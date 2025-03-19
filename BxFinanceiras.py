@@ -5,9 +5,10 @@ import sqlite3
 import customtkinter # type: ignore
 
 from Usr import db
+from funcoes import Icons
 
 
-class ConsultaAprovacoes:
+class ConsultaAprovacoes(Icons):
     def baixas_financeiras(self):
         # self.root = root
         # self.root.title("Baixas Financeiras")
@@ -49,7 +50,8 @@ class ConsultaAprovacoes:
         tk.Label(self.frame_top, text="Data", fg="white", bg="black").grid(row=2, column=0, padx=5, pady=2, sticky="w")
         tk.Entry(self.frame_top, width=15).grid(row=2, column=1, padx=5, pady=2)
 
-        self.btn_consulta = tk.Button(self.frame_top, text="🔍", command=self.consulta_aprovacoes)
+        icone_pesquisa = self.base64_to_photoimage('lupa')
+        self.btn_consulta = customtkinter.CTkButton(self.frame_top, image=icone_pesquisa, text='', fg_color='transparent', command=self.consulta_aprovacoes)
         self.btn_consulta.grid(row=2, column=2, padx=5, pady=2)
 
         tk.Label(self.frame_top, text="Aprovados", fg="white", bg="black").grid(row=2, column=3, padx=5, pady=2,
@@ -72,7 +74,7 @@ class ConsultaAprovacoes:
 
         self.tree.pack(expand=True, fill=tk.BOTH)
 
-        self.consulta_aprovacoes()
+        #self.consulta_aprovacoes()
 
         # Conexão com o banco de dados
         # self.conexao = sqlite3.connect("financeiro.db")
