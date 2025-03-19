@@ -14,7 +14,7 @@ from UsrPremissas                     import Premissas_Orcamento
 from UsrRelatorio_Premissas           import Resumo_Premissas
 from UsrCalcular_Orcamento            import Processar_Premissas_Orcamento
 from UsrCadastros                     import Versoes
-
+from BxFinanceiras                    import ConsultaAprovacoes
 
 class PrimaryWindow(
                     Login, 
@@ -30,7 +30,8 @@ class PrimaryWindow(
                     Premissas_Orcamento,
                     Resumo_Premissas,
                     Processar_Premissas_Orcamento,
-                    Versoes
+                    Versoes,
+                    ConsultaAprovacoes
                     ):
     def __init__(self):
         customtkinter.set_appearance_mode("Dark")
@@ -66,6 +67,8 @@ class PrimaryWindow(
                 # self.processar_premissas_orcamento()
             elif modulo == 'Versoes':
                 self.cad_versoes()
+            elif modulo == 'Baixas_Financeiras':
+                self.baixas_financeiras()
 
     def login_screen(self):
         # Configura a janela principal
@@ -231,7 +234,7 @@ class PrimaryWindow(
         filemenu4.add_command(label="Lcto (CPA/CRE)", command=lambda: self.menu_conectar('Lcto_Documentos'))
         filemenu4.add_command(label="Aprovação Lçtos")
         filemenu4.add_command(label="Borderô Bancário")
-        filemenu4.add_command(label="Baixas Financeiras")
+        filemenu4.add_command(label="Baixas Financeiras", command=lambda: self.menu_conectar('Baixas_Financeiras'))
         filemenu4.add_command(label="Relatório Cli/Fornec.", command=lambda: self.menu_conectar('Extrato_Financeiro'))
         filemenu4.add_command(label="Extrato Bancário")
 

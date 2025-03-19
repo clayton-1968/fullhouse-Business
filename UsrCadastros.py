@@ -553,6 +553,8 @@ class Versoes(Icons, Functions):
 
         self.janela_cadastro_versao.focus_force()
         self.janela_cadastro_versao.grab_set()
+        
+        self.consulta_versoes()
             
     def frame_versao_linha_1(self, janela):
         # Versão
