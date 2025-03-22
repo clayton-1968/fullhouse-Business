@@ -16,6 +16,7 @@ from UsrCalcular_Orcamento            import Processar_Premissas_Orcamento
 from UsrCadastros                     import Versoes
 from BxFinanceiras                    import ConsultaAprovacoes
 
+
 class PrimaryWindow(
                     Login, 
                     Lanc_fin, 
@@ -38,6 +39,7 @@ class PrimaryWindow(
         customtkinter.set_default_color_theme("dark-blue")
 
         self.login_screen()
+
 
         # self.janela_simulador_rel = None  # Initialize the attribute
         # self.janela_cadastro_pessoas = None
@@ -104,8 +106,24 @@ class PrimaryWindow(
         self.insert_senha.pack(pady=10)
         # self.insert_senha.bind("<Return>", lambda event: self.muda_barrinha(event, self.btn_login))
 
+        # Cbk lembrar senha
+        self.lembrar_senha = ctk.BooleanVar(value=False)
+        self.cbk_lembrar_senha = customtkinter.CTkCheckBox(self.login_frame, text=" Lembrar Senha", variable=self.lembrar_senha)
+        self.cbk_lembrar_senha.pack(pady=10)
+
+        username, password = self.load_credentials()
+
+        if len(username) > 0 and len(password) > 0:
+            self.insert_user.insert(0, username)
+            self.insert_senha.insert(0, password)
+            self.cbk_lembrar_senha.select()
+
         # Botão de login
-        self.btn_login = customtkinter.CTkButton(self.login_frame, text='Login', command=self.loginauth)
+        self.btn_login = customtkinter.CTkButton(self.login_frame, text='Login',
+                                                 command=lambda: self.loginauth(
+                                                     username=self.insert_user.get(),
+                                                     password=self.insert_senha.get(),
+                                                     remember=self.lembrar_senha.get()))
         self.btn_login.pack(pady=10)
 
         # Link para cadastro
@@ -124,13 +142,13 @@ class PrimaryWindow(
         customtkinter.CTkLabel(
             self.cadastro_frame, text="Insira seu e-mail para cadastro").pack(pady=10)
 
-        self.cadastrese_user = customtkinter.CTkEntry(
+        self.cadastro_user = customtkinter.CTkEntry(
             self.cadastro_frame, placeholder_text="Insira um e-mail válido para cadastro")
-        self.cadastrese_user.pack(pady=10)
+        self.cadastro_user.pack(pady=10)
 
-        self.cadastrese_senha = customtkinter.CTkEntry(
+        self.cadastro_senha = customtkinter.CTkEntry(
             self.cadastro_frame, placeholder_text="Insira uma senha que irá lembrar", show="*")
-        self.cadastrese_senha.pack(pady=10)
+        self.cadastro_senha.pack(pady=10)
 
         customtkinter.CTkButton(
             self.cadastro_frame, text='Submeter', command=self.submeter_cadastro).pack(pady=10)

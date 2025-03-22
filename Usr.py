@@ -1,3 +1,5 @@
+import os
+
 from imports import *
 
 db = MySqlDatabase()
@@ -6,9 +8,11 @@ db = MySqlDatabase()
 
 versao = '1.00.00.000'
 
+CREDENTIALS_FILE = 'credentials.txt'
+
 class Login(Limpeza):
     
-    def loginauth(self):
+    def loginauth(self, username, password, remember=False):
         self.check_email_user()
         Usr_Email = self.insert_user.get()
         Usr_Senha = self.insert_senha.get()
@@ -26,6 +30,9 @@ class Login(Limpeza):
             myresult = db.executar_consulta(vsSQL, Usr_Email)
                     
             if myresult:
+
+                self.save_credentials(username, password, remember)
+
                 versao_sys = myresult[0]['versao_nr']
                 if versao_sys != versao:
                     messagebox.showinfo('Gestor Negócios', 'Versão do Sistema desatualizada, favor atualizar.')
@@ -53,6 +60,23 @@ class Login(Limpeza):
         else:
             messagebox.showinfo(
                 'Gestor Negócios', 'Por favor, preencher os campos de usuário e senha.')
+
+    def save_credentials(self, username, password, remember=False):
+        if remember:
+            with open(CREDENTIALS_FILE, "w") as file:
+                file.write(f"{username}\n{password}")
+        else:
+            if os.path.exists(CREDENTIALS_FILE):
+                os.remove(CREDENTIALS_FILE)
+
+    def load_credentials(self):
+        if os.path.exists(CREDENTIALS_FILE):
+            with open(CREDENTIALS_FILE, "r") as file:
+                lines = file.readlines()
+                if len(lines) >= 2:
+                    return lines[0].strip(), lines[1].strip()
+
+        return "", ""
 
     def check_email_cad(self):
         self.regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
