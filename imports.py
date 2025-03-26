@@ -33,7 +33,7 @@ import base64
 import customtkinter
 import webbrowser
 import os
-
+from collections import defaultdict
 import re
 import hashlib
 import smtplib

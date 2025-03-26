@@ -164,12 +164,13 @@ class Processar_Premissas_Orcamento(Widgets):
             # self.progress_bar.start() # usar para processamentos
             # self.progress_bar.step() # usar para controle de andamento
             # self.progress_bar.stop() # para ou concluir o start
-           
-            
             # Processing each premissa
+            
             for index, premissa in enumerate(premissas, start=1):
-                self.progress_bar.start() # iniciar a barra
-
+                progress = index / total_records
+                self.progress_bar.set(progress)
+                # self.progress_bar.start() # iniciar a barra
+                
                 dta_inicio = premissa['DtaInicio']
                 if isinstance(dta_inicio, datetime):
                     dta_ref_calculo = self.ult_dia_mes(dta_inicio) 
@@ -184,14 +185,14 @@ class Processar_Premissas_Orcamento(Widgets):
                 else:
                     print('Erro: DtaInicio não é um objeto datetime válido.')
                     continue  
-
-                dta_ref_calculo = datetime.strptime(dta_ref_calculo, '%Y-%m-%d')         
+                
                 dta_fim = premissa['DtaFim']  # This should also be a datetime.date object
                 if isinstance(dta_fim, date):
                     dta_fim = datetime.combine(dta_fim, datetime.min.time())
-        
+
+                dta_ref_calculo = datetime.strptime(dta_ref_calculo, '%Y-%m-%d')         
                 while dta_ref_calculo <= dta_fim:
-                    str_registros = ""
+                    str_registros = ''
                     Idx_ID = premissa['Idx_ID']
                     Idx_Data = premissa['Idx_Data']
                     
@@ -264,12 +265,13 @@ class Processar_Premissas_Orcamento(Widgets):
 
                     va_lcto_apr = self.custos(preco_p0, quantidade, id_reajuste, periodicidade, dt_inicio, dt_fim, data_lancamento, Idx_Data)
                     
+                    if va_lcto_apr == None:
+                        va_lcto_apr = 0
+                    
                     parcelas = 1
                     va_lcto_ipt = va_lcto_apr * icms  
                     va_lcto_apr *= (1 - icms) 
-
                     
-
                     while parcelas <= nr_parcelas and va_lcto_apr != 0:
                         if parcelas == 1:
                             va_lcto_pto = va_lcto_apr * (a_vista / 100)
@@ -324,7 +326,8 @@ class Processar_Premissas_Orcamento(Widgets):
                             # Set updated payment date as the last day of the following month
                             data_pgto = self.ult_dia_mes(datetime(ano_pgto, mes_pgto, 1))  # Calculate the last day of the next payment month
                             data_pgto = datetime.strptime(data_pgto, '%Y-%m-%d') 
-
+                            
+                            # Tipo_Lcto = "CPA"
                             if premissa['Tipo_Lcto'] == "CPA":
                                 if data_pgto.year >= str_ano_base and va_lcto_pto != 0 and premissa['Financeiro'] == "S":
                                     if str_registros:
@@ -342,7 +345,7 @@ class Processar_Premissas_Orcamento(Widgets):
                                                     f"'111110101', '{data_pgto.strftime('%Y-%m-%d')}', " \
                                                     f"'26', 'F', '{dedutivel}', '{(va_lcto_ipt)}')"
 
-                            # Process for Tipo_Lcto = "CRE"
+                            # Tipo_Lcto = "CRE"
                             elif premissa['Tipo_Lcto'] == "CRE":
                                 if data_pgto.year >= str_ano_base and va_lcto_pto != 0 and premissa['Financeiro'] == "S":
                                     if str_registros:
@@ -379,9 +382,10 @@ class Processar_Premissas_Orcamento(Widgets):
                                         f"'{premissa['CenDebito']}', '{premissa['CenCredito']}', '113020202', '{premissa['ConCredito']}', " \
                                         f"'{data_lancamento.strftime('%Y-%m-%d')}', '25', 'O', '{dedutivel}', " \
                                         f"'{(va_lcto_ipt)}')"
-
-                    if premissa['PISCofins'] != 0:  # Assuming PISCofins is a field in rst
-                        va_lcto_ipt = abs(va_lcto_apr) * 0.076  # Calculate the PIS value
+                    
+                    # Gravar lançamento do credito do pis e cofins
+                    if premissa['PISCofins'] != 0:  
+                        va_lcto_ipt = abs(va_lcto_apr) * 0.076 
 
                         if data_lancamento.year >= str_ano_base and va_lcto_ipt != 0:
                             if str_registros:
@@ -422,16 +426,14 @@ class Processar_Premissas_Orcamento(Widgets):
                                             f"'510102001', '510102001', '111110101', '213010102', " \
                                             f"'{data_pgto.strftime('%Y-%m-%d')}', '23', 'F', 'N', " \
                                             f"{(va_lcto_ipt)})"
-
-                        if str_registros:
-                            print('GRAVAR OS DADOS')
-                            # self.gravar_orcamento(str_registros)
                     
+                    if str_registros:
+                        self.gravar_orcamento(str_registros)
+
                     # Calculate Data_Pgto as the last day of the payment month
                     dta_ref_calculo = self.ult_dia_mes(self.add_months(dta_ref_calculo, 1))  # Move to the next month
                     dta_ref_calculo = datetime.strptime(dta_ref_calculo, '%Y-%m-%d')  
                     
-                self.progress_bar.set((index / total_records) * 100)
             self.progress_bar.stop() # para ou concluir o start    
                 
         # Botão de Calcular
@@ -763,6 +765,8 @@ class Processar_Premissas_Orcamento(Widgets):
                                     Orc_Valor) 
             VALUES {}
         """.format(str_registro)  # Use .format to insert the record string
-        db.executar_consulta(vs_sql)    
+        print(vs_sql)
+        db._querying(vs_sql)
+        # db.executar_consulta(vs_sql)    
         
 Processar_Premissas_Orcamento()

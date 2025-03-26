@@ -13,6 +13,7 @@ from UsrExtratosClientes_Fornecedores import Extrato_Clientes_Fornecedores
 from UsrPremissas                     import Premissas_Orcamento
 from UsrRelatorio_Premissas           import Resumo_Premissas
 from UsrCalcular_Orcamento            import Processar_Premissas_Orcamento
+from UsrRelatorio_Orcamento           import Relatorio_Orcamento
 from UsrCadastros                     import Versoes
 from BxFinanceiras                    import ConsultaAprovacoes
 
@@ -31,6 +32,7 @@ class PrimaryWindow(
                     Premissas_Orcamento,
                     Resumo_Premissas,
                     Processar_Premissas_Orcamento,
+                    Relatorio_Orcamento,
                     Versoes,
                     ConsultaAprovacoes
                     ):
@@ -64,6 +66,10 @@ class PrimaryWindow(
                 self.premissas_orcamentos()
             elif modulo == 'Planejamento_Relatorio_Premissas':
                 self.resumo_premissas()
+            elif modulo == 'Planejamento_Processar_Premissas':
+                self.processar_premissas_orcamento()
+            elif modulo == 'Planejamento_Relatorio_Orcamento':
+                self. relatorio_orcamento()
             elif modulo == 'Manutencao':
                 messagebox.showinfo("Gestor de Negócios", "Em Manutenção!!")
                 # self.processar_premissas_orcamento()
@@ -289,7 +295,7 @@ class PrimaryWindow(
 
         sub_menu_relatorios = Menu(sub_menu_planejamento, tearoff=0)  # tearoff=0 para eliminar a linha separadora
         sub_menu_relatorios.add_command(label="xxxxxxxxx", command=lambda: self.menu_conectar('Manutencao'))
-        sub_menu_relatorios.add_command(label="Orçamento")
+        sub_menu_relatorios.add_command(label="Orçamento", command=lambda: self.menu_conectar('Planejamento_Relatorio_Orcamento'))
         sub_menu_planejamento.add_cascade(label="Relatórios", menu=sub_menu_relatorios)
         
         sub_menu_calcular = Menu(sub_menu_planejamento, tearoff=0)  # tearoff=0 para eliminar a linha separadora
