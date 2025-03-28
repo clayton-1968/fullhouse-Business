@@ -4518,7 +4518,7 @@ class Formatos():
             return
         
         if float(parti) > 1:
-            messagebox.showinfo('% Urbanizador', 'Percentual Não pode ser Maio que 100%!!!!')
+            messagebox.showinfo('% Urbanizador', 'Percentual Não pode ser Maior que 100%!!!!')
             parti = 0
             new_text = ''
             self.entry_participacao_urbanizador.focus()
@@ -4538,6 +4538,36 @@ class Formatos():
         self.entry_participacao_urbanizador.delete(0, "end")
         self.entry_participacao_urbanizador.insert(0, new_text.strip())
     
+    def format_per_dif_aprazo(self, event):
+        per_avista = float(self.entry_per_avista.get().replace("%", "").replace(",", ".")[:7]) / 100
+        parti = per_avista
+        new_text = ''
+
+        if event.keysym.lower() == "backspace":
+            return
+        
+        if float(parti) > 1 or float(parti) < 0 or float(parti) == 0:
+            messagebox.showinfo('% A vista', 'Percentual Inválido, não pode ser 0 ou maior que 100%!!!!', parent=self.janela_premissas)
+            parti = 0
+            new_text = ''
+            self.entry_per_avista.focus()
+            if isinstance(self.entry_per_avista, ctk.CTkEntry):
+                self.entry_per_avista.select_range(0, 'end')  # Seleciona todo o texto
+            return
+        else:
+            self.entry_per_aprazo.focus()
+            if isinstance(self.entry_per_aprazo, ctk.CTkEntry):
+                self.entry_per_aprazo.select_range(0, 'end')  # Seleciona todo o texto
+
+            new_text = self.format_per_fx(per_avista)
+            per_aprazo = self.format_per_fx(1 - per_avista)
+
+            self.entry_per_aprazo.delete(0, "end")
+            self.entry_per_aprazo.insert(0, per_aprazo.strip())
+
+        self.entry_per_avista.delete(0, "end")
+        self.entry_per_avista.insert(0, new_text.strip())
+
     def format_per_total_participacao(self, event):
         admmkt_parceiro = float(self.entry_admmkt_parceiro.get().replace("%", "").replace(",", ".")[:7]) / 100
         per_permuta_fisica = float(self.entry_participacao_permuta.get().replace("%", "").replace(",", ".")[:7]) / 100
@@ -5404,7 +5434,7 @@ class Functions():
     # Drop Status
     def get_status(self, ID_Empresa):
         strSqL = f"""SELECT Status FROM Status_Prospeccao
-        WHERE Empresa_ID='{str(ID_Empresa)}' ORDER BY Status_Order"""
+        WHERE Empresa_ID='{str(ID_Empresa)}' ORDER BY Status_Order, Status"""
 
         myresult = db._querying(strSqL)
         status = [(status['Status']) for status in myresult]

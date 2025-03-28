@@ -112,14 +112,11 @@ class Relatorio_Orcamento(Widgets):
         self.check_var_excel = customtkinter.StringVar(value="off")
         self.check_var_reais_mil = customtkinter.StringVar(value="off")
         
-        self.checkbox_premissas = customtkinter.CTkCheckBox(fr_opcoes, text='Imprime Premissas?', variable=self.check_var_premissas, onvalue="on", offvalue="off")
-        self.checkbox_premissas.place(relx=0.42, rely=0.20, relheight=0.35, relwidth=0.305)
-
         self.checkbox_excel = customtkinter.CTkCheckBox(fr_opcoes, text='Gerar Excel?', variable=self.check_var_excel, onvalue="on", offvalue="off")
-        self.checkbox_excel.place(relx=0.42, rely=0.555, relheight=0.35, relwidth=0.40)
+        self.checkbox_excel.place(relx=0.42, rely=0.50, relheight=0.35, relwidth=0.40)
 
         self.checkbox_reais_mil = customtkinter.CTkCheckBox(fr_opcoes, text='Em R$/1.000', variable=self.check_var_reais_mil, onvalue="on", offvalue="off")
-        self.checkbox_reais_mil.place(relx=0.73, rely=0.20, relheight=0.35, relwidth=0.265)
+        self.checkbox_reais_mil.place(relx=0.73, rely=0.50, relheight=0.35, relwidth=0.265)
 
         # Botão de Consultar
         def consultar():
@@ -146,11 +143,6 @@ class Relatorio_Orcamento(Widgets):
                 strClassificacao = 'Natureza Financeira'
             else:
                 strClassificacao = 'Centro Resultado'
-
-            if self.checkbox_premissas.get() == 'on':
-                chk_premissas = 'S'
-            else:
-                chk_premissas = 'N'
 
             if self.checkbox_excel.get() == 'on':
                 chk_excel = 'S' 
@@ -332,7 +324,9 @@ class Relatorio_Orcamento(Widgets):
 
             elif strClassificacao == 'Natureza Financeira':
                 ult_centro = lista[i]['Centro']
-                while i < len(lista) and lista[i]['Centro'] == ult_centro:
+                nr_registros = (len(lista))
+                
+                while (i + 1) <= nr_registros and lista[i]['Centro'] == ult_centro:
                     ult_conta = lista[i]['Conta']
                     NroDigitos = len(ult_conta)
                     str_desc_conta = lista[i]['DescSecundario']
@@ -359,58 +353,67 @@ class Relatorio_Orcamento(Widgets):
                             'Total_6': []    
                             }
                     
-                    while i < len(lista)  and lista[i]['Centro'] == ult_centro and lista[i]['Conta'] == ult_conta:
+                    while (i + 1) <= nr_registros  and lista[i]['Centro'] == ult_centro and lista[i]['Conta'] == ult_conta:
                         dta_ref_calculo = datetime.strptime(Dta_Inicio, "%d/%m/%Y").date()
-                        for coluna in range(1, 13):  
-                            dta_lcto = lista[i]['DtaLcto']
-                            if dta_lcto.year == ano_inicial and lista[i]['Conta'] == ult_conta:
-                                if dta_lcto >= dta_ref_calculo:  
-                                    if coluna == dta_lcto.month:
-                                        valor = lista[i]['Vlr'] / intDiv  
-                                        valor_mes[coluna - 1] += valor
-                                        NroDigitos = len(ult_conta)
-                                        total_ano[0] += valor  
-                                        if NroDigitos == 9:
-                                            total_geral[coluna - 1] += valor
-                                        
-                                        if i < len(lista):
-                                            i += 1  
-                                        
+                        
+                        for coluna in range(1, 13):
+                            if (i + 1) <= nr_registros: 
+                                dta_lcto = lista[i]['DtaLcto']
+                                
+                                if dta_lcto.year == ano_inicial and lista[i]['Conta'] == ult_conta:
+                                    if dta_lcto >= dta_ref_calculo:  
+                                        if coluna == dta_lcto.month:
+                                            valor = lista[i]['Vlr'] / intDiv  
+                                            valor_mes[coluna - 1] += valor
+                                            NroDigitos = len(ult_conta)
+                                            total_ano[0] += valor  
+                                            if NroDigitos == 9:
+                                                total_geral[coluna - 1] += valor
+                                            
+                                            if (i + 1) <= nr_registros:
+                                                i += 1
+                                        else:
+                                            valor_mes[coluna - 1] += 0
                                     else:
                                         valor_mes[coluna - 1] += 0
+                                    
+                                    # dta_ref_calculo = dta_ref_calculo + relativedelta(months=1)
+                                    # dta_ref_calculo = self.ult_dia_mes(dta_ref_calculo)
+                                    # dta_ref_calculo = datetime.strptime(dta_ref_calculo, "%Y-%m-%d").date()
                                 else:
                                     valor_mes[coluna - 1] += 0
                             else:
                                 valor_mes[coluna - 1] += 0
                         
-                        item['Jan'].append(f"{valor_mes[0]:,.0f}")  
-                        item['Fev'].append(f"{valor_mes[1]:,.0f}")  
-                        item['Mar'].append(f"{valor_mes[2]:,.0f}")  
-                        item['Abr'].append(f"{valor_mes[3]:,.0f}")  
-                        item['Mai'].append(f"{valor_mes[4]:,.0f}")  
-                        item['Jun'].append(f"{valor_mes[5]:,.0f}")  
-                        item['Jul'].append(f"{valor_mes[6]:,.0f}")  
-                        item['Ago'].append(f"{valor_mes[7]:,.0f}")  
-                        item['Set'].append(f"{valor_mes[8]:,.0f}")  
-                        item['Out'].append(f"{valor_mes[9]:,.0f}")  
-                        item['Nov'].append(f"{valor_mes[10]:,.0f}")  
-                        item['Dez'].append(f"{valor_mes[11]:,.0f}")
-                        item['Total_1'].append(f"{total_ano[0]:,.0f}")    
+                        item['Jan'].append(self.format_valor_fx(valor_mes[0]))  
+                        item['Fev'].append(self.format_valor_fx(valor_mes[1]))  
+                        item['Mar'].append(self.format_valor_fx(valor_mes[2]))  
+                        item['Abr'].append(self.format_valor_fx(valor_mes[3]))  
+                        item['Mai'].append(self.format_valor_fx(valor_mes[4]))  
+                        item['Jun'].append(self.format_valor_fx(valor_mes[5]))  
+                        item['Jul'].append(self.format_valor_fx(valor_mes[6]))  
+                        item['Ago'].append(self.format_valor_fx(valor_mes[7]))  
+                        item['Set'].append(self.format_valor_fx(valor_mes[8]))  
+                        item['Out'].append(self.format_valor_fx(valor_mes[9]))  
+                        item['Nov'].append(self.format_valor_fx(valor_mes[10]))  
+                        item['Dez'].append(self.format_valor_fx(valor_mes[11]))
+                        item['Total_1'].append(self.format_valor_fx(total_ano[0]))    
 
-                        while (i < len(lista) and lista[i]['Centro'] == ult_centro and lista[i]['Conta'] == ult_conta):
+
+                        while (i < nr_registros and lista[i]['Centro'] == ult_centro and lista[i]['Conta'] == ult_conta):
                             dta_lcto = lista[i]['DtaLcto']
                             if dta_lcto.year == ano_inicial:  
                                 for year_offset in range(1, 6):
                                     if dta_lcto.year == ano_inicial + year_offset:
                                         total_ano[year_offset] += lista[i]['Vlr'] / intDiv
-                                        print(year_offset)
+                                        
                             i += 1
                             
-                        item['Total_2'].append(f"{total_ano[1]:,.0f}")
-                        item['Total_3'].append(f"{total_ano[2]:,.0f}")
-                        item['Total_4'].append(f"{total_ano[3]:,.0f}")
-                        item['Total_5'].append(f"{total_ano[4]:,.0f}")
-                        item['Total_6'].append(f"{total_ano[5]:,.0f}")
+                        item['Total_2'].append(self.format_valor_fx(total_ano[1]))
+                        item['Total_3'].append(self.format_valor_fx(total_ano[2]))
+                        item['Total_4'].append(self.format_valor_fx(total_ano[3]))
+                        item['Total_5'].append(self.format_valor_fx(total_ano[4]))
+                        item['Total_6'].append(self.format_valor_fx(total_ano[5]))
 
                         total_ano[0] = 0
                         total_ano[1] = 0

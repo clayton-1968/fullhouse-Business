@@ -765,7 +765,7 @@ class Processar_Premissas_Orcamento(Widgets):
                                     Orc_Valor) 
             VALUES {}
         """.format(str_registro)  # Use .format to insert the record string
-        print(vs_sql)
+        # print(vs_sql)
         db._querying(vs_sql)
         # db.executar_consulta(vs_sql)    
         

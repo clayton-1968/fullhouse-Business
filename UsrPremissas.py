@@ -371,9 +371,8 @@ class Premissas_Orcamento(Widgets):
 
         self.entry_per_avista = customtkinter.CTkEntry(fr_informacoes_financeiras_fiscais, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_per_avista.place(relx=0.43, rely=0.50, relwidth=0.10, relheight=0.40)
-        self.entry_per_avista.bind("<Return>", lambda event: self.format_per(event, self.entry_per_avista, self.entry_per_avista))
-        self.entry_per_avista.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_per_aprazo))
-
+        self.entry_per_avista.bind("<Return>", lambda event: self.format_per_dif_aprazo(event))
+        
         # % A Prazo
         lb_per_aprazo = customtkinter.CTkLabel(fr_informacoes_financeiras_fiscais, text="% A Prazo", text_color="white", font=('Arial', 10), anchor=tk.W)
         lb_per_aprazo.place(relx=0.54, rely=0.30, relheight=0.125, relwidth=0.20)
@@ -674,8 +673,8 @@ class Premissas_Orcamento(Widgets):
         else:
             GeraPgto = 'N'
 
-        Per_Avista = float(self.entry_per_avista.get().replace("%", "").replace(",", ".")[:7]) / 100
-        Per_APrazo = float(self.entry_per_aprazo.get().replace("%", "").replace(",", ".")[:7]) / 100
+        Per_Avista = float(self.entry_per_avista.get().replace("%", "").replace(",", ".")[:7]) 
+        Per_APrazo = float(self.entry_per_aprazo.get().replace("%", "").replace(",", ".")[:7]) 
         Nr_Parcelas = float(self.entry_nr_parcelas.get().replace(' x', '').replace('.', '').replace(',', '.')[:15])
         Prazo = float(self.entry_prazo_pagto.get().replace(' x', '').replace('.', '').replace(',', '.')[:15])
         Per_Juros  = float(self.entry_per_tx_juros.get().replace("%", "").replace(",", ".")[:7]) / 100
@@ -738,6 +737,7 @@ class Premissas_Orcamento(Widgets):
         
         if DS_Nat_Gerencial != '':
             ID_Nat_Gerencial = self.obter_Nat_Gerencial_ID(DS_Nat_Gerencial)
+            Nat_Tipo = 'R'
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher Periodicidade!!", parent=self.janela_premissas)
             return
@@ -791,7 +791,8 @@ class Premissas_Orcamento(Widgets):
                             Periodi_ID=%s, 
                             Prem_DtaInicio=%s, 
                             Prem_DtaFim=%s, 
-                            Status_ID=%s
+                            Status_ID=%s,
+                            Nat_Tipo=%s
                         WHERE 
                             Pri_ID=%s AND 
                             Orc_ID=%s AND 
@@ -823,6 +824,7 @@ class Premissas_Orcamento(Widgets):
                         Dta_Inicio,
                         Dta_Fim,
                         DS_Status,
+                        Nat_Tipo,
                         ID_Empresa, 
                         ID_Orc,
                         ID_Lcto
@@ -858,10 +860,11 @@ class Premissas_Orcamento(Widgets):
                             Periodi_ID, 
                             Prem_DtaInicio, 
                             Prem_DtaFim, 
-                            Status_ID
+                            Status_ID,
+                            Nat_Tipo
                         )
                         VALUES (%s, %s, %s, %s, 'PRM', %s, %s, %s, %s, %s,
-                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """
             params = (
                         ID_Empresa, 
@@ -889,7 +892,8 @@ class Premissas_Orcamento(Widgets):
                         ID_Periodicidade ,
                         Dta_Inicio,
                         Dta_Fim,
-                        DS_Status
+                        DS_Status,
+                        Nat_Tipo
                     )
                                 
         db.executar_consulta(vsSQL, params)
