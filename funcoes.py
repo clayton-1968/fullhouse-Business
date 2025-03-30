@@ -906,7 +906,6 @@ class Gravar():
                         
                         Status_Prospeccao               = %s,
                         Anexos                          = %s,
-                        Data_Contrato                   = %s,
                         Observacao                      = %s,
                         Area_EndCoordenadas             = %s,
                         VpL_Taxa_Desconto               = %s
@@ -1032,7 +1031,6 @@ class Gravar():
 
                     TStatus,
                     TAnexos,
-                    Dta_Documento, 
                     TObservacao,
                     EndCoordenadas,
                     TPer_Desconto_VPL,
@@ -3491,7 +3489,7 @@ class Consultas():
                             )
     
     def Acessar_Maps(self):
-        self.entry_informacoes_maps.delete(0, 'end')
+        self.entry_informacoes_https.delete(0, 'end')
         # Construa a URL
         url = f"https://srv-web-full-gestor.eastus2.cloudapp.azure.com/maps/getCoordenadas.php?cidade={self.entry_municipio.get()}&uf={self.entry_uf.get()}" 
         # Abre a URL no navegador padrão
@@ -4796,11 +4794,6 @@ class Formatos():
             return False
 
 class Formularios():
-
-    def button_maps(self, janela, coordenadas_relx, coordenadas_rely, coordenadas_relwidth, coordenadas_relheight, tipo):
-        self.btn_consultar = customtkinter.CTkButton(janela, text='Maps',fg_color='transparent', text_color="black", command=self.Acessar_Maps)  # Tamanho desejado
-        self.btn_consultar.pack()
-        self.btn_consultar.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
 
     def OnDoubleClick(self, event):
         selected_item = self.list_g.selection()

@@ -155,7 +155,7 @@ class Simulador_Estudos_Rel(Widgets):
         coordenadas_relwidth = 0.10
         coordenadas_relheight = 0.07
         icon_image = self.base64_to_photoimage('save')
-        self.btn_consultar = customtkinter.CTkButton(
+        self.btn_processar = customtkinter.CTkButton(
                                                     janela, 
                                                     text='',
                                                     image=icon_image, 
@@ -170,8 +170,9 @@ class Simulador_Estudos_Rel(Widgets):
                                                                                     )
                                                                     ]
                                                     ) 
-        self.btn_consultar.pack()
-        self.btn_consultar.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        self.btn_processar.pack()
+        self.btn_processar.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        self.btn_processar.bind("<Return>", lambda event: self.btn_processar.invoke())
 
     def frame_carregar_dados(self, janela, ID_Empresa, UF, Cidade, Tipo, Nome_da_Area):
         self.consultar_simulacao(janela, ID_Empresa, UF, Cidade, Tipo, Nome_da_Area)
@@ -1629,56 +1630,116 @@ class Simulador_Estudos_Rel(Widgets):
         status = []
         self.entry_informacoes_status = AutocompleteCombobox(self.fr_informacoes, width=30, font=('Times', 11), completevalues=status)
         self.entry_informacoes_status.pack()
-        self.entry_informacoes_status.place(relx=0.01, rely=0.19, relwidth=0.10, relheight=0.25)
+        self.entry_informacoes_status.place(relx=0.01, rely=0.19, relwidth=0.30, relheight=0.25)
         self.entry_informacoes_status.bind("<Button-1>", lambda event: self.atualizar_status(event, self.entry_empresa.get(), self.entry_informacoes_status))
         self.entry_informacoes_status.bind('<Down>', lambda event: self.atualizar_status(event, self.entry_empresa.get(), self.entry_informacoes_status))
-        self.entry_informacoes_status.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_empresa.get(), self.entry_informacoes_anexos))
+        self.entry_informacoes_status.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_informacoes_anexos))
 
         # Anexos
         self.lb_informacoes_anexos = customtkinter.CTkLabel(self.fr_informacoes, text="Anexos", text_color="black", font=('Arial', 10), anchor=tk.W)
-        self.lb_informacoes_anexos.place(relx=0.12, rely=0.11, relheight=0.07, relwidth=0.70)
+        self.lb_informacoes_anexos.place(relx=0.315, rely=0.11, relheight=0.07, relwidth=0.70)
         self.entry_informacoes_anexos = customtkinter.CTkEntry(self.fr_informacoes, fg_color="black", text_color="white", justify=tk.LEFT)
-        self.entry_informacoes_anexos.place(relx=0.12, rely=0.19, relwidth=0.10, relheight=0.25)
+        self.entry_informacoes_anexos.place(relx=0.315, rely=0.19, relwidth=0.465, relheight=0.25)
         self.entry_informacoes_anexos.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_informacoes_data))
 
-        # Data
+        # Data do cadastro
         self.lb_informacoes_data = customtkinter.CTkLabel(self.fr_informacoes, text="Data Cadastro", text_color="black", font=('Arial', 10), anchor=tk.W)
-        self.lb_informacoes_data.place(relx=0.23, rely=0.11, relheight=0.07, relwidth=0.97)
+        self.lb_informacoes_data.place(relx=0.785, rely=0.11, relheight=0.07, relwidth=0.97)
         self.entry_informacoes_data = customtkinter.CTkEntry(self.fr_informacoes, fg_color="black", text_color="white", justify=tk.CENTER)
-        self.entry_informacoes_data.place(relx=0.23, rely=0.19, relwidth=0.10, relheight=0.25)
+        self.entry_informacoes_data.place(relx=0.785, rely=0.19, relwidth=0.10, relheight=0.25)
         self.entry_informacoes_data.bind("<Button-1>", lambda event: self.calendario(event, self.entry_informacoes_data))
         self.entry_informacoes_data.bind("<Return>", lambda event: self.muda_barrinha_dta(event, self.entry_informacoes_data, self.entry_informacoes_unidade_negocio))
         
         # Unidade Negócio
         self.lb_informacoes_unidade_negocio = customtkinter.CTkLabel(self.fr_informacoes, text="Unidade Negócio", text_color="black", font=('Arial', 10), anchor=tk.W)
-        self.lb_informacoes_unidade_negocio.place(relx=0.34, rely=0.11, relheight=0.07, relwidth=0.97)
+        self.lb_informacoes_unidade_negocio.place(relx=0.895, rely=0.11, relheight=0.07, relwidth=0.97)
         self.unidade_negocio = []
         self.entry_informacoes_unidade_negocio = AutocompleteCombobox(self.fr_informacoes, width=30, justify=tk.LEFT, font=('Times', 8), completevalues=self.nome_curva)
-        self.entry_informacoes_unidade_negocio.place(relx=0.34, rely=0.19, relwidth=0.10, relheight=0.25)
+        self.entry_informacoes_unidade_negocio.place(relx=0.895, rely=0.19, relwidth=0.10, relheight=0.25)
         self.entry_informacoes_unidade_negocio.bind("<Button-1>", lambda event: self.atualizar_unidade_negocios(event, self.entry_informacoes_unidade_negocio))
         self.entry_informacoes_unidade_negocio.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_informacoes_https))
 
         # Https://
         self.lb_informacoes_https = customtkinter.CTkLabel(self.fr_informacoes, text="Https://", text_color="black", font=('Arial', 10), anchor=tk.W)
-        self.lb_informacoes_https.place(relx=0.45, rely=0.11, relheight=0.07, relwidth=0.97)
+        self.lb_informacoes_https.place(relx=0.01, rely=0.45, relheight=0.08, relwidth=0.25)
         self.entry_informacoes_https = customtkinter.CTkEntry(self.fr_informacoes, fg_color="black", text_color="white", justify=tk.LEFT)
-        self.entry_informacoes_https.place(relx=0.45, rely=0.19, relwidth=0.54, relheight=0.25)
-        self.entry_informacoes_https.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_informacoes_maps))
-
-        # Coordenadas Maps
+        self.entry_informacoes_https.place(relx=0.01, rely=0.55, relwidth=0.85, relheight=0.25)
+        
+        # Coordenadas Maps - Desativado gravando em branco o campo
         self.lb_informacoes_maps = customtkinter.CTkLabel(self.fr_informacoes, text="Coordenadas Maps", text_color="black", font=('Arial', 10), anchor=tk.W)
-        self.lb_informacoes_maps.place(relx=0.01, rely=0.45, relheight=0.08, relwidth=0.25)
+        # self.lb_informacoes_maps.place(relx=0.01, rely=0.45, relheight=0.08, relwidth=0.25)
         self.entry_informacoes_maps = customtkinter.CTkEntry(self.fr_informacoes, fg_color="black", text_color="white", justify=tk.LEFT)
-        self.entry_informacoes_maps.place(relx=0.01, rely=0.55, relwidth=0.85, relheight=0.25)
-        self.entry_informacoes_maps.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_informacoes_maps))
+        # self.entry_informacoes_maps.place(relx=0.01, rely=0.55, relwidth=0.85, relheight=0.25)
+        # self.entry_informacoes_maps.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_informacoes_maps))
 
-        # Icon maps
+        # Icon Adicionar endereço no maps
         coordenadas_relx = 0.86
         coordenadas_rely = 0.55
-        coordenadas_relwidth = 0.10
+        coordenadas_relwidth = 0.05
         coordenadas_relheight = 0.25
-        self.button_maps(self.fr_informacoes, coordenadas_relx, coordenadas_rely, coordenadas_relwidth, coordenadas_relheight,'maps')
+        icon_image = self.base64_to_photoimage('savedown')
+        self.btn_gravar_maps = customtkinter.CTkButton(
+                                                    self.fr_informacoes,  
+                                                    text='',
+                                                    image=icon_image, 
+                                                    fg_color='transparent', 
+                                                    command=self.Acessar_Maps
+                                                        )
+        self.btn_gravar_maps.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        self.btn_gravar_maps.bind("<Return>", lambda event: self.btn_gravar_maps.invoke())
+        
+        # Icon de Consulta Endereço Cadastrado
+        def selected_maps():
+            ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get()) 
+            UF = self.entry_uf.get()
+            Cidade = self.entry_municipio.get()
+            Tipo_Estudo = self.entry_tpo_projeto.get()
+            Nome_Area = self.entry_nome_cenario.get()
+            url =self.entry_informacoes_https.get()
+            
+            if not ID_Empresa:
+                messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!', parent=self.janela_simulador_rel)
+                return
+            
+            if not UF:
+                messagebox.showinfo('Gestor Negócios', 'UF em Branco!!!', parent=self.janela_simulador_rel)
+                return
+            
+            if not Cidade:
+                messagebox.showinfo('Gestor Negócios', 'Município em Branco!!!', parent=self.janela_simulador_rel)
+                return
+            
+            if not Tipo_Estudo:
+                messagebox.showinfo('Gestor Negócios', 'Tipo do Estudo em Branco!!!', parent=self.janela_simulador_rel)
+                return
+            
+            if not Nome_Area:
+                messagebox.showinfo('Gestor Negócios', 'Nome da Área em Branco!!!', parent=self.janela_simulador_rel)
+                return
+            
+            if not url:
+                messagebox.showinfo('Gestor Negócios', 'Url da Área em Branco!!!', parent=self.janela_simulador_rel)
+                return
+            
+            UF = UF.upper()
+            url = url.strip()  # Remove espaços em branco no início e no fim
+            webbrowser.open(url)
 
+        coordenadas_relx = 0.915
+        coordenadas_rely = 0.55
+        coordenadas_relwidth = 0.05
+        coordenadas_relheight = 0.25
+        icon_image = self.base64_to_photoimage('lupa')
+        self.btn_consultar_maps = customtkinter.CTkButton(
+                                                    self.fr_informacoes,  
+                                                    text='',
+                                                    image=icon_image, 
+                                                    fg_color='transparent', 
+                                                    command=selected_maps
+                                                        )
+        self.btn_consultar_maps.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        self.btn_consultar_maps.bind("<Return>", lambda event: self.btn_consultar_maps.invoke())
+        
         self.limpar_simulador_negocios()
 
 Simulador_Estudos_Rel()
