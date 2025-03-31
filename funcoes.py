@@ -375,7 +375,7 @@ class Gravar():
             messagebox.showinfo('Gestor Negócios', 'Nome da Área em Branco!!!', parent=self.janela_simulador_rel)
             return
         
-        ID_Unidade = self.entry_informacoes_unidade_negocio.get()
+        ID_Unidade = self.entry_informacoes_unidade_negocio.get() # ARRUMAR PARA UNIDADE NEGÓCIO SEJA ID
         Dta_Registro = datetime.now() #aJUSTAR PARA DATA DO DIA DO REGISTRO
         Usr = os.environ.get('Usr_login')
         
@@ -386,8 +386,10 @@ class Gravar():
         EndBairro = ''
         
         TPer_Desconto_VPL = float(self.entry_taxa_desconto.get().replace("%", "").replace(",", ".")[:7]) / 100
-
-        Dta_Documento = datetime.now().strftime("%Y-%m-%d")
+        
+        Dta_Documento = self.entry_informacoes_data.get()  
+        Dta_Documento = datetime.strptime(Dta_Documento, "%d/%m/%Y").date()  # Formato ajustado
+        
         Tamanho_Area = float(self.entry_area_total.get().replace(" m²", "").replace(".", "").replace(",", ".")) 
         Per_Aproveitamento = float(self.entry_area_aproveitamento.get().replace("%", "").replace(",", ".")[:7]) / 100
         Area_aproveitada = float(self.entry_area_aproveitado.get().replace(" m²", "").replace(".", "").replace(",", ".")) 
@@ -906,6 +908,7 @@ class Gravar():
                         
                         Status_Prospeccao               = %s,
                         Anexos                          = %s,
+                        Data_Contrato                   = %s,
                         Observacao                      = %s,
                         Area_EndCoordenadas             = %s,
                         VpL_Taxa_Desconto               = %s
@@ -1031,6 +1034,7 @@ class Gravar():
 
                     TStatus,
                     TAnexos,
+                    Dta_Documento,
                     TObservacao,
                     EndCoordenadas,
                     TPer_Desconto_VPL,

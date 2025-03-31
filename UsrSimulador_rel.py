@@ -1642,8 +1642,8 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_informacoes_anexos.place(relx=0.315, rely=0.19, relwidth=0.465, relheight=0.25)
         self.entry_informacoes_anexos.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_informacoes_data))
 
-        # Data do cadastro
-        self.lb_informacoes_data = customtkinter.CTkLabel(self.fr_informacoes, text="Data Cadastro", text_color="black", font=('Arial', 10), anchor=tk.W)
+        # Data do Contrato
+        self.lb_informacoes_data = customtkinter.CTkLabel(self.fr_informacoes, text="Data do Contrato", text_color="black", font=('Arial', 10), anchor=tk.W)
         self.lb_informacoes_data.place(relx=0.785, rely=0.11, relheight=0.07, relwidth=0.97)
         self.entry_informacoes_data = customtkinter.CTkEntry(self.fr_informacoes, fg_color="black", text_color="white", justify=tk.CENTER)
         self.entry_informacoes_data.place(relx=0.785, rely=0.19, relwidth=0.10, relheight=0.25)

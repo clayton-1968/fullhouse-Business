@@ -6,7 +6,7 @@ db = MySqlDatabase()
 
 """Função de Autenticação do Usuário"""
 
-versao = '1.00.00.000'
+versao = '1.00.00.001'
 
 CREDENTIALS_FILE = 'credentials.txt'
 
@@ -36,13 +36,13 @@ class Login(Limpeza):
                 versao_sys = myresult[0]['versao_nr']
                 if versao_sys != versao:
                     messagebox.showinfo('Gestor Negócios', 'Versão do Sistema desatualizada, favor atualizar.')
-                    caminho_exec = r"C:\FullBusiness\atualizar.exe"  # Caminho para o executável
+                    caminho_exec = r"C:\FullBusiness\atualizador.exe"  # Caminho para o executável
                     try:
-                        subprocess.Popen(caminho_exec)  # Inicia o executável
-                        self.window_one.quit
                         messagebox.showinfo('Gestor Negócios', f'Executável {caminho_exec} foi iniciado.')
+                        subprocess.Popen(caminho_exec)  # Inicia o executável
                     except Exception as e:
                         messagebox.showinfo('Gestor Negócios', f'Erro ao iniciar o executável: {e}')
+                        self.window_one.quit
 
                 Usr_senhaexcel = myresult[0]['Usr_senhaexcel']
                 Usr_login = myresult[0]['Usr_Login']
@@ -111,21 +111,19 @@ class Login(Limpeza):
 
     def check_email_user(self):
         self.regex2 = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
-        # Label data
+        # Validação de email
         if (re.search(self.regex2, self.insert_user.get())):
             self.valida_email_usuario = 'valido'
-            # print("Valid Email")
         else:
-            self.valida_email_usuario = 'invalido'
-            # print("Invalid Email")
+            self.valida_email_usuario = 'invalido'    
 
     def autenticar_usuarios(Per_Modulo):
         """atenticar o acesso do usuário no modulo"""
         UsR_Login = session['Usr_login']
         Permitido = False
-        if UsR_Login == 'Admin' or UsR_Login == 'ADMIN' or UsR_Login == 'admin':
-            Permitido = True
-        elif UsR_Login != None:
+        # if UsR_Login == 'Admin' or UsR_Login == 'ADMIN' or UsR_Login == 'admin':
+        #     Permitido = True
+        if UsR_Login != None:
             vsSQL = f"SELECT usr.Usr_Login, pp.Permissao_Modulo, pp.Permissao_Tipo FROM usuarios usr \
                     INNER JOIN TB_Permissoes pp ON usr.Usr_Login=pp.UsR_Login \
                     WHERE usr.Usr_Login='{UsR_Login}' \
