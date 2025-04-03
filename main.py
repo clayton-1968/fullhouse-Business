@@ -16,16 +16,16 @@ from UsrCalcular_Orcamento            import Processar_Premissas_Orcamento
 from UsrRelatorio_Orcamento           import Relatorio_Orcamento
 from UsrCadastros                     import Versoes
 from BxFinanceiras                    import ConsultaAprovacoes
-
+from UsrExtratoBancario               import ExtratoBancario
 
 class PrimaryWindow(
-                    Login, 
-                    Lanc_fin, 
-                    Resumo_Estudos, 
-                    Simulador_Estudos, 
-                    Simulador_Estudos_Rel, 
-                    Simulador_Maps, 
-                    Sites_rel, 
+                    Login,
+                    Lanc_fin,
+                    Resumo_Estudos,
+                    Simulador_Estudos,
+                    Simulador_Estudos_Rel,
+                    Simulador_Maps,
+                    Sites_rel,
                     Pesquisa_Mercado,
                     Fluxo_Projetado,
                     Extrato_Clientes_Fornecedores,
@@ -34,14 +34,14 @@ class PrimaryWindow(
                     Processar_Premissas_Orcamento,
                     Relatorio_Orcamento,
                     Versoes,
-                    ConsultaAprovacoes
-                    ):
+                    ConsultaAprovacoes,
+                    ExtratoBancario
+):
     def __init__(self):
         customtkinter.set_appearance_mode("Dark")
         customtkinter.set_default_color_theme("dark-blue")
 
         self.login_screen()
-
 
         # self.janela_simulador_rel = None  # Initialize the attribute
         # self.janela_cadastro_pessoas = None
@@ -69,7 +69,7 @@ class PrimaryWindow(
             elif modulo == 'Planejamento_Processar_Premissas':
                 self.processar_premissas_orcamento()
             elif modulo == 'Planejamento_Relatorio_Orcamento':
-                self. relatorio_orcamento()
+                self.relatorio_orcamento()
             elif modulo == 'Manutencao':
                 messagebox.showinfo("Gestor de Negócios", "Em Manutenção!!")
                 # self.processar_premissas_orcamento()
@@ -77,6 +77,8 @@ class PrimaryWindow(
                 self.cad_versoes()
             elif modulo == 'Baixas_Financeiras':
                 self.baixas_financeiras()
+            elif modulo == 'Extrato_Bancario':
+                self.extrato_bancario(self.principal_frame)
 
     def login_screen(self):
         # Configura a janela principal
@@ -260,7 +262,7 @@ class PrimaryWindow(
         filemenu4.add_command(label="Borderô Bancário")
         filemenu4.add_command(label="Baixas Financeiras", command=lambda: self.menu_conectar('Baixas_Financeiras'))
         filemenu4.add_command(label="Relatório Cli/Fornec.", command=lambda: self.menu_conectar('Extrato_Financeiro'))
-        filemenu4.add_command(label="Extrato Bancário")
+        filemenu4.add_command(label="Extrato Bancário", command=lambda: self.menu_conectar('Extrato_Bancario'))
 
         filemenu5.add_command(label="Cronograma")  # , command=modo_escuro)
         filemenu5.add_command(label="Reuniões")  # , command=modo_escuro)
