@@ -15,7 +15,7 @@ from UsrRelatorio_Premissas           import Resumo_Premissas
 from UsrCalcular_Orcamento            import Processar_Premissas_Orcamento
 from UsrRelatorio_Orcamento           import Relatorio_Orcamento
 from UsrCadastros                     import Versoes
-from BxFinanceiras                    import ConsultaAprovacoes
+from UsrAprovacaoLctos                import AprovacaoLctos
 from UsrExtratoBancario               import ExtratoBancario
 
 class PrimaryWindow(
@@ -34,7 +34,7 @@ class PrimaryWindow(
                     Processar_Premissas_Orcamento,
                     Relatorio_Orcamento,
                     Versoes,
-                    ConsultaAprovacoes,
+                    AprovacaoLctos,
                     ExtratoBancario
 ):
     def __init__(self):
@@ -75,8 +75,8 @@ class PrimaryWindow(
                 # self.processar_premissas_orcamento()
             elif modulo == 'Versoes':
                 self.cad_versoes()
-            elif modulo == 'Baixas_Financeiras':
-                self.baixas_financeiras()
+            elif modulo == 'Aprovacao_Lctos':
+                self.aprovacao_lctos(self.principal_frame)
             elif modulo == 'Extrato_Bancario':
                 self.extrato_bancario(self.principal_frame)
 
@@ -258,9 +258,9 @@ class PrimaryWindow(
         filemenu3.add_command(label="Status Negócio")  # , command=modo_claro)
 
         filemenu4.add_command(label="Lcto (CPA/CRE)", command=lambda: self.menu_conectar('Lcto_Documentos'))
-        filemenu4.add_command(label="Aprovação Lçtos")
+        filemenu4.add_command(label="Aprovação Lçtos", command=lambda: self.menu_conectar('Aprovacao_Lctos'))
         filemenu4.add_command(label="Borderô Bancário")
-        filemenu4.add_command(label="Baixas Financeiras", command=lambda: self.menu_conectar('Baixas_Financeiras'))
+        filemenu4.add_command(label="Baixas Financeiras")
         filemenu4.add_command(label="Relatório Cli/Fornec.", command=lambda: self.menu_conectar('Extrato_Financeiro'))
         filemenu4.add_command(label="Extrato Bancário", command=lambda: self.menu_conectar('Extrato_Bancario'))
 
