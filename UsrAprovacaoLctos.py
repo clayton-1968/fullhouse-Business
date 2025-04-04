@@ -136,11 +136,37 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         col_widths = [80, 200, 30, 80, 40, 100, 50, 100]
         headers = ["Unid_ID", "Centro_ID", "Natureza_ID", "Pessoa_ID", "Pessoas_Descricao", "Nr_Documento", "Valor", "Status"]
 
-        for col, width in zip(self.tree['columns'], col_widths):
-            self.tree.heading(col, text=headers[col_widths.index(width)])
+        for col, header, width in zip(self.tree['columns'], headers, col_widths):
+            self.tree.heading(col, text=header)
             self.tree.column(col, width=width)
 
         self.tree.pack(expand=True, fill=tk.BOTH)
+        self.tree.bind("<Double-1>", self.aprovar_documento)
+
+
+    def aprovar_documento(self, event):
+        self.selected_item = self.tree.selection()
+        if self.selected_item:
+            try:
+                self.item = self.tree.item(self.selected_item)
+
+                self.doc_id = self.item['values'][5]
+
+                query = f"""
+                    UPDATE TB_Itens SET Doc_AprovacaoJose = 'S', Doc_AprovacaoZe = 'S' 
+                    WHERE Doc_Num_Documento = "{self.doc_id}"
+                """
+
+                myresult = db._querying(query)
+
+                self.item['values'][7] = 'S'
+
+                self.tree.item(self.selected_item, values=self.item['values'])
+
+                messagebox.showinfo("Aviso", "Documento aprovado!")
+            except:
+                messagebox.showerror("Erro", "Ocorreu um erro ao tentar aprovar um documento!")
+                return
 
 
     def consulta_aprovacoes(self):
@@ -149,7 +175,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         # SELECT ID_Unidade, Unidade_Descricao, ID_CR, Cen_Descricao, ID_Natureza, Nat_Descricao, ID_Pessoa, Pessoas_Descricao,
         #        Doc_Num_Documento, Vlr_Total, Doc_DS_Observacao, Doc_AprovacaoJose, Anexo
         query = """
-        SELECT ID_Unidade, ID_CR, ID_Natureza, ID_Pessoa, Pessoas_Descricao,
+        SELECT DISTINCT ID_Unidade, ID_CR, ID_Natureza, ID_Pessoa, Pessoas_Descricao,
           Doc_Num_Documento, Vlr_Total, Doc_AprovacaoJose
         FROM TB_Itens
         LEFT JOIN TB_Pessoas ON TB_Itens.ID_Pessoa = TB_Pessoas.Pessoas_CPF_CNPJ
@@ -188,13 +214,13 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         for item in consulta:
             formatted_item = (
-                item['ID_Unidade'],
-                item['ID_CR'],
-                item['ID_Natureza'],
-                item['ID_Pessoa'],
-                item['Pessoas_Descricao'],
-                item['Doc_Num_Documento'],
-                item['Vlr_Total'],
-                item['Doc_AprovacaoJose'],
+                str(item['ID_Unidade']),
+                str(item['ID_CR']),
+                str(item['ID_Natureza']),
+                str(item['ID_Pessoa']),
+                str(item['Pessoas_Descricao']),
+                str(item['Doc_Num_Documento']),
+                str(item['Vlr_Total']),
+                str(item['Doc_AprovacaoJose']),
             )
             self.tree.insert('', 'end', values=formatted_item)
