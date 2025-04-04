@@ -15,10 +15,19 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         self.create_widgets_aprovacao_lctos()
 
+    def preenche_cnpj(self, event):
+        if self.combo_empresa.get():
+            self.cnpj = self.obter_Empresa_ID(self.combo_empresa.get())
+
+            self.entry_cnpj.delete(0, tk.END)
+            self.entry_cnpj.insert(0, self.cnpj)
+
     def create_widgets_aprovacao_lctos(self):
         # Empresa
         self.frame_empresa(self.frame_principal, 0, 0.02, 0.30, 0.09)
         self.combo_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_pessoa))
+        self.combo_empresa.bind("<<ComboboxSelected>>", self.preenche_cnpj)
+
 
         # CNPJ
         self.fr_cnpj = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
@@ -30,11 +39,6 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.entry_cnpj = customtkinter.CTkEntry(self.fr_cnpj, fg_color="white", text_color="black",
                                                            justify=tk.RIGHT)
         self.entry_cnpj.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_cnpj.bind("<KeyRelease>",
-                                       lambda event: self.format_cpf_cnpj(event, self.entry_cnpj, "J"))
-        self.entry_cnpj.bind("<Return>", lambda event: self.checar_cpf_cnpj(event, self.entry_cnpj,
-                                                                                      "J",
-                                                                                      None))
 
         # Unidade de Negócio
         self.fr_unidade_negocio = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
@@ -97,7 +101,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.entry_dt = customtkinter.CTkEntry(self.fr_data, fg_color="white", text_color="black", justify=tk.CENTER)
         self.entry_dt.delete(0, 'end')
         self.entry_dt.insert(0, datetime.now().strftime("%d/%m/%Y"))
-        self.entry_dt.place(relx=0.35, rely=0.46, relwidth=0.485, relheight=0.50)
+        self.entry_dt.place(relx=0.275, rely=0.46, relwidth=0.485, relheight=0.50)
         self.entry_dt.bind("<Button-1>", lambda event: self.calendario(event, self.entry_dt))
         self.entry_dt.bind("<Return>", lambda event: self.muda_barrinha_dta(event, self.entry_dt, self.entry_dt))
 
@@ -149,7 +153,29 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
           Doc_Num_Documento, Vlr_Total, Doc_AprovacaoJose
         FROM TB_Itens
         LEFT JOIN TB_Pessoas ON TB_Itens.ID_Pessoa = TB_Pessoas.Pessoas_CPF_CNPJ
+        WHERE 1=1
         """
+
+        if self.combo_empresa.get():
+            self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+            query += f' AND ID_Empresa = "{self.id_empresa}"'
+
+        if self.entry_unidade_negocio.get():
+            self.id_unidade = self.obter_Unidade_ID(self.entry_unidade_negocio.get())
+            query += f' AND ID_Unidade = "{self.id_unidade}"'
+
+        if self.entry_centro.get():
+            self.id_cr = self.obter_Centro_ID(self.entry_centro.get())
+            query += f' AND ID_CR = "{self.id_cr}"'
+
+        if self.entry_natureza.get():
+            self.id_natureza = self.obter_Natureza_ID(self.entry_natureza.get())
+            query += f' AND ID_Natureza = "{self.id_natureza}"'
+
+        if self.aprovados_var.get():
+            query += ' AND Doc_AprovacaoJose = "S" AND Doc_AprovacaoZe = "S"'
+
+        # O CAMPO DATA NÃO ESTÁ SENDO FILTRADO PORQUE NÃO TEMOS O CAMPO NA TABELA
 
         myresult = db._querying(query)
         consulta = [(consulta) for consulta in myresult]
