@@ -17,6 +17,7 @@ from UsrRelatorio_Orcamento           import Relatorio_Orcamento
 from UsrCadastros                     import Versoes
 from UsrAprovacaoLctos                import AprovacaoLctos
 from UsrExtratoBancario               import ExtratoBancario
+from UsrBaixasFinanceiras             import BaixasFinanceiras
 
 class PrimaryWindow(
                     Login,
@@ -35,7 +36,8 @@ class PrimaryWindow(
                     Relatorio_Orcamento,
                     Versoes,
                     AprovacaoLctos,
-                    ExtratoBancario
+                    ExtratoBancario,
+                    BaixasFinanceiras
 ):
     def __init__(self):
         customtkinter.set_appearance_mode("Dark")
@@ -79,6 +81,8 @@ class PrimaryWindow(
                 self.aprovacao_lctos(self.principal_frame)
             elif modulo == 'Extrato_Bancario':
                 self.extrato_bancario(self.principal_frame)
+            elif modulo == 'Baixas_Financeiras':
+                self.baixas_financeiras(self.principal_frame)
 
     def login_screen(self):
         # Configura a janela principal
@@ -260,7 +264,7 @@ class PrimaryWindow(
         filemenu4.add_command(label="Lcto (CPA/CRE)", command=lambda: self.menu_conectar('Lcto_Documentos'))
         filemenu4.add_command(label="Aprovação Lçtos", command=lambda: self.menu_conectar('Aprovacao_Lctos'))
         filemenu4.add_command(label="Borderô Bancário")
-        filemenu4.add_command(label="Baixas Financeiras")
+        filemenu4.add_command(label="Baixas Financeiras", command=lambda: self.menu_conectar('Baixas_Financeiras'))
         filemenu4.add_command(label="Relatório Cli/Fornec.", command=lambda: self.menu_conectar('Extrato_Financeiro'))
         filemenu4.add_command(label="Extrato Bancário", command=lambda: self.menu_conectar('Extrato_Bancario'))
 
