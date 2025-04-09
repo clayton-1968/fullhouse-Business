@@ -57,9 +57,9 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
         self.fr_botao_box.place(relx=0.78, rely=0.02, relwidth=0.22, relheight=0.09)
 
         self.somente_pend_var = tk.BooleanVar()
-        self.aprovados_cbox = customtkinter.CTkCheckBox(self.fr_botao_box, text="Somente Pendentes",
+        self.somente_pend_cbox = customtkinter.CTkCheckBox(self.fr_botao_box, text="Somente Pendentes",
                             variable=self.somente_pend_var)
-        self.aprovados_cbox.place(relx=0.01, rely=0.25, relwidth=0.6, relheight=0.5)
+        self.somente_pend_cbox.place(relx=0.01, rely=0.25, relwidth=0.6, relheight=0.5)
 
         # Botão de consulta
         icone_pesquisa = self.base64_to_photoimage('lupa')
@@ -95,7 +95,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
         self.lb_baixa = customtkinter.CTkLabel(self.fr_baixa, text="Tipo de Baixa")
         self.lb_baixa.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
-        self.combo_baixa = customtkinter.CTkOptionMenu(self.fr_baixa, values=["", "EFETUAR BAIXA"], fg_color="white",
+        self.combo_baixa = customtkinter.CTkOptionMenu(self.fr_baixa, values=["EFETUAR BAIXA", "CANCELAR BAIXA"], fg_color="white",
                                                        text_color="black")
         self.combo_baixa.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
 
@@ -300,7 +300,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
         # Resultado
         self.fr_tree = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_tree.place(relx=0, rely=0.35, relwidth=1, relheight=1)
+        self.fr_tree.place(relx=0, rely=0.47, relwidth=1, relheight=1)
 
         self.tree = ttk.Treeview(self.fr_tree, columns=(
             "Data Pagto", "CpF/CnPj", "Beneficiário", "Nr. Documento",
@@ -315,161 +315,240 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
             self.tree.heading(col, text=header)
             self.tree.column(col, width=width)
 
-        self.tree.pack(expand=True, fill=tk.BOTH)
+        self.tree.grid(row=0, column=0, sticky="nsew")
 
-        # # Configurar colunas
-        # colunas = [
-        #     ("Data Pagto", 60), ("CpF/CnPj", 100), ("Beneficiário", 350),
-        #     ("Nr. Documento", 80), ("Valor", 100), ("Nr. Parc.", 50),
-        #     ("Data Doc.", 60), ("Situação", 50), ("Unidade", 50), ("Valor Efetivo", 100)
-        # ]
-        #
-        # for col, width in colunas:
-        #     self.lbaixas.heading(col, text=col)
-        #     self.lbaixas.column(col, width=width, anchor=tk.CENTER)
-        #
-        # self.lbaixas.pack(fill=tk.BOTH, expand=True)
-        # self.lbaixas.bind("<ButtonRelease-1>", self.lbaixas_click)
-        #
-        # # Frame de detalhes
-        # detalhes_frame = ttk.LabelFrame(main_frame, text="Detalhes da Baixa", padding="10")
-        # detalhes_frame.pack(fill=tk.X, pady=5)
-        #
-        # # Campos de detalhes
-        # ttk.Label(detalhes_frame, text="Data Baixa:").grid(row=0, column=0, sticky=tk.W)
-        # self.tbaixa_dta = ttk.Entry(detalhes_frame)
-        # self.tbaixa_dta.grid(row=0, column=1, sticky=tk.W)
-        # self.tbaixa_dta.bind("<KeyRelease>", self.formatar_data)
-        #
-        # ttk.Label(detalhes_frame, text="CPF/CNPJ:").grid(row=0, column=2, sticky=tk.W)
-        # self.tbaixa_cpf_cnpj = ttk.Entry(detalhes_frame, state='readonly')
-        # self.tbaixa_cpf_cnpj.grid(row=0, column=3, sticky=tk.W)
-        #
-        # ttk.Label(detalhes_frame, text="Favorecido:").grid(row=1, column=0, sticky=tk.W)
-        # self.tbaixa_favorecido_ds = ttk.Entry(detalhes_frame, state='readonly')
-        # self.tbaixa_favorecido_ds.grid(row=1, column=1, sticky=tk.W)
-        #
-        # ttk.Label(detalhes_frame, text="Nr. Documento:").grid(row=1, column=2, sticky=tk.W)
-        # self.tbaixa_documento_nr = ttk.Entry(detalhes_frame, state='readonly')
-        # self.tbaixa_documento_nr.grid(row=1, column=3, sticky=tk.W)
-        #
-        # ttk.Label(detalhes_frame, text="Valor:").grid(row=2, column=0, sticky=tk.W)
-        # self.tbaixa_documento_valor = ttk.Entry(detalhes_frame, state='readonly')
-        # self.tbaixa_documento_valor.grid(row=2, column=1, sticky=tk.W)
-        #
-        # ttk.Label(detalhes_frame, text="Nr. Parcela:").grid(row=2, column=2, sticky=tk.W)
-        # self.tbaixa_parcela_nr = ttk.Entry(detalhes_frame, state='readonly')
-        # self.tbaixa_parcela_nr.grid(row=2, column=3, sticky=tk.W)
-        #
-        # ttk.Label(detalhes_frame, text="Data Doc.:").grid(row=3, column=0, sticky=tk.W)
-        # self.tbaixa_dtadocumento = ttk.Entry(detalhes_frame, state='readonly')
-        # self.tbaixa_dtadocumento.grid(row=3, column=1, sticky=tk.W)
-        #
-        # ttk.Label(detalhes_frame, text="Situação:").grid(row=3, column=2, sticky=tk.W)
-        # self.tbaixa_situacao = ttk.Entry(detalhes_frame, state='readonly')
-        # self.tbaixa_situacao.grid(row=3, column=3, sticky=tk.W)
-        #
-        # ttk.Label(detalhes_frame, text="Unidade:").grid(row=4, column=0, sticky=tk.W)
-        # self.tbaixa_unidade = ttk.Entry(detalhes_frame, state='readonly')
-        # self.tbaixa_unidade.grid(row=4, column=1, sticky=tk.W)
-        #
-        # ttk.Label(detalhes_frame, text="Valor Liquidação:").grid(row=4, column=2, sticky=tk.W)
-        # self.tbaixa_vlr_liquidacao = ttk.Entry(detalhes_frame)
-        # self.tbaixa_vlr_liquidacao.grid(row=4, column=3, sticky=tk.W)
-        #
-        # # Frame Banco
-        # banco_frame = ttk.LabelFrame(detalhes_frame, text="Dados Bancários", padding="10")
-        # banco_frame.grid(row=5, column=0, columnspan=4, sticky=tk.W + tk.E, pady=5)
-        #
-        # ttk.Label(banco_frame, text="Banco:").grid(row=0, column=0, sticky=tk.W)
-        # self.tbanco = ttk.Entry(banco_frame)
-        # self.tbanco.grid(row=0, column=1, sticky=tk.W)
-        # self.tbanco.bind("<Double-1>", self.tbanco_dblclick)
-        #
-        # ttk.Label(banco_frame, text="Agência:").grid(row=0, column=2, sticky=tk.W)
-        # self.tagencia = ttk.Entry(banco_frame)
-        # self.tagencia.grid(row=0, column=3, sticky=tk.W)
-        #
-        # ttk.Label(banco_frame, text="Conta:").grid(row=0, column=4, sticky=tk.W)
-        # self.tconta = ttk.Entry(banco_frame)
-        # self.tconta.grid(row=0, column=5, sticky=tk.W)
-        #
-        # # Botão Gravar
-        # ttk.Button(detalhes_frame, text="Gravar Baixa", command=self.gravar_bxpagtos).grid(row=6, column=0,
-        #                                                                                    columnspan=4, pady=10)
+        # Scrollbar
+        scrollbar = ttk.Scrollbar(self.fr_tree, orient="vertical", command=self.tree.yview)
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        self.tree.configure(yscrollcommand=scrollbar.set)
 
-    def formatar_data(self, event):
-        widget = event.widget
-        texto = widget.get()
+        self.fr_tree.grid_rowconfigure(0, weight=1)
+        self.fr_tree.grid_columnconfigure(0, weight=1)
 
-        if len(texto) == 2 and not texto.endswith("/"):
-            widget.insert(2, "/")
-            widget.icursor(3)
-        elif len(texto) == 5 and not texto.endswith("/"):
-            widget.insert(5, "/")
-            widget.icursor(6)
-
-
-    def tpessoa_id_dblclick(self, event):
-        if not self.tcnpj.get():
-            messagebox.showerror("Erro", "Preencher a Empresa!")
-            return
-
-        # Implementar consulta de pessoa
-        messagebox.showinfo("Consulta", "Consulta de pessoa (implementar)")
-
-    def tbanco_dblclick(self, event):
-        if not self.tcnpj.get():
-            messagebox.showerror("Erro", "Preencher a Empresa!")
-            return
-
-        # Implementar consulta de banco
-        messagebox.showinfo("Consulta", "Consulta de banco (implementar)")
-
-    def tbaixa_tpo_dblclick(self, event):
-        # Implementar seleção de tipo de baixa
-        messagebox.showinfo("Consulta", "Seleção de tipo de baixa (implementar)")
 
     def consulta_titulos(self):
-        # Limpar a lista
-        for item in self.lbaixas.get_children():
-            self.lbaixas.delete(item)
-
-        # Validar campos
-        if not self.tcnpj.get():
-            messagebox.showerror("Erro", "Empresa não pode ser vazia!")
-            return
+        self.tree.delete(*self.tree.get_children())
 
         try:
-            # Converter datas para o formato do banco de dados
-            dta_inicio = datetime.strptime(self.tdta_inicio.get(), "%d/%m/%Y").strftime("%Y-%m-%d")
-            dta_fim = datetime.strptime(self.tdta_fim.get(), "%d/%m/%Y").strftime("%Y-%m-%d")
+            if self.entry_dt_inicio.get():
+                self.dt_inicio = datetime.strptime(self.entry_dt_inicio.get(), "%d/%m/%Y").strftime("%Y-%m-%d")
+            if self.entry_dt_fim.get():
+                self.dt_fim = datetime.strptime(self.entry_dt_fim.get(), "%d/%m/%Y").strftime("%Y-%m-%d")
+            if self.entry_dt_doc.get():
+                self.dt_doc = datetime.strptime(self.entry_dt_doc.get(), "%d/%m/%Y").strftime("%Y-%m-%d")
+            if self.entry_dt_baixa.get():
+                self.dt_baixa = datetime.strptime(self.entry_dt_baixa.get(), "%d/%m/%Y").strftime("%Y-%m-%d")
         except ValueError:
-            messagebox.showerror("Erro", "Data inválida!")
+            messagebox.showerror("Erro", "Formato de data inválido! Use DD/MM/YYYY")
             return
 
-        # Simular consulta (substituir por consulta real ao banco de dados)
-        if self.tbaixa_tpo.get() == "EFETUAR BAIXA":
-            # Simular dados de consulta
-            dados = [
-                (
-                "01/01/2023", "12345678901", "Fornecedor Exemplo 1", "DOC001", "1000,00", "1", "01/01/2023", "L", "001",
-                "1000,00"),
-                ("", "98765432101", "Fornecedor Exemplo 2", "FAT002", "500,00", "1", "15/01/2023", "F", "002", ""),
-            ]
-        else:
-            # Simular dados para cancelamento de baixa
-            dados = [
-                (
-                "10/01/2023", "12345678901", "Fornecedor Exemplo 1", "DOC001", "1000,00", "1", "01/01/2023", "L", "001",
-                "1000,00"),
-                ("05/01/2023", "98765432101", "Fornecedor Exemplo 2", "FAT002", "500,00", "1", "15/01/2023", "F", "002",
-                 "500,00"),
-            ]
+        if self.combo_baixa.get() == "EFETUAR BAIXA":
+            query = """
+            SELECT
+                dc.Doc_Aprovacao AS Doc_Aprovacao,
+                ii.Fin_Num_documento AS Num_Documento,
+                ii.ID_Empresa,
+                pp.Pessoas_Descricao,
+                ii.ID_Pessoa AS ID_Pessoa,
+                pp.Pessoas_Descricao AS DS_Pessoa,
+                pp.Pessoas_Tipo AS Tipo_Empresa,
+                ii.ID_Unidade AS Unidade,
+                ff.Unidade_Descricao,
+                ii.Fin_Parcela AS Parcela,
+                dc.Doc_Dta_Documento AS Dta_Vcto,
+                ii.Fin_VlR_Parcela AS Vlr_Parcela,
+                ii.Fin_Dta_Liquidacao AS Dta_Liquidacao,
+                ii.Fin_VlR_Liquidacao AS Vlr_Liquidacao,
+                ii.ID_Bco_Liquidacao
+            FROM TB_Financeiro ii
+            LEFT JOIN TB_CB_Doc dc ON dc.ID_Empresa=ii.ID_Empresa AND dc.ID_Pessoa=ii.ID_Pessoa 
+                AND dc.ID_Unidade=ii.ID_Unidade AND dc.Doc_Num_Documento=ii.Fin_Num_Documento
+            LEFT JOIN TB_Pessoas pp ON pp.Pessoas_CPF_CNPJ=ii.ID_Pessoa AND pp.Empresa_ID=ii.ID_Empresa
+            LEFT JOIN TB_UnidadesNegocio ff ON ff.Unidade_ID=ii.ID_Unidade AND ff.Empresa_ID=ii.ID_Empresa
+            WHERE dc.Doc_Aprovacao = 'S'
+            """
 
-        # Adicionar dados à Treeview
-        for item in dados:
-            self.lbaixas.insert("", tk.END, values=item)
+            if self.combo_empresa.get():
+                self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+                query += f" AND ii.ID_Empresa = '{self.id_empresa}'"
+
+            if self.combo_pessoa.get():
+                self.id_pessoa = self.obter_Pessoa_ID(self.combo_pessoa.get())
+                query += f" AND ii.ID_Pessoa = '{self.id_pessoa}'"
+
+            query += f" AND ii.Fin_Dta_Vcto BETWEEN '{self.dt_inicio}' AND '{self.dt_fim}'"
+
+            if self.somente_pend_var.get():
+                query += " AND ii.Fin_Dta_Liquidacao IS NULL"
+
+            query += " ORDER BY ii.ID_Pessoa, ii.Fin_Num_documento, ii.Fin_Parcela"
+
+            myresult = db._querying(query)
+            consulta = [(consulta) for consulta in myresult]
+
+            # Inserir dados na tabela
+            for item in consulta:
+                formatted_item = (
+                    str(item['Dta_Liquidacao']),
+                    str(item['ID_Pessoa']),
+                    str(item['DS_Pessoa']) if item['DS_Pessoa'] else "Não Cadastrado!",
+                    str(item['Num_Documento']),
+                    str(item['Vlr_Parcela']),
+                    str(item['Parcela']),
+                    str(item['Dta_Vcto']),
+                    "L",
+                    str(item['Unidade']),
+                    str(item['Vlr_Liquidacao']),
+                )
+                self.tree.insert('', 'end', values=formatted_item)
+
+            # Second query for TB_Faturas
+            query = """
+            SELECT 
+                TB_Pessoas.Pessoas_Descricao, Fat_Pessoa, Fat_NumDoc, Fat_Vlr, Fat_Vencimento, Fat_Data
+            FROM TB_Faturas
+            LEFT JOIN TB_Pessoas ON TB_Pessoas.Pessoas_CPF_CNPJ=Fat_Pessoa AND TB_Pessoas.Empresa_ID=TB_Faturas.Fat_Empresa
+            LEFT JOIN TB_UnidadesNegocio ON TB_UnidadesNegocio.Unidade_ID=TB_Faturas.Fat_IDUnidade
+            WHERE Fat_DtaBaixa IS NULL
+            """
+
+            if self.combo_empresa.get():
+                self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+                query += f" AND Fat_Empresa = '{self.id_empresa}'"
+
+            if self.combo_pessoa.get():
+                self.id_pessoa = self.obter_Pessoa_ID(self.combo_pessoa.get())
+                query += f" AND Fat_Pessoa = '{self.id_pessoa}'"
+
+            query += f" AND Fat_Data BETWEEN '{self.dt_inicio}' AND '{self.dt_fim}'"
+
+            myresult = db._querying(query)
+            consulta_2 = [(consulta_2) for consulta_2 in myresult]
+
+            if not consulta and not consulta_2:
+                messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!")
+                return
+
+            # Inserir dados na tabela
+            for item in consulta_2:
+                formatted_item = (
+                    "",
+                    str(item['Fat_Pessoa']),
+                    str(item['Pessoas_Descricao']),
+                    str(item['Fat_NumDoc']),
+                    str(item['Fat_Vlr']),
+                    "1",
+                    str(item['Fat_Data']),
+                    "F",
+                    "O",
+                    ""
+                )
+                self.tree.insert('', 'end', values=formatted_item)
+
+        elif self.combo_baixa.get() == "CANCELAR BAIXA":
+            query = """
+            SELECT
+                dc.Doc_Aprovacao AS Doc_Aprovacao,
+                ii.Fin_Num_documento AS Num_Documento,
+                ii.ID_Empresa,
+                pp.Pessoas_Descricao,
+                ii.ID_Pessoa AS ID_Pessoa,
+                pp1.Pessoas_Descricao AS DS_Pessoa,
+                pp1.Pessoas_Tipo AS Tipo_Empresa,
+                ii.ID_Fazenda AS Unidade,
+                ff.Unidade_Descricao,
+                ii.Fin_Parcela AS Parcela,
+                dc.Doc_Dta_Documento AS Dta_Vcto,
+                ii.Fin_VlR_Parcela AS Vlr_Parcela,
+                ii.Fin_Dta_Liquidacao AS Dta_Liquidacao,
+                ii.Fin_VlR_Liquidacao AS Vlr_Liquidacao,
+                ii.ID_Bco_Liquidacao
+            FROM TB_Financeiro ii
+            INNER JOIN TB_CB_Doc dc ON dc.ID_Empresa=ii.ID_Empresa AND dc.ID_Pessoa=ii.ID_Pessoa 
+                AND dc.ID_Fazenda=ii.ID_Fazenda AND dc.Doc_Num_Documento=ii.Fin_Num_Documento
+            INNER JOIN TB_Pessoas pp ON pp.Pessoas_CPF_CNPJ=ii.ID_Empresa
+            INNER JOIN TB_Pessoas pp1 ON pp1.Pessoas_CPF_CNPJ=ii.ID_Pessoa
+            INNER JOIN TB_UnidadesNegocio ff ON ff.Unidade_ID=ii.ID_Fazenda
+            WHERE dc.Doc_Aprovacao = 'X'
+            """
+
+            if self.combo_empresa.get():
+                self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+                query += f" AND ii.ID_Empresa = '{self.id_empresa}'"
+
+            if self.combo_pessoa.get():
+                self.id_pessoa = self.obter_Pessoa_ID(self.combo_pessoa.get())
+                query += f" AND ii.ID_Pessoa = '{self.id_pessoa}'"
+
+            query += f" AND ii.Fin_Dta_Liquidacao BETWEEN '{self.dt_inicio}' AND '{self.dt_fim}'"
+
+            if self.somente_pend_var.get():
+                query += " AND ii.Fin_Dta_Liquidacao IS NOT NULL"
+
+            query += " ORDER BY ii.ID_Pessoa, ii.Fin_Num_documento, ii.Fin_Parcela"
+
+            myresult = db._querying(query)
+            consulta = [(consulta) for consulta in myresult]
+
+            # Inserir dados na tabela
+            for item in consulta:
+                formatted_item = (
+                    str(item['Dta_Liquidacao']),
+                    str(item['ID_Pessoa']),
+                    str(item['DS_Pessoa']) if item['DS_Pessoa'] else "Não Cadastrado!",
+                    str(item['Num_Documento']),
+                    str(item['Vlr_Parcela']),
+                    str(item['Parcela']),
+                    str(item['Dta_Vcto']),
+                    "L",
+                    str(item['Unidade']),
+                    str(item['Vlr_Liquidacao']),
+                )
+                self.tree.insert('', 'end', values=formatted_item)
+
+            # Second query for TB_Faturas with canceled baixas
+            query = """
+            SELECT 
+                TB_Pessoas.Pessoas_Descricao, Fat_Pessoa, Fat_NumDoc, Fat_VlrBaixa, Fat_DtaBaixa, Fat_Vlr, Fat_Vencimento, Fat_Data
+            FROM TB_Faturas
+            LEFT JOIN TB_Pessoas ON TB_Pessoas.Pessoas_CPF_CNPJ = Fat_Pessoa
+            LEFT JOIN TB_UnidadesNegocio ON TB_UnidadesNegocio.Unidade_ID = TB_Faturas.Fat_IDFaz
+            WHERE Fat_DtaBaixa IS NOT NULL
+            """
+
+            if self.combo_empresa.get():
+                self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+                query += f" AND Fat_Empresa = '{self.id_empresa}'"
+
+            if self.combo_pessoa.get():
+                self.id_pessoa = self.obter_Pessoa_ID(self.combo_pessoa.get())
+                query += f" AND Fat_Pessoa = '{self.id_pessoa}'"
+
+            query += f" AND Fat_DtaBaixa BETWEEN '{self.dt_inicio}' AND '{self.dt_fim}'"
+
+            myresult = db._querying(query)
+            consulta_2 = [(consulta_2) for consulta_2 in myresult]
+
+            if not consulta and not consulta_2:
+                messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!")
+                return
+
+            # Inserir dados na tabela
+            for item in consulta_2:
+                formatted_item = (
+                    str(item['Fat_DtaBaixa']),
+                    str(item['Fat_Pessoa']),
+                    str(item['Pessoas_Descricao']),
+                    str(item['Fat_NumDoc']),
+                    str(item['Fat_Vlr']),
+                    "1",
+                    str(item['Fat_Data']),
+                    "F",
+                    "O",
+                    str(item['Fat_VlrBaixa'])
+                )
+                self.tree.insert('', 'end', values=formatted_item)
+
 
     def gravar_bxpagtos(self):
         # Validar campos obrigatórios
