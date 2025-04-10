@@ -1,6 +1,7 @@
 from imports import *
 from widgets import Widgets
 from datetime import datetime
+from PIL import ImageTk, Image
 
 ################# criando janela ###############
 class Cronograma_Atividades(Widgets):
@@ -12,107 +13,39 @@ class Cronograma_Atividades(Widgets):
        
 ################# dividindo a janela ###############
     def frame_cabecalho_cronograma_atividades(self, janela):
-        # Empresa
+        # Projeto
         coordenadas_relx = 0.005
         coordenadas_rely = 0.01
         coordenadas_relwidth = 0.25
         coordenadas_relheight = 0.07
-        fr_empresa = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_empresa.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
-        lb_empresa = customtkinter.CTkLabel(fr_empresa, text="Empresa")
-        lb_empresa.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+        fr_projeto = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_projeto.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_projeto = customtkinter.CTkLabel(fr_projeto, text="Projetos")
+        lb_projeto.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
 
-        empresas = []
+        projetos = []
 
-        self.entry_empresa = AutocompleteCombobox(fr_empresa, width=30, font=('Times', 11), completevalues=empresas)
-        self.entry_empresa.pack()
-        self.entry_empresa.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_empresa.bind("<Button-1>", lambda event: self.atualizar_empresas(event, self.entry_empresa))
-        self.entry_empresa.bind("<KeyRelease>", lambda event: self.atualizar_empresas(event, self.entry_empresa))
-        self.entry_empresa.bind('<Down>', lambda event: self.atualizar_empresas(event, self.entry_empresa))
-        self.entry_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_uf))
+        self.entry_projeto = AutocompleteCombobox(fr_projeto, width=30, font=('Times', 11), completevalues=projetos)
+        self.entry_projeto.pack()
+        self.entry_projeto.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_projeto.bind("<Button-1>", lambda event: self.atualizar_projetos(event, self.entry_projeto))
+        self.entry_projeto.bind('<Down>', lambda event: self.atualizar_projetos(event, self.entry_projeto))
 
-        # Unidade de Negócio
-        coordenadas_relx = 0.26
-        coordenadas_rely = 0.01
-        coordenadas_relwidth = 0.17
-        coordenadas_relheight = 0.07
-        fr_unidade_negocio = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_unidade_negocio.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
-        lb_unidade_negocio = customtkinter.CTkLabel(fr_unidade_negocio, text="Unidade Negócios")
-        lb_unidade_negocio.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
-
-        unidade_negocios = []
-
-        self.entry_unidade_negocio = AutocompleteCombobox(fr_unidade_negocio, width=30, font=('Times', 11), completevalues=unidade_negocios)
-        self.entry_unidade_negocio.pack()
-        self.entry_unidade_negocio.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_unidade_negocio.bind("<Button-1>", lambda event: self.atualizar_unidade_negocios(event, self.entry_empresa.get(), self.entry_unidade_negocio))
-        self.entry_unidade_negocio.bind('<Down>', lambda event: self.atualizar_unidade_negocios(event, self.entry_empresa.get(), self.entry_unidade_negocio))
-
-        # Período Vencimento
-        TDta_Inicio = datetime.strptime("01/01/2000", "%d/%m/%Y")
-        TDta_Fim = datetime.now()
-        
-        coordenadas_relx = 0.435
-        coordenadas_rely = 0.01
-        coordenadas_relwidth = 0.17
-        coordenadas_relheight = 0.07
-        fr_periodo = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_periodo.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
-        lb_periodo = customtkinter.CTkLabel(fr_periodo, text="Período Vencimento")
-        lb_periodo.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
-
-        lb_dt_venc_inicio = customtkinter.CTkLabel(fr_periodo, text="Data Início")
-        lb_dt_venc_inicio.place(relx=0.01, rely=0.30, relheight=0.125, relwidth=0.20)
-        self.entry_dt_venc_inicio = customtkinter.CTkEntry(fr_periodo, fg_color="black", text_color="white", justify=tk.CENTER)
-        self.entry_dt_venc_inicio.delete(0, 'end')
-        self.entry_dt_venc_inicio.insert(0, TDta_Inicio.strftime("%d/%m/%Y"))
-        self.entry_dt_venc_inicio.place(relx=0.01, rely=0.46, relwidth=0.485, relheight=0.50)
-        self.entry_dt_venc_inicio.bind("<Button-1>", lambda event: self.calendario(event, self.entry_dt_venc_inicio))
-        self.entry_dt_venc_inicio.bind("<Return>", lambda event: self.muda_barrinha_dta(event, self.entry_dt_venc_inicio, self.entry_dt_venc_fim))
-
-        lb_dt_venc_fim = customtkinter.CTkLabel(fr_periodo, text="Data Fim")
-        lb_dt_venc_fim.place(relx=0.47, rely=0.30, relheight=0.125, relwidth=0.35)
-        self.entry_dt_venc_fim = customtkinter.CTkEntry(fr_periodo, fg_color="black", text_color="white", justify=tk.CENTER)
-        self.entry_dt_venc_fim.delete(0, 'end')
-        self.entry_dt_venc_fim.insert(0, TDta_Fim.strftime("%d/%m/%Y"))
-        self.entry_dt_venc_fim.place(relx=0.50, rely=0.46, relwidth=0.485, relheight=0.50)
-        self.entry_dt_venc_fim.bind("<Button-1>", lambda event: self.calendario(event, self.entry_dt_venc_inicio))
-        self.entry_dt_venc_fim.bind("<Return>", lambda event: self.muda_barrinha_dta(event, self.entry_dt_venc_fim, self.entry_info_pag_valor_parc))
-
-        # Pessoa
-        coordenadas_relx = 0.61
-        coordenadas_rely = 0.01
-        coordenadas_relwidth = 0.34
-        coordenadas_relheight = 0.07
-        fr_pessoa = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_pessoa.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
-        lb_pessoa = customtkinter.CTkLabel(fr_pessoa, text="Cliente/Fornecedor/Prestador Serviços")
-        lb_pessoa.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
-
-        pessoas = []
-        
-        self.entry_pessoa = AutocompleteCombobox(fr_pessoa, width=30, font=('Times', 11), completevalues=pessoas)
-        self.entry_pessoa.pack()
-        self.entry_pessoa.place(relx=0.01, rely=0.5, relwidth=0.985, relheight=0.4)
-        self.entry_pessoa.bind("<Button-1>", lambda event:  self.atualizar_pessoa(event, self.entry_empresa.get(), self.entry_pessoa))
-        self.entry_pessoa.bind('<Down>', lambda event:  self.atualizar_pessoa(event, self.entry_empresa.get(), self.entry_pessoa))
-        
         # Botão de Consultar
         icon_image = self.base64_to_photoimage('lupa')
-        self.btn_consultar_extrato = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=self.consulta_extrato)
-        self.btn_consultar_extrato.place(relx=0.955, rely=0.012, relwidth=0.04, relheight=0.05)
+        self.btn_consultar_projeto = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=self.consulta_cronograma_atividades)
+        self.btn_consultar_projeto.pack(pady=10)
+        self.btn_consultar_projeto.place(relx=0.955, rely=0.02, relwidth=0.04, relheight=0.05)
 
     def frame_list_cronograma_atividades(self, janela):
-        ## Listbox _ Informações Pesquisa
+        ## Listbox _ Cronograma de Atividades
         bg_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkFrame"]["fg_color"])
         text_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkLabel"]["text_color"])
         selected_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkButton"]["fg_color"])
         treestyle = ttk.Style()
-        treestyle.theme_use('default')
-        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
-        treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
+        # treestyle.theme_use('default')
+        # treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+        # treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
         
         self.fr_list = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         self.fr_list.place(relx=0.005, rely=0.085, relwidth=0.99, relheight=0.91)
@@ -120,302 +53,1756 @@ class Cronograma_Atividades(Widgets):
         self.scrollbar = ttk.Scrollbar(self.fr_list, orient='vertical')
         self.scrollbar.pack(side='right', fill='y')
 
-        # Widgets - Listar Parcelas
-        self.LExtrato = ttk.Treeview(self.fr_list, height=7, column=(
-                                                            'ID', 
-                                                            'Descricao', 
-                                                            'Dta_Vencto_Liquidacao', 
-                                                            'Tipo', 
-                                                            'Banco', 
-                                                            'Referencia',
-                                                            'Debitos',
-                                                            'Creditos',
-                                                            'Saldo'
-                                                            ), show='headings')
+        # Widgets - Listar Tarefas
+        self.LCronograma = TreeviewEdit(self.fr_list, height=7, column=(
+                                                            'Nr',
+                                                            'tarefa_id',
+                                                            'tarefa_DS',
+                                                            'responsavel_nome',
+                                                            'tarefa_dependencia',
+                                                            'tempo_espera',
+                                                            'tempo_previsto',
+                                                            'percentual_execucao',
+                                                            'data_inicial_prevista',
+                                                            'data_inicial_realizada',
+                                                            'data_conclusao_prevista',
+                                                            'data_conclusao_realizada',
+                                                            'observacao',
+                                                            )) #, show='headings'
+                    
         
-        self.LExtrato.heading('#0', text='#', anchor='center')
-        self.LExtrato.heading('#1', text='ID', anchor='center')
-        self.LExtrato.heading('#2', text='Descrição', anchor='center')
-        self.LExtrato.heading('#3', text='Data (Vcto/Liq.)', anchor='center')
-        self.LExtrato.heading('#4', text='Tipo', anchor='center')
-        self.LExtrato.heading('#5', text='Banco', anchor='center')
-        self.LExtrato.heading('#6', text='Referência', anchor='center')
-        self.LExtrato.heading('#7', text='Débitos', anchor='center')
-        self.LExtrato.heading('#8', text='Créditos', anchor='center')
-        self.LExtrato.heading('#9', text='Saldo', anchor='center')
+        self.LCronograma.heading('#0', text='Status', anchor='center')
+        self.LCronograma.heading('#1', text='Nr.', anchor='center')
+        self.LCronograma.heading('#2', text='Código', anchor='center')
+        self.LCronograma.heading('#3', text='Descrição', anchor='center')
+        self.LCronograma.heading('#4', text='Responsável', anchor='center')
+        self.LCronograma.heading('#5', text='Dependência', anchor='center')
+        self.LCronograma.heading('#6', text='Espera', anchor='center')
+        self.LCronograma.heading('#7', text='Prazo', anchor='center')
+        self.LCronograma.heading('#8', text='% Conclusão', anchor='center')
+        self.LCronograma.heading('#9', text='Início Prev.', anchor='center')
+        self.LCronograma.heading('#10', text='Início Real', anchor='center')
+        self.LCronograma.heading('#11', text='Conclusão Prev.', anchor='center')
+        self.LCronograma.heading('#12', text='Conclusão Real', anchor='center')
+        self.LCronograma.heading('#13', text='Observação', anchor='center')
         
-        Col = 30
+        
+        Col = 50
+        Col1 = 30
 
-        self.LExtrato.column('#0', width=2, anchor='w')
-        self.LExtrato.column('ID', width=15, anchor='e')
-        self.LExtrato.column('Descricao', width=800, anchor='w')
-        self.LExtrato.column('Dta_Vencto_Liquidacao', width=5, anchor='c')
-        self.LExtrato.column('Tipo', width=Col, anchor='c')
-        self.LExtrato.column('Banco', width=Col, anchor='c')
-        self.LExtrato.column('Referencia', width=Col, anchor='c')
-        self.LExtrato.column('Debitos', width=Col, anchor='e')
-        self.LExtrato.column('Creditos', width=Col, anchor='e')
-        self.LExtrato.column('Saldo', width=Col, anchor='e')
+        self.LCronograma.column('#0', width=2, anchor='c')
+        self.LCronograma.column('Nr', width=5, anchor='c')
+        self.LCronograma.column('tarefa_id', width=40, anchor='w')
+        self.LCronograma.column('tarefa_DS', width=400, anchor='w')
+        self.LCronograma.column('responsavel_nome', width=25, anchor='w')
+        self.LCronograma.column('tarefa_dependencia', width=Col, anchor='c')
+        self.LCronograma.column('tempo_espera', width=Col1, anchor='c')
+        self.LCronograma.column('tempo_previsto', width=Col1, anchor='c')
+        self.LCronograma.column('percentual_execucao', width=Col1, anchor='e')
+        self.LCronograma.column('data_inicial_prevista', width=Col, anchor='e')
+        self.LCronograma.column('data_inicial_realizada', width=Col, anchor='e')
+        self.LCronograma.column('data_conclusao_prevista', width=Col, anchor='e')
+        self.LCronograma.column('data_conclusao_realizada', width=Col, anchor='e')
+        self.LCronograma.column('observacao', width=300, anchor='w')
+                
         
-        
-        self.LExtrato.pack(expand=True, fill='both')
-        self.LExtrato.place(relx=0.005, rely=0.01, relwidth=0.985, relheight=0.985)
+        self.LCronograma.pack(expand=True, fill='both')
+        self.LCronograma.place(relx=0.005, rely=0.01, relwidth=0.985, relheight=0.985)
     
     def consulta_cronograma_atividades(self):
-        if self.entry_empresa.get() != '':
-            ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get())
+        projeto_ds = self.entry_projeto.get()
+        if self.entry_projeto.get() != '':
+            projeto_id = self.obter_Projeto_ID(self.entry_projeto.get())
         else:
-            messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!")
+            messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto!!")
             return
         
-        if self.entry_pessoa.get() != '':
-            ID_Pessoa = self.obter_Pessoa_ID(self.entry_pessoa.get())
-        else:
-            ID_Pessoa = self.entry_pessoa.get()
-            
-        if self.entry_unidade_negocio.get() != '':
-            ID_Unidade = self.obter_Unidade_ID(self.entry_unidade_negocio.get())
-        else:
-            ID_Unidade = self.entry_unidade_negocio.get()
-
-        Dta_Vcto_Inicio = self.entry_dt_venc_inicio.get()
-        Dta_Vcto_Fim = self.entry_dt_venc_fim.get()
-        Dta_Vcto_Inicio_str = datetime.strptime(Dta_Vcto_Inicio, "%d/%m/%Y")
-        last_year = Dta_Vcto_Inicio_str - timedelta(days=365)
-        Dta_Lcto = last_year.strftime('%Y-%m-%d')
-        Dta_Anterior = last_year.strftime('%Y%m%d')
-
-        Dta_Vcto_Inicio = datetime.strptime(Dta_Vcto_Inicio, "%d/%m/%Y").strftime('%Y-%m-%d')
-        Dta_Vcto_Fim = datetime.strptime(Dta_Vcto_Fim, "%d/%m/%Y").strftime('%Y-%m-%d') 
-        
         # Limpa a lista atual antes de inserir novos resultados
-        self.LExtrato.delete(*self.LExtrato.get_children())
+        self.LCronograma.delete(*self.LCronograma.get_children())
 
-        # Lista para armazenar as condições
-        params = []
-        conditions_1 = []
-        conditions_2 = []
-        conditions_3 = []
-        conditions_4 = []
+        sql_query = """
+                        SELECT projeto_ID, projeto_DS, tarefa_ID, tarefa_DS, responsavel_nome,
+                            tarefa_dependencia, tempo_espera, tempo_previsto, percentual_execucao,
+                            data_Inicial_Prevista, data_Inicial_Realizada, dias_diferenca_inicio,
+                            data_conclusao_prevista, data_conclusao_realizada, prazo_fatal_dias,
+                            dias_diferenca, status, observacao
+                        FROM programas_atividades 
+                        WHERE projeto_ID = %s
+                        ORDER BY tarefa_ID
+                    """
         
+        self.list_tarefas = []
+        self.list_tarefas = db.executar_consulta(sql_query, projeto_id)
         
-        conditions_1.append("dd.ID_Empresa = %s ")
-        params = [ID_Empresa]
-        if ID_Pessoa != '':
-            conditions_1.append("dd.ID_Pessoa = %s ")
-            params.append(ID_Pessoa)
-        if ID_Unidade != '':
-            conditions_1.append("dd.ID_Unidade = %s ")
-            params.append(ID_Unidade)
-        conditions_1.append("dd.Doc_Dta_Documento BETWEEN %s AND %s")
-        params.append(Dta_Vcto_Inicio)
-        params.append(Dta_Vcto_Fim)
-
-
-        conditions_2.append("ff.ID_Empresa = %s ")
-        params.append(ID_Empresa)
-        if ID_Pessoa != '':
-            conditions_2.append("ff.ID_Pessoa = %s ")
-            params.append(ID_Pessoa)
-        if ID_Unidade != '':
-            conditions_2.append("ff.ID_Unidade = %s ")
-            params.append(ID_Unidade)
-        conditions_2.append("ff.Fin_Dta_Liquidacao BETWEEN %s AND %s")
-        params.append(Dta_Vcto_Inicio)
-        params.append(Dta_Vcto_Fim)
-        conditions_2.append("ff.Fin_VlR_Liquidacao<>0")
+        self.icon_image_azul = self.base64_to_farois('semafaro_azul') 
+        self.icon_image_verde = self.base64_to_farois('semafaro_verde') 
+        self.icon_image_amarelo = self.base64_to_farois('semafaro_amarelo') 
+        self.icon_image_vermelho = self.base64_to_farois('semafaro_vermelho') 
         
-        conditions_3.append("dd.ID_Empresa = %s ")
-        params.append(ID_Empresa)
-        if ID_Pessoa != '':
-            conditions_3.append("dd.ID_Pessoa = %s ")
-            params.append(ID_Pessoa)
-        if ID_Unidade != '':
-            conditions_3.append("dd.ID_Unidade = %s ")
-            params.append(ID_Unidade)
-        conditions_3.append("dd.Doc_Dta_Documento<=%s")
-        params.append(Dta_Anterior)
-
-        conditions_4.append("ff.ID_Empresa = %s ")
-        params.append(ID_Empresa)
-        if ID_Pessoa != '':
-            conditions_4.append("ff.ID_Pessoa = %s ")
-            params.append(ID_Pessoa)
-        if ID_Unidade != '':
-            conditions_4.append("ff.ID_Unidade = %s ")
-            params.append(ID_Unidade)
-        conditions_4.append("ff.Fin_Dta_Liquidacao<=%s")
-        params.append(Dta_Anterior)
-        conditions_4.append("ff.Fin_VlR_Liquidacao<>0")
-   
-        strSql = f"""
-                    SELECT  
-                    Empresa_Codigo, 
-                    Empresa_Descricao, 
-                    Pessoa_Codigo, 
-                    Pessoa_Descricao, 
-                    Unidade_ID, 
-                    Unidade_Descricao, 
-                    Nr_Documento, 
-                    Dta, 
-                    SUM(Vlr) AS Vlr, 
-                    Bco, 
-                    Tipo
-                    FROM (
-                    SELECT
-                    dd.ID_Empresa                       AS Empresa_Codigo,
-                    pp.Pri_Descricao                    AS Empresa_Descricao,
-                    dd.ID_Pessoa                        AS Pessoa_Codigo,
-                    pp1.Pessoas_Descricao               AS Pessoa_Descricao,
-                    dd.ID_Unidade                       AS Unidade_ID,
-                    un.Unidade_Descricao                AS Unidade_Descricao,
-                    'Documento Fiscal'                  AS Tipo,
-                    dd.Doc_Num_Documento                AS Nr_Documento,
-                    1                                   AS Parcela,
-                    dd.Doc_Dta_Documento                AS Dta,
-                    dd.Doc_VlR  *-1                     AS Vlr,
-                    ''                                  As Bco
-                    FROM TB_CB_Doc dd
-                    INNER JOIN TB_Empresas        pp  ON pp.Pri_Cnpj=dd.ID_Empresa
-                    INNER JOIN TB_Pessoas         pp1 ON pp1.Pessoas_CPF_CNPJ=dd.ID_Pessoa AND pp1.Empresa_ID=dd.ID_Empresa
-                    INNER JOIN TB_UnidadesNegocio un  ON un.Unidade_ID=dd.ID_Unidade AND un.Empresa_ID=dd.ID_Empresa
-                    WHERE {' AND '.join(conditions_1)}
-                    
-                    Union ALL
-                    
-                    SELECT
-                    ff.ID_Empresa                       AS Empresa_Codigo,
-                    pp.Pri_Descricao                    AS Empresa_Descricao,
-                    ff.ID_Pessoa                        AS Pessoa_Codigo,
-                    pp1.Pessoas_Descricao               AS Pessoa_Descricao,
-                    ff.ID_Unidade                       AS Unidade_ID,
-                    un.Unidade_Descricao                AS Unidade_Descricao,
-                    'Liquidacao'                        AS Tipo,
-                    ff.Fin_Num_documento                AS Nr_Documento,
-                    ff.Fin_Parcela                      AS Parcela,
-                    COALESCE(ff.Fin_Dta_Liquidacao,0)   AS Dta,
-                    COALESCE(ff.Fin_VlR_Liquidacao,0)   AS Vlr,
-                    COALESCE(ff.ID_Bco_Liquidacao, 0)   As Bco
-                    FROM TB_Financeiro ff
-                    INNER JOIN TB_Empresas        pp  ON pp.Pri_Cnpj=ff.ID_Empresa
-                    INNER JOIN TB_Pessoas         pp1 ON pp1.Pessoas_CPF_CNPJ=ff.ID_Pessoa AND pp1.Empresa_ID=ff.ID_Empresa
-                    INNER JOIN TB_UnidadesNegocio un  ON un.Unidade_ID=ff.ID_Unidade AND un.Empresa_ID=ff.ID_Empresa
-                    WHERE {' AND '.join(conditions_2)}
-                    
-                    Union ALL
-                    
-                    SELECT
-                    dd.ID_Empresa                       AS Empresa_Codigo,
-                    pp.Pri_Descricao                    AS Empresa_Descricao,
-                    dd.ID_Pessoa                        AS Pessoa_Codigo,
-                    pp1.Pessoas_Descricao               AS Pessoa_Descricao,
-                    dd.ID_Unidade                       AS Unidade_ID,
-                    un.Unidade_Descricao                AS Unidade_Descricao,
-                    'SaldoInicial'                      AS Tipo,
-                    '-'                                 AS Nr_Documento,
-                    '00'                                AS Parcela,
-                    {Dta_Lcto}                          AS Dta,
-                    SUM(dd.Doc_VlR*-1)                  AS Vlr,
-                    ''                                  As Bco
-                    FROM TB_CB_Doc dd
-                    INNER JOIN TB_Empresas        pp  ON pp.Pri_Cnpj=dd.ID_Empresa
-                    INNER JOIN TB_Pessoas         pp1 ON pp1.Pessoas_CPF_CNPJ=dd.ID_Pessoa AND pp1.Empresa_ID=dd.ID_Empresa
-                    INNER JOIN TB_UnidadesNegocio un  ON un.Unidade_ID=dd.ID_Unidade AND un.Empresa_ID=dd.ID_Empresa
-                    WHERE {' AND '.join(conditions_3)}
-                    GROUP BY dd.ID_Empresa, pp.Pri_Descricao, dd.ID_Pessoa, pp1.Pessoas_Descricao, dd.ID_Unidade, un.Unidade_Descricao
-                    
-                    Union ALL
-                    
-                    SELECT
-                    ff.ID_Empresa                           AS Empresa_Codigo,
-                    pp.Pri_Descricao                        AS Empresa_Descricao,
-                    ff.ID_Pessoa                            AS Pessoa_Codigo,
-                    pp1.Pessoas_Descricao                   AS Pessoa_Descricao,
-                    ff.ID_Unidade                           AS Unidade_ID,
-                    un.Unidade_Descricao                    AS Unidade_Descricao,
-                    'SaldoInicial'                          AS Tipo,
-                    '-'                                     AS Nr_Documento,
-                    '00'                                    AS Parcela,
-                    {Dta_Lcto}                              AS Dta,
-                    SUM(COALESCE(ff.Fin_VlR_Liquidacao,0))  AS Vlr,
-                    '0'                                     AS Bco
-                    FROM TB_Financeiro ff
-                    INNER JOIN TB_Empresas        pp  ON pp.Pri_Cnpj=ff.ID_Empresa
-                    INNER JOIN TB_Pessoas         pp1 ON pp1.Pessoas_CPF_CNPJ=ff.ID_Pessoa AND pp1.Empresa_ID=ff.ID_Empresa
-                    INNER JOIN TB_UnidadesNegocio un  ON un.Unidade_ID=ff.ID_Unidade AND un.Empresa_ID=ff.ID_Empresa
-                    WHERE {' AND '.join(conditions_4)}
-                    GROUP BY ff.ID_Empresa, pp.Pri_Descricao, ff.ID_Pessoa, pp1.Pessoas_Descricao , ff.ID_Unidade, un.Unidade_Descricao
-                    ) AS COMPLETO
-                    GROUP BY Empresa_Codigo, Empresa_Descricao, Pessoa_Codigo, Pessoa_Descricao, Unidade_ID, Unidade_Descricao, Nr_Documento, Bco , Parcela, Dta, Tipo
-                    ORDER BY Unidade_ID, Pessoa_Codigo, Dta, vlr DESC
-                """
-        
-        results = db.executar_consulta(strSql, params)
-        
-        # Carregar Lista
-        icon_image = self.base64_to_photoimage('lupa')
-                
-        # Configura as tags para o Treeview
-        self.LExtrato.tag_configure('vermelho', foreground='red')  # Define a tag 'vermelho' para texto vermelho
-        self.LExtrato.tag_configure('preto', foreground='black')  # Define a tag 'preto' para texto preto
-        tags = []
-
-        total = 0
-        saldo = 0
-
-        # Agrupando dados por Unidade
-        unidade_map = {}
-        for entry in results:
-            ID_Unidade = entry["Unidade_ID"]
-            if ID_Unidade not in unidade_map:
-                unidade_map[ID_Unidade] = {"DS_Unidade": entry["Unidade_Descricao"], "pessoas": {}}
-
-            ID_Pessoa = entry["Pessoa_Codigo"]
-            if ID_Pessoa not in unidade_map[ID_Unidade]["pessoas"]:
-                unidade_map[ID_Unidade]["pessoas"][ID_Pessoa] = {"DS_Pessoa": entry["Pessoa_Descricao"], "transactions": []}
-                
-            unidade_map[ID_Unidade]["pessoas"][ID_Pessoa]["transactions"].append(entry)
-
-        # Agrupando dados por Unidade
-        for ID_Unidade, unit_data in unidade_map.items():
-            # Adiciona a entrada da Unidade
-            unit_item = self.LExtrato.insert("", "end", text=ID_Unidade, values=(ID_Unidade, unit_data["DS_Unidade"], '', '', '', '', '', '', ''))
+        if not self.list_tarefas:
+            # Tarefa em Branco
+            tarefa_info= []
+            tarefa_info = (
+                            '01',
+                            ' ' * round(2) + "Preencher Descrição Nova Tarefa...................!!!!",
+                            '',
+                            '',
+                            0,
+                            1,
+                            '0.00%',
+                            datetime.now().strftime("%d/%m/%Y"),
+                            '',
+                            datetime.now().strftime("%d/%m/%Y"),
+                            '',
+                            ''
+                            )
+            self.LCronograma.insert(parent="", index="end", image=self.icon_image_amarelo, values=tarefa_info)
             
-            for ID_Pessoa, person_data in unit_data["pessoas"].items():
-                # Adiciona a entrada da Pessoa
-                # print(person_data["DS_Pessoa"])
-                person_item = self.LExtrato.insert("", "end", text=ID_Pessoa, values=(ID_Pessoa, person_data["DS_Pessoa"], '', '', '', '', '', '', ''))
+            # Segunda Tarefa em Branco
+            tarefa_info= []
+            tarefa_info = (
+                            '01.01',
+                            ' ' * round(5) + "Preencher Descrição Nova Tarefa...................!!!!",
+                            '',
+                            '',
+                            0,
+                            1,
+                            '0.00%',
+                            datetime.now().strftime("%d/%m/%Y"),
+                            '',
+                            datetime.now().strftime("%d/%m/%Y"),
+                            '',
+                            '',
+                            )
+            self.LCronograma.insert(parent="", index="end", image=self.icon_image_amarelo, values=tarefa_info)
 
-                saldo = 0  # Reinicia o saldo para cada pessoa
+        else:
+            tarefa_info= []
+            nrregistros = 1
+            for record in self.list_tarefas:
+                nrcarat = len(record.get('tarefa_ID'))
+                dta_branco = str('1899-12-30')
+                data_realizada = datetime.strftime(record.get('data_Inicial_Realizada'), "%Y-%m-%d")
+                data_conclusao = datetime.strftime(record.get('data_conclusao_realizada'), "%Y-%m-%d")
+                data_realizada_prev = datetime.strftime(record.get('data_Inicial_Prevista'), "%Y-%m-%d")
+                data_conclusao_prev = datetime.strftime(record.get('data_conclusao_prevista'), "%Y-%m-%d")
+                per_conclusao = f"{record.get('percentual_execucao'):.2%}"
 
-                for transaction in person_data["transactions"]:
-                    
-                    # Formata a data do documento
-                    Dta_Documento = transaction["Dta"]
-                    Dta_obj = datetime.strptime(Dta_Documento, "%Y-%m-%d")
-                    # Dta_Documento = datetime.strptime(Dta_Documento, "%Y/%m/%d")
-                    Dta_Documento = Dta_obj.strftime("%d/%m/%Y")
-                    # Dta_Documento = transaction["Dta"]
-                    tipo = transaction["Tipo"]
-                    banco = transaction["Bco"]
-                    nr_documento = transaction["Nr_Documento"]
-                    vlr = transaction["Vlr"]
+                semaforo = self.status_on(data_realizada_prev , data_realizada, data_conclusao_prev, data_conclusao, per_conclusao)
+                
+                if data_realizada_prev == str(dta_branco):
+                    data_realizada_prev = ''
+                else:
+                    data_realizada_prev = datetime.strptime(data_realizada_prev, "%Y-%m-%d")
+                    data_realizada_prev =data_realizada_prev.strftime("%d/%m/%Y")  # Formato desejado: "DD/MM/YYYY"
+                
+                if data_realizada == str(dta_branco):
+                    data_realizada = ''
+                else:
+                    data_realizada = datetime.strptime(data_realizada, "%Y-%m-%d")
+                    data_realizada = data_realizada.strftime("%d/%m/%Y")  # Formato desejado: "DD/MM/YYYY"
 
-                    # Verifica se o valor é negativo para formatar os débitos e créditos
-                    debit = f"{abs(vlr):,.2f}" if vlr < 0 else "0.00"
-                    credit = "0.00" if vlr < 0 else f"{vlr:,.2f}"
+                if data_conclusao == str(dta_branco):
+                    data_conclusao = ''
+                else:
+                    data_conclusao = datetime.strptime(data_conclusao, "%Y-%m-%d")
+                    data_conclusao = data_conclusao.strftime("%d/%m/%Y")  # Formato desejado: "DD/MM/YYYY"
 
-                    # Atualiza o saldo
-                    saldo += vlr
-                    total += vlr
+                if data_conclusao_prev == str(dta_branco):
+                    data_conclusao_prev = ''
+                else:
+                    data_conclusao_prev = datetime.strptime(data_conclusao_prev, "%Y-%m-%d")
+                    data_conclusao_prev = data_conclusao_prev.strftime("%d/%m/%Y")  # Formato desejado: "DD/MM/YYYY"
 
-                    # Adiciona a linha de transação na lista
-                    # print(person_item, Dta_Documento, tipo, banco, nr_documento, debit, credit, f"{saldo:,.2f}")
-                    self.LExtrato.insert("", "end", text="", values=('', '', Dta_Documento, tipo, banco, nr_documento, debit, credit, f"{saldo:,.2f}"))
-                                                                          
-        self.LExtrato.tag_configure('odd', background='#eee')
-        self.LExtrato.tag_configure('even', background='#ddd')
-        self.LExtrato.configure(yscrollcommand=self.scrollbar.set)
-        self.scrollbar.configure(command=self.LExtrato.yview)
+                if record.get('record.observacao') is None:
+                    Observacao = ''
+                else:
+                    Observacao = record.get('record.observacao')                
+
+                tarefa_info = (
+                    nrregistros,
+                    record.get('tarefa_ID'),
+                    ' ' * round(nrcarat) + record.get('tarefa_DS'),
+                    record.get('responsavel_nome'),
+                    record.get('tarefa_dependencia'),
+                    record.get('tempo_espera') if record.get('tempo_espera') is not None else 0,
+                    record.get('tempo_previsto'),
+                    per_conclusao,
+                    data_realizada_prev,
+                    data_realizada,
+                    data_conclusao_prev,
+                    data_conclusao,
+                    Observacao,
+                )
+                
+                self.LCronograma.insert(parent="", index="end", image=semaforo, values=tarefa_info)
+                nrregistros += 1
+
+        self.LCronograma.tag_configure('odd', background='#eee')
+        self.LCronograma.tag_configure('even', background='#ddd')
+        self.LCronograma.configure(yscrollcommand=self.scrollbar.set)
+        self.scrollbar.configure(command=self.LCronograma.yview)
+
+        self.atualiza_cronograma_interacao(10)
+        self.ajustar_list()
+
+        def selected_incluir():
+            selected_item = self.LCronograma.selection()
+            if selected_item:
+                item_text = self.LCronograma.item(selected_item, 'text')
+                values = self.LCronograma.item(selected_item, 'values')
+                lin = self.LCronograma.index(selected_item)
+                tarefa_id = values[1]
+                self.incluir_tarefas(projeto_id, projeto_ds, lin, tarefa_id, selected_item)
+            else:
+                messagebox.showinfo("Erro", "Selecione a posição para inclusão da Tarefa!")
+                return
+                # lin = 'end'
+
+        def selected_anexar():
+            selected_item = self.LCronograma.selection()
+            if selected_item:
+                # Texto do item selecionado
+                item_text = self.LCronograma.item(self.LCronograma.selection(), 'text')
+                # Obtém os valores associados (como uma tupla)
+                values = self.LCronograma.item(self.LCronograma.selection(), 'values')
+                
+                ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+                UF = values[6]
+                Cidade = values[5]
+                Tipo = values[3]
+                Nome_da_Area = values[4]
+                
+                self.lista_negocio = self.Consulta_Negocio(ID_Empresa, UF, Cidade, Tipo, Nome_da_Area)
+                if self.lista_negocio[0].get('Http') != '':
+                    url = self.lista_negocio[0].get('Http')
+                else:
+                    messagebox.showwarning("Maps", "Coordenadas Não Cadastrada!!!")
+                    return
+                
+                url = url.strip()  # Remove espaços em branco no início e no fim
+                webbrowser.open(url)
+
+        def selected_excluir():
+            if self.entry_projeto.get() != '':
+                projeto_id = self.obter_Projeto_ID(self.entry_projeto.get())
+            else:
+                messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto!!")
+                return
+            
+            selected_item = self.LCronograma.selection()
+            if selected_item:
+                item_text = self.LCronograma.item(selected_item, 'text')
+                values = self.LCronograma.item(selected_item, 'values')
+                lin = self.LCronograma.index(selected_item)
+                tarefa_id = values[1]
+                self.excluir_tarefas(projeto_id, tarefa_id, lin)
+            else:
+                messagebox.showinfo("Erro", "Selecione a posição para Exclusão da Tarefa!")
+                return
+                       
+        def postPopUpMenu(event):
+            row_id = self.LCronograma.identify_row(event.y)
+            if row_id:  # Realiza a verificação se a linha existe.
+                self.LCronograma.selection_set(row_id)
+                row_values = self.LCronograma.item(row_id)['values']
+                
+                
+                postPopUpMenu = tk.Menu(self.LCronograma, tearoff=0, font=('Verdana', 11))
+                
+                # postPopUpMenu.add_command(label='Incluir Tarefa', accelerator='Ctrl+I', command= selected_incluir)
+                postPopUpMenu.add_command(label='Incluir Tarefa', accelerator='Insert', command= selected_incluir)
+                postPopUpMenu.add_command(label='Excluir Tarefa', accelerator='Delete', command=selected_excluir)
+                postPopUpMenu.add_separator()
+                postPopUpMenu.add_command(label='Anexar Documento', accelerator='Alt+U', command=selected_anexar)
+                postPopUpMenu.post(event.x_root, event.y_root)
+        
+        self.LCronograma.bind("<Button-3>", postPopUpMenu)  # 'Button-3' é o clique direito do mouse
+        self.LCronograma.bind('<Insert>', lambda event: selected_incluir() if self.LCronograma.selection() else None)
+        # self.LCronograma.bind('<Control-i>', lambda event: selected_incluir() if self.LCronograma.selection() else None)
+        self.LCronograma.bind('<Delete>', lambda event: selected_excluir() if self.LCronograma.selection() else None)
+        self.LCronograma.bind('<Control-u>', lambda event: selected_anexar() if self.LCronograma.selection() else None)
+
+    def atualizar_dependencias(self, tarefa_id_nova):
+        nr_campos = 1
+        linha_base_predessessora = None
+
+        # Primeiro loop para atualizar os números dos campos
+        for i in range(len(self.LCronograma.get_children())):
+            item = self.LCronograma.get_children()[i]
+            values = self.LCronograma.item(item, 'values')
+            self.LCronograma.item(item, text='', values=(nr_campos,) + values[1:])  
+            if values[1] == tarefa_id_nova:  # Supondo que o segundo subitem é o que procuramos
+                linha_base_predessessora = nr_campos
+            
+            nr_campos += 1
+
+        # Segundo loop para processar as dependências
+        for ii in range(len(self.LCronograma.get_children())):
+            item = self.LCronograma.get_children()[ii]
+            values = self.LCronograma.item(item, 'values')
+            str_endereco = self.LCronograma.item(item, 'values')[4]  # Supondo que o 5º item é o subitem 4
+            nr_caracteres = len(str_endereco)
+                
+            str_espera = self.LCronograma.item(item, 'values')[5]
+            str_prazo = self.LCronograma.item(item, 'values')[6]  # Supondo que o 5º item é o subitem 4
+            str_per_conclusao = self.LCronograma.item(item, 'values')[7]  # Supondo que o 5º item é o subitem 4
+            str_ini_prev = self.LCronograma.item(item, 'values')[8]  # Supondo que o 5º item é o subitem 4
+            str_ini_real = self.LCronograma.item(item, 'values')[9]  # Supondo que o 5º item é o subitem 4
+            str_fim_prev = self.LCronograma.item(item, 'values')[10]  # Supondo que o 5º item é o subitem 4
+            str_fim_real = self.LCronograma.item(item, 'values')[11]  # Supondo que o 5º item é o subitem 4
+            str_obs = self.LCronograma.item(item, 'values')[12]  # Supondo que o 5º item é o subitem 4
+            
+
+            if nr_caracteres > 2:
+                linha_tarefa = ""
+                tarefa_dependencia = ""
+                lin_dependente = ""
+
+                for vi_contador in range(nr_caracteres):
+                    char_atual = str_endereco[vi_contador]
+
+                    if char_atual != ";":
+                        lin_dependente += char_atual  # Accumula caracteres
+                    if char_atual == ";" or vi_contador == nr_caracteres - 1:
+                        # processa a dependência acumulada
+                        dependente_num = int(lin_dependente)
+                        if dependente_num > linha_base_predessessora:
+                            linha_tarefa = dependente_num + 1
+                        else:
+                            linha_tarefa = dependente_num
+                        tarefa_dependencia += str(linha_tarefa)
+                        lin_dependente = ""
+
+                        # Adiciona o delimitador se não for o último
+                        if vi_contador < nr_caracteres - 1:
+                            tarefa_dependencia += ";"
+
+                # Atualiza o subitem de dependência
+                self.LCronograma.item(
+                                        item, 
+                                        text='', 
+                                        values=values[:4] + (
+                                                                tarefa_dependencia, 
+                                                                str_espera, 
+                                                                str_prazo, 
+                                                                str_per_conclusao,
+                                                                str_ini_prev,
+                                                                str_ini_real,
+                                                                str_fim_prev,
+                                                                str_fim_real,
+                                                                str_obs,
+                                                            )
+                                        )  
+            elif nr_caracteres != 0:
+                dependente_num = int(str_endereco.replace("'", ""))
+                if dependente_num >= linha_base_predessessora:
+                    tarefa_dependencia = dependente_num + 1
+                else:
+                    tarefa_dependencia = dependente_num
+                
+                tarefa_dependencia = str(tarefa_dependencia)
+                
+                # Atualiza o subitem de dependência
+                self.LCronograma.item(
+                                        item, 
+                                        text='', 
+                                        values=values[:4] + (
+                                                                tarefa_dependencia, 
+                                                                str_espera, 
+                                                                str_prazo, 
+                                                                str_per_conclusao,
+                                                                str_ini_prev,
+                                                                str_ini_real,
+                                                                str_fim_prev,
+                                                                str_fim_real,
+                                                                str_obs,
+                                                            )
+                                        ) 
+            else:
+                tarefa_dependencia = ""  
+           
+    def atualiza_cronograma_interacao(self, nr_interacao):
+        calcular = True
+        data_atualizacao = datetime.now()
+        for _ in range(nr_interacao):
+            for item_id in self.LCronograma.get_children():
+                
+                values = self.LCronograma.item(item_id, 'values')
+                tarefa_dependencia = values[4]   
+                if tarefa_dependencia:
+                    self.predessessora(item_id)
+
+        self.dta_tarefa_mae
+        calcular = False
     
+    def predessessora(self, item_id):
+        try:
+            task_data = self.LCronograma.item(item_id)
+
+            # Extraindo informações relevantes
+            tarefa_id = task_data['values'][1]  
+            tarefa_dependencia = str(task_data['values'][4]) 
+            tempo_espera = float(task_data['values'][5]) 
+            tempo_previsto = float(task_data['values'][6]) 
+
+            # Inicializa a data da tarefa predecessora
+            dta_precedente = None
+
+            if tarefa_dependencia:
+                # Divide as dependências por ';'
+                dependencias = tarefa_dependencia.split(';')  # Exemplo: '1;2;3'
+                for dep in dependencias:
+                    
+                    dep_index = int(dep) - 1  # Ajusta a indexação para 0 (Python)
+                    item_ids = self.LCronograma.get_children()  # Obtém os IDs de todos os itens
+                    # Verifica se o índice está dentro do intervalo
+                    if dep_index >= len(item_ids):
+                        continue  # Ignora se o índice estiver fora do intervalo
+                    
+                    # Obtém dados da tarefa dependente utilizando o ID do item correspondente
+                    dependent_item_id = item_ids[dep_index]
+                    dependent_task_data = self.LCronograma.item(dependent_item_id)
+                    
+                    # Processa a tarefa dependente e atualiza a data precedentemente
+                    if dependent_task_data['values'][10]:  # Supondo que data_conclusao_realizada está na posição 10
+                        if dta_precedente is None or dta_precedente < datetime.strptime(dependent_task_data['values'][10], "%d/%m/%Y"):
+                            dta_precedente = datetime.strptime(dependent_task_data['values'][10], "%d/%m/%Y")
+                    else:
+                        # Se não tiver data de conclusão, usa a data de previsão
+                        if dta_precedente is None or dta_precedente < datetime.strptime(dependent_task_data['values'][9], "%d/%m/%Y"):
+                            dta_precedente = datetime.strptime(dependent_task_data['values'][9], "%d/%m/%Y")
+
+            # Atualiza a data inicial prevista da tarefa atual, considerando o tempo de espera
+            if dta_precedente:  # Se houver uma data precedentemente válida
+                task_data['values'][7] = (dta_precedente + timedelta(days=tempo_espera)).strftime("%d/%m/%Y")  # Atualiza data_inicial_prevista
+
+            # Atualiza a data de conclusão prevista, caso a tarefa seguinte corresponda nas dependências
+            if int(tarefa_id.split('.')[0]) + 1 <= len(self.LCronograma.get_children()):  # Verifica se existe uma tarefa seguinte
+                next_item_id = self.LCronograma.get_children()[int(tarefa_id.split('.')[0])]  # Ajuste de indexação
+                next_task_data = self.LCronograma.item(next_item_id)
+
+                #  Trata as datas de conclusão de acordo com a lógica da tarefa atual
+                if data_inicial_realizada := task_data['values'][8]:  # Verifica se tem data inicial realizada
+                    data_conclusao_prevista = datetime.strptime(data_inicial_realizada, "%d/%m/%Y") + timedelta(days=tempo_previsto)  # Adiciona o tempo previsto
+                    task_data['values'][9] = data_conclusao_prevista.strftime("%d/%m/%Y")
+                else:
+                    task_data['values'][9] = (datetime.strptime(task_data['values'][8], "%d/%m/%Y") + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
+
+        except Exception as e:
+            print(f"Erro na predessessora: {str(e)}")  # Exibe mensagem de erro caso ocorra uma exceção
+            
+    def ajustar_list(self):
+        try:
+            for i in range(len(self.LCronograma.get_children())):  # Itera sobre os itens no Treeview
+                item_id = self.LCronograma.get_children()[i]
+                task_data = self.LCronograma.item(item_id)  # Obtém os dados do item
+                tarefa_id = str(task_data['values'][1])  # Assume tarefa_ID está na posição 1
+                nrcarat = len(tarefa_id.upper())
+                linha = i + 1
+
+                if linha < len(self.LCronograma.get_children()):
+                    next_item_id = self.LCronograma.get_children()[linha]
+                    next_task_data = self.LCronograma.item(next_item_id)
+                    next_tarefa_id = str(next_task_data['values'][1])  # Assume tarefa_ID está na posição 1
+                    nrcarat_seguinte = len(next_tarefa_id.upper())
+                else:
+                    nrcarat_seguinte = nrcarat
+
+                # Aplica formatação baseada nos critérios
+                if nrcarat_seguinte > nrcarat:
+                    self.LCronograma.item(item_id, tags=('bold_blue',))  # Usar tags para aplicar estilos
+                elif nrcarat_seguinte == nrcarat and nrcarat > 2:
+                    self.LCronograma.item(item_id, tags=('normal_black',))
+                elif nrcarat_seguinte == nrcarat and nrcarat <= 2:
+                    self.LCronograma.item(item_id, tags=('bold_blue',))
+
+                # Para última linha, verifica comparação com a linha anterior
+                if i == len(self.LCronograma.get_children()) - 1:
+                    tarefa_id = str(self.LCronograma.item(item_id)['values'][1])  # Assume tarefa_ID está na posição 1
+                    tarefa_id_anterior = str(self.LCronograma.item(self.LCronograma.get_children()[i - 1])['values'][1])
+                    if len(tarefa_id.upper()) < len(tarefa_id_anterior.upper()):
+                        self.LCronograma.item(item_id, tags=('bold_blue',))
+
+            # Configura as tags para o Treeview
+            self.LCronograma.tag_configure('bold_blue', font=('Helvetica', 10, 'bold'), foreground='blue')
+            self.LCronograma.tag_configure('normal_black', font=('Helvetica', 10), foreground='black')
+
+        except Exception as e:
+            messagebox.showerror("Erro!", f"Erro: {str(e)}")  # Exibe mensagem de erro        
+
+    def status_on(self, dta_inicio_prev, dta_inicio_real, dta_conclusao_prev, dta_conclusao_real, per_conclusao):
+        # try:
+            if isinstance(dta_conclusao_prev, str):
+                dta_conclusao_prev = datetime.strptime(dta_conclusao_prev, "%Y-%m-%d").date()
+            
+            today = datetime.now().date()
+            if dta_inicio_real == '':
+                if dta_inicio_prev < today:
+                    icon_image = self.icon_image_vermelho
+                else:
+                    icon_image = self.icon_image_amarelo
+            else:
+                if dta_conclusao_real == '':
+                    if dta_inicio_real != '' and dta_conclusao_prev < today:
+                        icon_image = self.icon_image_vermelho
+                    else:
+                        icon_image = self.icon_image_azul
+                elif float(per_conclusao.replace("%", "")) == 100.00:
+                    icon_image = self.icon_image_verde
+                elif dta_conclusao_prev >= today:
+                    icon_image = self.icon_image_azul
+                elif dta_conclusao_prev < today:
+                    icon_image = self.icon_image_vermelho
+                else:
+                    icon_image = self.icon_image_amarelo
+
+            return icon_image
+           
+        # except Exception as e:
+            # messagebox.showerror("Error", f"An error occurred: {str(e)}")
+
+    def incluir_tarefas(self, projeto_id, projeto_ds, linha, tarefa_id, selected_index):
+        # Parametros Iniciais
+        nrcampo = int(linha) + 2
+        tarefa_id = tarefa_id.replace(".", "")
+        Linha_Incluir = int(linha) + 1
+
+        tarefa_id_nova = ''
+        tarefa_ds_nova = "Preencher Descricão Nova Tarefa...................!!!!"
+        responsavel_nome = ''
+        tarefa_dependencia = ''
+        tempo_previsto = 1
+        percentual_execucao = 0
+        data_inicial_prevista = datetime.now().date()
+        data_conclusao_prevista = data_inicial_prevista
+        dias_diferenca_inicio = ''
+        
+        prazo_fatal_dias = 0
+        dias_diferenca_conclusao = 0
+        status_projeto = ''
+        observacao = ''
+        
+        nivel_inclusao = len(tarefa_id)
+        nivel_inclusao_mae = len(tarefa_id)
+        nivel_secundario = ''
+        nivel_ultimo = ''
+        lin = int(linha) + 1 
+       
+        # Checar e determinar o código novo
+        for i in range(lin, len(self.LCronograma.get_children())):
+            item = self.LCronograma.get_children()[i]
+            values = self.LCronograma.item(item, 'values')
+            nivel_secundario = len(values[1].replace(".", ""))  # Supondo que o segundo subitem é o que você quer
+            
+            if nivel_inclusao == nivel_secundario:
+                nivel_ultimo = values[1]
+
+        # Verifica se Nivel_Ultimo está vazio
+        if nivel_ultimo == '':
+            nivel_ultimo = tarefa_id[:nivel_inclusao - 2] + str(int(tarefa_id[-2:]) + 1).zfill(2)  # Incrementa os últimos dois dígitos
+            Linha_Incluir = 'end'
+        else:
+            nivel_inclusao = len(tarefa_id) + 2
+            nivel_secundario = ""
+            nivel_ultimo = ""
+            linha += 1  # Ajusta linha para o próximo item
+            # Segundo Loop
+            for i in range(lin, len(self.LCronograma.get_children())):
+                item = self.LCronograma.get_children()[i]
+                values = self.LCronograma.item(item, 'values')
+                nivel_secundario = len(values[1].replace(".", ""))
+                if nivel_inclusao == nivel_secundario and values[1].replace(".", "")[:nivel_inclusao_mae] == tarefa_id.replace(".", ""):
+                    nrcampo = self.LCronograma.index(item) + 2
+                    Linha_Incluir = self.LCronograma.index(item) + 1
+                    nivel_ultimo = values[1]
+                    
+            # Define Nivel_Ultimo baseado no resultado do segundo loop
+            def calcular_nivel_ultimo(tarefa_id, nivel_inclusao, nivel_ultimo):
+                # Extrai a parte inicial do tarefa_id
+                parte_inicial = tarefa_id[:nivel_inclusao - 2]
+                # Extrai os últimos dois caracteres de nivel_ultimo e incrementa
+                numero_atual = int(nivel_ultimo[-2:]) + 1
+                # numero_atual = '00' + numero_atual
+                numero_formatado = str(numero_atual).zfill(2)  # Garante que tenha 2 dígitos
+                # Concatena e retorna o novo ID
+                # print(parte_inicial, numero_formatado)
+                novo_nivel_ultimo = parte_inicial + numero_formatado
+                return novo_nivel_ultimo
+            
+            if nivel_ultimo == '':
+                nivel_ultimo = tarefa_id + "01"
+            else:
+                novo_nivel_ultimo = calcular_nivel_ultimo(tarefa_id, nivel_inclusao, nivel_ultimo)
+                nivel_ultimo = novo_nivel_ultimo #tarefa_id[:nivel_inclusao - 2] + str(int(nivel_ultimo[-2:]) + 1).zfill(2)
+
+        # Construir o Código
+        tarefa_id_nova = ".".join([nivel_ultimo[i:i+2] for i in range(0, len(nivel_ultimo), 2)])
+        
+        # Adicionar na Lista
+        nrcarat = len(tarefa_id_nova)
+        per_conclusao = 0
+        semaforo = self.status_on(data_inicial_prevista , '', data_inicial_prevista, '', per_conclusao)
+        tarefa_info = (
+                        nrcampo,
+                        tarefa_id_nova,
+                        ' ' * round(nrcarat) + tarefa_ds_nova,  
+                        '',  # Responsável
+                        '',  # Dependência
+                        0,   # Tempo de espera
+                        1,   # Tempo previsto
+                        percentual_execucao,  
+                         data_inicial_prevista.strftime("%d/%m/%Y"),  
+                        '',  # Data Realizada
+                        data_conclusao_prevista.strftime("%d/%m/%Y"),  
+                        '',  # Data de Conclusão Realizada
+                        '',  # Observação
+                    )       
+        # Adicionar na Tela
+        self.LCronograma.insert(
+                                '', 
+                                Linha_Incluir,
+                                iid=nrcampo,
+                                image=semaforo, 
+                                values=tarefa_info
+                                )
+        # Gravar no Banco de Dados
+        self.gravar_cronograma_incluir(projeto_id, projeto_ds, tarefa_id_nova, tarefa_ds_nova, data_inicial_prevista, data_conclusao_prevista)
+        # Atualizar os indices
+        self.atualizar_dependencias(tarefa_id_nova)
+        self.atualiza_cronograma_interacao(10)
+        self.adjustar_list()
+        # messagebox.showinfo("Sucesso", "Nova tarefa incluída com sucesso!")
+    
+    def gravar_cronograma_incluir(self, projeto_id, projeto_ds, tarefa_id_nova, tarefa_ds_nova, data_inicial_prevista, data_conclusao_prevista):
+        try:
+            if not projeto_id:
+                messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto!!")
+                return
+            
+            projeto_cr = 0
+            responsavel_nome = ""
+            tarefa_dependencia = ""
+            tempo_espera = 0
+            tempo_previsto = 0
+            percentual_execucao = 0.0
+            data_inicial_realizada = str('1899-12-30')
+            data_conclusao_realizada = str('1899-12-30')
+            dias_diferenca_inicio = 0
+            prazo_fatal_dias = 0
+            dias_diferenca_conclusao = 0
+            status_projeto = ""
+            observacao = ""
+            anexos = ""
+
+            # Prepare the SQL insertion command
+            vsSQL = """
+                        INSERT INTO programas_atividades (
+                                                            projeto_ID, 
+                                                            projeto_DS, 
+                                                            projeto_cr, 
+                                                            tarefa_ID, 
+                                                            tarefa_DS, 
+                                                            responsavel_nome, 
+                                                            tarefa_dependencia,
+                                                            tempo_espera, 
+                                                            tempo_previsto, 
+                                                            percentual_execucao, 
+                                                            data_Inicial_Prevista,
+                                                            data_Inicial_Realizada, 
+                                                            dias_diferenca_inicio, 
+                                                            data_conclusao_prevista,
+                                                            data_conclusao_realizada, 
+                                                            prazo_fatal_dias, 
+                                                            dias_diferenca, 
+                                                            status, 
+                                                            observacao, 
+                                                            anexos)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """
+            params = (
+                projeto_id,
+                projeto_ds,
+                projeto_cr,
+                tarefa_id_nova,
+                tarefa_ds_nova.replace("'", " "),  
+                responsavel_nome,
+                tarefa_dependencia,
+                round(tempo_espera, 0),
+                round(tempo_previsto, 0),
+                float(percentual_execucao),  
+                data_inicial_prevista.strftime("%Y-%m-%d"),
+                data_inicial_realizada,
+                round(dias_diferenca_inicio, 0),
+                data_conclusao_prevista.strftime("%Y-%m-%d"),
+                data_conclusao_realizada,
+                round(prazo_fatal_dias, 0),
+                round(dias_diferenca_conclusao, 0),
+                status_projeto,
+                observacao.replace("'", " "),  
+                anexos
+            )
+
+            # Execute SQL command
+            myresult = db.executar_consulta(vsSQL, params)
+            messagebox.showinfo("Sucesso", "Compras gravadas com sucesso!")
+
+        except Exception as e:
+            messagebox.showinfo(f"Error occurred: {str(e)}")
+        finally:
+            pass
+ 
+    def excluir_tarefas(self, projeto_id, tarefa_id, linha):
+        try:
+            item_id = self.LCronograma.get_children()[linha]  # Use o índice selecionado para obter o ID
+            values = self.LCronograma.item(item_id, 'values')
+            tarefa_id = values[1]
+            current_task_length = len(tarefa_id)
+            
+            # Determine a linha seguinte
+            next_index = linha + 1
+            
+            # Verifica se o próximo índice está dentro dos limites
+            if next_index < len(self.LCronograma.get_children()):
+                next_item_id = self.LCronograma.get_children()[next_index]  # Obtém o próximo ID de item
+                next_values = self.LCronograma.item(next_item_id, 'values')
+                next_task_length = len(next_values[1])  # Assumindo que 'tarefa_id' está na posição 1
+            else:
+                next_task_length = current_task_length  # Se estiver fora do intervalo, mantenha o comprimento atual
+                
+            # Verifica se a tarefa atual pode ser excluída
+            if current_task_length < next_task_length:
+                messagebox.showinfo("Info", "Não pode Excluir uma tarefa mãe sem excluir as tarefas filhas!")
+                return
+            
+            # Confirma a exclusão com o usuário
+            if messagebox.askyesno("Confirmar", "Tem Certeza que deseja Excluir?"):
+                # Comando SQL de exclusão
+                delete_sql = f"DELETE FROM programas_atividades WHERE projeto_id={projeto_id} AND tarefa_id='{tarefa_id}'"
+                db._querying(delete_sql)
+                
+                # Remove a tarefa da lista em memória
+                self.LCronograma.delete(item_id)
+                
+                # Atualiza os índices das tarefas restantes
+                for idx, task in enumerate(self.LCronograma.get_children()):
+                    task_data = self.LCronograma.item(task)
+                    task_data['task_index'] = idx + 1  # Atualiza índice exibido
+                
+                messagebox.showinfo("Success", "Tarefa excluída com sucesso!")
+            else:
+                messagebox.showinfo("Cancelado", "A exclusão foi cancelada.")
+
+        except Exception as e:
+            messagebox.showerror("Erro", f"Um erro ocorreu: {str(e)}")
+
+    def dta_tarefa_mae(self):
+        dta_atualizacao = datetime.now()
+        for idx in range(len(self.LCronograma.get_children())):
+            values = self.LCronograma.item(idx, 'values')
+            nrcarat = 0
+            NrCampos = values[0]
+            tarefa_id = values[1]
+            nrcarat = len(tarefa_id)
+
+            Lin = idx + 1
+            if Lin > len(self.LCronograma.get_children()):
+                return
+            else:
+                NrCaraceteres_Reg_Seg = len(values[1])
+
+            nrcarat_seguinte = 0
+            nr_tarefas_concluidas = 0
+            data_inicial_prevista = None
+            data_inicial_realizada = None
+            data_conclusao_prevista = None
+            data_conclusao_realizada = None
+
+            values = self.LCronograma.item(Lin, 'values')
+            nrregistros = len(values[1])
+            linha = Lin + 1
+            while values[1][:nrcarat] == tarefa_id and len(self.LCronograma.get_children()) >= linha:
+                values = self.LCronograma.item(linha, 'values')
+                if len(values[1]) <= nrregistros:
+                    values = self.LCronograma.item(Lin, 'values')
+                    if values[8]:
+                        if not data_inicial_prevista:
+                            data_inicial_prevista = values[8]
+                        else:
+                            data_inicial_prevista = min(data_inicial_prevista, values[8])
+                    if values[9]:
+                        if not data_inicial_realizada:
+                            data_inicial_realizada = values[9]
+                        else:
+                            data_inicial_realizada = min(data_inicial_realizada, values[9])
+                    if values[10]:
+                        if not data_conclusao_prevista:
+                            data_conclusao_prevista = values[10]
+                        else:
+                            data_conclusao_prevista = max(data_conclusao_prevista, values[10])
+                    if values[11]:
+                        if not data_conclusao_realizada:
+                            data_conclusao_realizada = values[11]
+                        else:
+                            data_conclusao_realizada = max(data_conclusao_realizada, values[11])
+
+                    # Count completed tasks
+                    if values[7] == 1.0:
+                        nr_tarefas_concluidas += 1
+                    
+                    nrcarat_seguinte += 1
+        
+                    # Calcular o Percentual de Execução
+                    percentual_execucao = nr_tarefas_concluidas / nrcarat_seguinte if nrcarat_seguinte > 0 else 0
+
+                    # Atualização no List
+                    if idx < len(self.LCronograma.get_children()):
+                        if data_inicial_prevista:
+                            self.LCronograma[idx]['data_inicial_prevista'] = data_inicial_prevista
+                        if data_inicial_realizada:
+                            self.LCronograma[idx]['data_inicial_realizada'] = data_inicial_realizada
+                        if data_conclusao_prevista:
+                            self.LCronograma[idx]['data_conclusao_prevista'] = data_conclusao_prevista
+                        if data_conclusao_realizada:
+                            self.LCronograma[idx]['data_conclusao_realizada'] = data_conclusao_realizada
+                            
+                        self.LCronograma[idx]['percentual_execucao'] = percentual_execucao
+
+                        # Optionally display success message
+                        messagebox.showinfo("Success", f"Task dates and percentages updated for: {self.LCronograma[idx]['tarefa_id']}")
+                Lin += 1
+                values = self.LCronograma.item(Lin, 'values')
+                nrregistros = len(values[1])
+                linha += 1
+                if Lin > len(self.LCronograma.get_children()):
+                    return
+                elif linha > len(self.LCronograma.get_children()):
+                    return
+                    
+            if nr_tarefas_concluidas != 0:
+                percentual_execucao = (nr_tarefas_concluidas / nrcarat_seguinte)
+            else:
+                percentual_execucao = 0
+
+            if NrCaraceteres_Reg_Seg > nrcarat:
+                if data_inicial_realizada and data_conclusao_realizada and percentual_execucao >= 1:
+                    self.LCronograma[idx]['data_conclusao_realizada'] = data_conclusao_realizada - data_inicial_realizada
+                elif data_inicial_prevista and data_conclusao_prevista:
+                    self.LCronograma[idx]['data_conclusao_prevista'] = data_conclusao_prevista - data_inicial_prevista
+
+                self.LCronograma[idx]['percentual_execucao'] = percentual_execucao
+    
+    
+    
+    
+    
+    
+    # FALTA AJUSTAR AS OUTRAS QUESTÕES
+    def excluir_programa(self, projeto_id, tarefa_id, linha):
+        
+        try:
+            # Check if the project is linked to any activities (programs)
+            sql_query = f"SELECT * FROM programas_atividades WHERE projeto_ID={projeto_id}"
+            records = db._querying(sql_query)
+            
+            if records:
+                messagebox.showinfo("Info", "Projeto já Está Vinculado a um Programa, primeiro excluir o Programa!")
+                return
+            
+            if messagebox.askyesno("Confirmar", "Tem Certeza que deseja Exluir%s"):
+                # If user confirms, delete the project
+                delete_sql = f"DELETE FROM projetos_cronograma WHERE projeto_id={projeto_id}"
+                db._querying(delete_sql)
+                messagebox.showinfo("Success", "Projeto excluído com sucesso!")
+
+            else:
+                # If the user cancels, no action is taken
+                messagebox.showinfo("Cancelado", "A exclusão foi cancelada.")
+
+        except Exception as e:
+            messagebox.showerror("Erro", f"Um erro ocorreu: {str(e)}")
+    
+    def data_inicial_prev(self, dependency, line):
+        if dependency:
+            self.predessessora(line)
+
+    def status_gantt(self, selected_index):
+        
+        try:
+            dta_atualizacao = datetime.now()
+
+            # Get the selected task
+            task = self.LCronograma[selected_index]
+
+            if not task['data_conclusao_realizada']:
+                if datetime.strptime(task['data_inicio_prevista'], "%d/%m/%Y") < dta_atualizacao:
+                    task['status'] = "Atrasado Início"
+                    task['report_icon'] = 3
+                else:
+                    task['status'] = "Programa"
+                    task['report_icon'] = 1
+            else:
+                if not task['data_inicio_realizada']:
+                    if task['data_conclusao_prevista'] and datetime.strptime(task['data_conclusao_realizada'], "%d/%m/%Y") < dta_atualizacao:
+                        task['status'] = "Atrasado Conclusão"
+                        task['report_icon'] = 3
+                    else:
+                        task['status'] = "Em Andamento"
+                        task['report_icon'] = 4
+                elif float(task['percentual_execucao'].rstrip('%')) == 100:
+                    task['status'] = "Concluído"
+                    task['report_icon'] = 5
+                elif datetime.strptime(task['data_conclusao_prevista'], "%d/%m/%Y") > dta_atualizacao:
+                    task['status'] = "Em Andamento"
+                    task['report_icon'] = 4
+                elif datetime.strptime(task['data_conclusao_prevista'], "%d/%m/%Y") < dta_atualizacao:
+                    task['status'] = "Atrasado Conclusão"
+                    task['report_icon'] = 3
+                else:
+                    task['status'] = "Programa"
+                    task['report_icon'] = 1
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Error occurred: {str(e)}") 
+
+    
+    
+    def gravar_cronograma_total(self, projeto_id, conexao):
+        pass 
+
+    def gravar_alterar_dependencias(self, tarefa_id, tarefa_dependencia, projeto_id, conexao):
+        """
+        Updates the dependencies of a specified task in the programas_atividades table.
+
+        :param tarefa_id: ID of the task whose dependencies are to be updated.
+        :param tarefa_dependencia: New dependencies to set for the task.
+        :param projeto_id: ID of the project the task belongs to.
+        :param conexao: Database connection object.
+        """
+        try:
+            # Prepare the SQL UPDATE statement
+            sql = f"""
+            UPDATE programas_atividades 
+            SET tarefa_dependencia = %s
+            WHERE projeto_ID = %s AND tarefa_ID = %s
+            """
+            
+            # Execute SQL command
+            with conexao.cursor() as cursor:
+                cursor.execute(sql, (tarefa_dependencia, projeto_id, tarefa_id))
+                conexao.commit()  # Commit the transaction
+
+        except Exception as e:
+            print(f"Error occurred while updating dependencies: {str(e)}")   
+
+    # def abrir_anexo(self, projeto_id, tarefa_id, connection):
+    #     try:
+    #         sql_query = f"""
+    #         SELECT 
+    #             Empresa_ID AS Empresa, 
+    #             Projeto_ID AS Projeto, 
+    #             Tarefa_ID AS Tarefa, 
+    #             ID_Anexo AS Anexo, 
+    #             Doc_Num_Documento AS Doc 
+    #         FROM 
+    #             TB_Gedoc_Tarefas 
+    #         WHERE 
+    #             Projeto_ID = %s AND Tarefa_ID = %s
+    #         """
+
+    #         # Execute the SQL query
+    #         with connection.cursor() as cursor:
+    #             cursor.execute(sql_query, (projeto_id, tarefa_id))
+    #             results = cursor.fetchall()
+
+    #             if not results:
+    #                 messagebox.showinfo("Info", "Documentos Não Cadastrado!")
+    #                 return
+                
+    #             # Initialize the user annexes dialog
+    #             user_anexos = UserAnexos()
+    #             user_anexos.annex_list.delete(0, 'end')  # Clear previous items
+
+    #             # Adding items to the annex list
+    #             for row in results:
+    #                 task_description, annex_id, document_number = row[2], row[3], row[4]
+    #                 user_anexos.annex_list.insert('end', f"Tarefa: {task_description}, Anexo ID: {annex_id}, Documento: {document_number}")
+
+    #             user_anexos.show()  # Simulate showing the annexes
+
+    #     except Exception as e:
+    #         messagebox.showerror("Erro", f"Erro! {str(e)}")
+    
+    def carrega_controle_image_list(self):
+        # Clear existing images
+        self.image_list_status.clear()
+
+        # Load images
+        self.add_image("img1", "lvIcons/amarelo.jpg")
+        self.add_image("img2", "lvIcons/verde.jpg")
+        self.add_image("img3", "lvIcons/vermelho.jpg")
+        self.add_image("img4", "lvIcons/azul.jpg")
+        self.add_image("img5", "lvIcons/aguardando_1.jpg")
+        self.add_image("img6", "lvIcons/Anexo.jpg")
+
+    def add_image(self, img_key, img_path):
+        full_path = os.path.join(os.path.dirname(__file__), img_path)
+        if os.path.exists(full_path):
+            img = Image.open(full_path)
+            self.image_list_status[img_key] = ImageTk.PhotoImage(img)
+
+    def gravar_anexo_cronograma(projeto_id, tarefa_id, connection):
+        try:
+            # Open a file dialog to select a PDF
+            root = tk.Tk()
+            root.withdraw()  # Hide the root window
+            file_path = filedialog.askopenfilename(
+                title="Procurar Arquivos .pdf",
+                initialdir=os.getcwd(),  # Set initial directory
+                filetypes=[("PDF Files", "*.pdf"), ("All Files", "*.*")]
+            )
+
+            if not file_path:
+                messagebox.showinfo("Info", "No file selected.")
+                return
+
+            # Get the details of the file
+            file_name = os.path.basename(file_path)
+
+            # Check if the document is already in the database
+            sql_check = """
+            SELECT ID_Anexo FROM TB_Gedoc_Tarefas 
+            WHERE Projeto_ID = %s AND Tarefa_ID = %s AND Doc_Num_Documento = %s AND Empresa_ID = %s
+            """
+            id_empresa = "Your company ID"  # Replace with actual company ID retrieval logic
+            
+            with connection.cursor() as cursor:
+                cursor.execute(sql_check, (projeto_id, tarefa_id, file_name, id_empresa))
+                existing_record = cursor.fetchone()
+
+                # Open and read the file in binary mode
+                with open(file_path, 'rb') as file:
+                    file_data = file.read()
+
+                if existing_record is None:
+                    # Insert a new record
+                    sql_insert = """
+                    INSERT INTO TB_Gedoc_Tarefas 
+                    (Empresa_ID, Projeto_ID, Tarefa_ID, Doc_Num_Documento, BinarioPDF) 
+                    VALUES (%s, %s, %s, %s, %s)
+                    """
+                    cursor.execute(sql_insert, (id_empresa, projeto_id, tarefa_id, file_name, file_data))
+                    connection.commit()
+                    messagebox.showinfo("Success", "Document saved successfully.")
+
+                else:
+                    # Update the existing record
+                    id_anexo = existing_record[0]
+                    sql_update = """
+                    UPDATE TB_Gedoc_Tarefas 
+                    SET BinarioPDF = %s 
+                    WHERE ID_Anexo = %s
+                    """
+                    cursor.execute(sql_update, (file_data, id_anexo))
+                    connection.commit()
+                    messagebox.showinfo("Success", "Document updated successfully.")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {str(e)}")
+        finally:
+            if connection:
+                connection.close()  # Ensure the connection is closed                           
+
+    def upload_arquivo_cronograma(projeto_id, tarefa_id, doc_num_documento, connection):
+        
+        try:
+            # Prepare SQL query
+            sql_query = """
+            SELECT * FROM TB_Gedoc_Tarefas 
+            WHERE Projeto_ID = %s AND Tarefa_ID = %s AND Doc_Num_Documento = %s
+            """
+            
+            # Execute the SQL command
+            with connection.cursor() as cursor:
+                cursor.execute(sql_query, (projeto_id, tarefa_id, doc_num_documento))
+                record = cursor.fetchone()
+
+                if record is None:
+                    messagebox.showinfo("Info", "Documentos Não Cadastrado!")
+                    return
+
+                # Get the binary data for the document
+                b64_data = record[4]  # Assuming 'BinarioPDF' is the 5th column in the result set
+
+                if b64_data is not None:
+                    # Decode and save the file
+                    file_path = os.path.join(os.getcwd(), doc_num_documento)  # Save in the current directory
+                    with open(file_path, 'wb') as file:
+                        file.write(b64_data)  # Write the binary data to a file
+
+                    messagebox.showinfo("Success", "Document downloaded successfully.")
+                    
+                    # Optionally, you can open the file or trigger additional UI dialogs
+                    # In a GUI application, you might want to open this file or perform further actions
+                else:
+                    messagebox.showinfo("Info", "No data found for the specified document.")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Error occurred: {str(e)}")
+
 Cronograma_Atividades()
+class TreeviewEdit(ttk.Treeview):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.master = master
+        self.tree = ttk.Treeview(self)
+        # self.cronograma = Cronograma_Atividades
+        
+        self.bind('<Double-1>', self.on_double_click) 
+
+    def on_double_click(self, event):
+        
+        region_clicked = self.identify_region(event.x, event.y)
+        if region_clicked not in ('tree', 'cell'):
+            return
+        
+        col_id = self.identify_column(event.x)
+        self.column_index = int(col_id[1:]) - 1
+        if self.column_index < 2:
+            messagebox.showinfo("Gestor de Negócios", "Campo Não Permite Alteração!!")
+            return
+
+        selected_iid = self.focus() # O numero da linha tbem é o iid
+        selected_values = self.item(selected_iid)
+        if col_id == '#0':
+            selected_text = selected_values.get('text')
+        else:
+            selected_text = selected_values.get('values')[self.column_index]
+        
+        
+        self.entry_descricao = selected_values.get('values')[2]
+        self.entry_responsavel = selected_values.get('values')[3]
+        self.entry_dependencia = selected_values.get('values')[4]
+        self.entry_tempo_espera = selected_values.get('values')[5]
+        self.entry_tempo_previsto = selected_values.get('values')[6]
+        self.entry_per_execucao = selected_values.get('values')[7]
+        self.entry_data_inicial_prevista = selected_values.get('values')[8]       
+        self.entry_data_inicial_realizada = selected_values.get('values')[9]
+        self.entry_data_conclusao_prevista = selected_values.get('values')[10]
+        self.entry_data_conclusao_realizada = selected_values.get('values')[11]
+        self.entry_observacao = selected_values.get('values')[12]
+        
+        column_box = self.bbox(selected_iid, col_id)
+        self.entry_edit = tk.Entry(self.master, width=column_box[2])
+        
+        if self.column_index == 8 or self.column_index == 9 or self.column_index == 10 or self.column_index == 11:
+            self.entry_edit.bind("<Double-1>", self.calendario)
+            self.entry_edit.bind('<KeyRelease>', self.update_date_format)
+        
+        # Atualiza os demais campos e depois salva tudo
+        ## Carregar os dados para os devidos Calculos
+        self.entry_descricao = selected_values.get('values')[2]
+        self.entry_responsavel = selected_values.get('values')[3]
+        self.entry_dependencia = selected_values.get('values')[4]
+        self.entry_tempo_espera = selected_values.get('values')[5]
+        self.entry_tempo_previsto = selected_values.get('values')[6]
+        self.entry_per_execucao = selected_values.get('values')[7]
+        self.entry_data_inicial_prevista = selected_values.get('values')[8]       
+        self.entry_data_inicial_realizada = selected_values.get('values')[9]
+        self.entry_data_conclusao_prevista = selected_values.get('values')[10]
+        self.entry_data_conclusao_realizada = selected_values.get('values')[11]
+        self.entry_observacao = selected_values.get('values')[12]
+                    
+        self.entry_edit.editing_column_index = self.column_index
+        self.entry_edit.editing_item_iid = selected_iid
+        self.entry_edit.insert(0, selected_text)
+        self.entry_edit.select_range(0, tk.END)
+        self.entry_edit.focus_set()
+        if self.column_index != 8 and self.column_index != 9 and self.column_index != 10 and self.column_index != 11:
+            self.entry_edit.bind('<FocusOut>', self.on_focus_out)
+
+        self.entry_edit.bind('<Return>', self.on_enter_pressed)
+        
+        # localização do entry no TreeView
+        self.entry_edit.place(x=column_box[0], 
+                         y=column_box[1],
+                         width=column_box[2],
+                         height=column_box[3])
+    
+    def on_focus_out(self, event):
+        event.widget.destroy()
+
+    def on_enter_pressed(self, event):
+        # Carrega os farois
+        self.icon_image_azul = self.base64_to_farois('semafaro_azul') 
+        self.icon_image_verde = self.base64_to_farois('semafaro_verde') 
+        self.icon_image_amarelo = self.base64_to_farois('semafaro_amarelo') 
+        self.icon_image_vermelho = self.base64_to_farois('semafaro_vermelho') 
+
+        # Obtém o valor editado
+        new_value = event.widget.get()
+        self.semaforo = []
+        if self.column_index == 3:
+            # Dependência
+            if new_value != '':
+                self.entry_data_inicial_prevista = self.predessessora(selected_iid)
+            pass
+            
+        elif self.column_index == 7:
+            # Percentual de Execução
+            if float(new_value) == 100:
+                self.semaforo = self.icon_image_verde
+            
+            new_value = f"{float(new_value)/100:.2%}"
+            
+        selected_iid = event.widget.editing_item_iid
+        self.column_index = event.widget.editing_column_index
+
+        if self.column_index == -1:
+            self.item(selected_iid, text=new_value)
+        else:
+            current_values = self.item(selected_iid).get('values')
+            current_values[2] = self.entry_descricao
+            current_values[3] = self.entry_responsavel
+            current_values[4] = self.entry_dependencia
+            current_values[5] = self.entry_tempo_espera
+            current_values[6] = self.entry_tempo_previsto 
+            current_values[7] = self.entry_per_execucao 
+            current_values[8] = self.entry_data_inicial_prevista
+            current_values[9] = self.entry_data_inicial_realizada
+            current_values[10] = self.entry_data_conclusao_prevista
+            current_values[11] = self.entry_data_conclusao_realizada
+            current_values[12] = self.entry_observacao
+            current_values[self.column_index] = new_value
+            if self.semaforo:
+                self.item(selected_iid, image=self.semaforo, values=current_values)
+            else:
+                self.item(selected_iid,  values=current_values)
+
+            self.gravar_cronograma_tarefa(selected_iid)
+            # self.atualiza_cronograma_interacao(10)
+            # self.ajustar_list()
+
+        event.widget.destroy()
+
+    def update_date_format(self, event):
+        # Obtém o valor editado
+        current_value = event.widget.get()
+        
+        sel_start = len(current_value)
+        if len(current_value) == 2:
+            current_value += "/"
+            sel_start = 4
+        elif len(current_value) == 5:
+            current_value += "/"
+            sel_start = 7
+
+        # Update entry value and position cursor
+        event.widget.delete(0, tk.END)
+        event.widget.insert(0, current_value)
+        event.widget.icursor(sel_start)
+    
+    def calendario(self, event):
+        # self.window_calendar = Tk()
+        self.window_calendar = customtkinter.CTkToplevel(self.master)
+        self.window_calendar.title('Calendário')
+        calendario = tkcalendar.Calendar(self.window_calendar, locale='pt_br')
+        calendario.pack(pady=10)
+       
+        def get_data(event):
+            dta = calendario.get_date()
+            for widget in self.window_calendar.winfo_children():
+                widget.destroy()
+
+            self.window_calendar.destroy()  # Destroi
+            self.window_calendar = None  # Reseta a referência do frame atual
+            self.entry_edit.delete(0, "end")
+            self.entry_edit.insert(0, dta.strip())
+
+        calendario.bind('<<CalendarSelected>>', get_data)
+        self.window_calendar.focus_force()
+        self.window_calendar.grab_set()
+    
+    def Tarefa_Inicio_Previsto(self, event):
+        try:
+            inicio_real = self.entry_data_inicial_realizada
+            inicio_previsto = self.entry_data_inicial_prevista
+            tempo_exec = int(self.entry_tempo_previsto) if self.entry_tempo_previsto.isdigit() else 0
+            if inicio_real:
+                start_date = datetime.strptime(inicio_real, "%d/%m/%Y")
+            else:
+                start_date = datetime.strptime(inicio_previsto, "%d/%m/%Y")
+            
+            conclusion_date = start_date + timedelta(days=tempo_exec)
+            self.entry_data_conclusao_prevista.delete(0, tk.END)
+            self.entry_data_conclusao_prevista.insert(0, conclusion_date.strftime("%d/%m/%Y"))
+        except ValueError as e:
+            messagebox.showerror("Erro", "O formato data tem que ser (dd/mm/yyyy).")
+        except Exception as e:
+            messagebox.showerror("Erro", str(e))
+    
+    def Tarefa_Inicio_Real(self, event):
+        try:
+            inicio_real = self.entry_data_inicial_realizada
+            inicio_previsto = self.entry_data_inicial_prevista
+            tempo_exec = int(self.entry_tempo_previsto()) if self.entry_tempo_previsto.isdigit() else 0
+            
+            if inicio_real:
+                start_date = datetime.strptime(inicio_real, "%d/%m/%Y")
+            else:
+                start_date = datetime.strptime(inicio_previsto, "%d/%m/%Y")
+
+            conclusion_date = start_date + timedelta(days=tempo_exec)
+            self.entry_data_conclusao_prevista.delete(0, tk.END)  
+            self.entry_data_conclusao_prevista.insert(0, conclusion_date.strftime("%d/%m/%Y"))
+        
+        except ValueError:
+            messagebox.showerror("Erro", "O formato data tem que ser (dd/mm/yyyy).")
+        except Exception as e:
+            messagebox.showerror("Erro", str(e))
+    
+    def atualizar_dependencias(self, tarefa_id_nova):
+        nr_campos = 1
+        linha_base_predessessora = None
+
+        # Primeiro loop para atualizar os números dos campos
+        for i in range(len(self.LCronograma.get_children())):
+            item = self.LCronograma.get_children()[i]
+            values = self.LCronograma.item(item, 'values')
+            self.LCronograma.item(item, text='', values=(nr_campos,) + values[1:])  
+            if values[1] == tarefa_id_nova:  # Supondo que o segundo subitem é o que procuramos
+                linha_base_predessessora = nr_campos
+            
+            nr_campos += 1
+
+        # Segundo loop para processar as dependências
+        for ii in range(len(self.LCronograma.get_children())):
+            item = self.LCronograma.get_children()[ii]
+            values = self.LCronograma.item(item, 'values')
+            str_endereco = self.LCronograma.item(item, 'values')[4]  # Supondo que o 5º item é o subitem 4
+            nr_caracteres = len(str_endereco)
+                
+            str_espera = self.LCronograma.item(item, 'values')[5]
+            str_prazo = self.LCronograma.item(item, 'values')[6]  # Supondo que o 5º item é o subitem 4
+            str_per_conclusao = self.LCronograma.item(item, 'values')[7]  # Supondo que o 5º item é o subitem 4
+            str_ini_prev = self.LCronograma.item(item, 'values')[8]  # Supondo que o 5º item é o subitem 4
+            str_ini_real = self.LCronograma.item(item, 'values')[9]  # Supondo que o 5º item é o subitem 4
+            str_fim_prev = self.LCronograma.item(item, 'values')[10]  # Supondo que o 5º item é o subitem 4
+            str_fim_real = self.LCronograma.item(item, 'values')[11]  # Supondo que o 5º item é o subitem 4
+            str_obs = self.LCronograma.item(item, 'values')[12]  # Supondo que o 5º item é o subitem 4
+            
+
+            if nr_caracteres > 2:
+                linha_tarefa = ""
+                tarefa_dependencia = ""
+                lin_dependente = ""
+
+                for vi_contador in range(nr_caracteres):
+                    char_atual = str_endereco[vi_contador]
+
+                    if char_atual != ";":
+                        lin_dependente += char_atual  # Accumula caracteres
+                    if char_atual == ";" or vi_contador == nr_caracteres - 1:
+                        # processa a dependência acumulada
+                        dependente_num = int(lin_dependente)
+                        if dependente_num > linha_base_predessessora:
+                            linha_tarefa = dependente_num + 1
+                        else:
+                            linha_tarefa = dependente_num
+                        tarefa_dependencia += str(linha_tarefa)
+                        lin_dependente = ""
+
+                        # Adiciona o delimitador se não for o último
+                        if vi_contador < nr_caracteres - 1:
+                            tarefa_dependencia += ";"
+
+                # Atualiza o subitem de dependência
+                self.LCronograma.item(
+                                        item, 
+                                        text='', 
+                                        values=values[:4] + (
+                                                                tarefa_dependencia, 
+                                                                str_espera, 
+                                                                str_prazo, 
+                                                                str_per_conclusao,
+                                                                str_ini_prev,
+                                                                str_ini_real,
+                                                                str_fim_prev,
+                                                                str_fim_real,
+                                                                str_obs,
+                                                            )
+                                        )  
+            elif nr_caracteres != 0:
+                dependente_num = int(str_endereco.replace("'", ""))
+                if dependente_num >= linha_base_predessessora:
+                    tarefa_dependencia = dependente_num + 1
+                else:
+                    tarefa_dependencia = dependente_num
+                
+                tarefa_dependencia = str(tarefa_dependencia)
+                
+                # Atualiza o subitem de dependência
+                self.LCronograma.item(
+                                        item, 
+                                        text='', 
+                                        values=values[:4] + (
+                                                                tarefa_dependencia, 
+                                                                str_espera, 
+                                                                str_prazo, 
+                                                                str_per_conclusao,
+                                                                str_ini_prev,
+                                                                str_ini_real,
+                                                                str_fim_prev,
+                                                                str_fim_real,
+                                                                str_obs,
+                                                            )
+                                        ) 
+            else:
+                tarefa_dependencia = ""  
+    
+    def atualiza_cronograma_interacao(self, nr_interacao):
+        calcular = True
+        data_atualizacao = datetime.now()
+        for _ in range(nr_interacao):
+            for item_id in self.tree.get_children():
+                
+                values = self.tree.item(item_id, 'values')
+                tarefa_dependencia = values[4]   
+                if tarefa_dependencia:
+                    self.predessessora(item_id)
+
+        self.dta_tarefa_mae
+        calcular = False
+
+    def predessessora(self, item_id):
+        try:
+            task_data = self.LCronograma.item(item_id)
+
+            # Extraindo informações relevantes
+            tarefa_id = task_data['values'][1]  
+            tarefa_dependencia = str(task_data['values'][4]) 
+            tempo_espera = float(task_data['values'][5]) 
+            tempo_previsto = float(task_data['values'][6]) 
+
+            # Inicializa a data da tarefa predecessora
+            dta_precedente = None
+
+            if tarefa_dependencia:
+                # Divide as dependências por ';'
+                dependencias = tarefa_dependencia.split(';')  # Exemplo: '1;2;3'
+                for dep in dependencias:
+                    
+                    dep_index = int(dep) - 1  # Ajusta a indexação para 0 (Python)
+                    item_ids = self.LCronograma.get_children()  # Obtém os IDs de todos os itens
+                    # Verifica se o índice está dentro do intervalo
+                    if dep_index >= len(item_ids):
+                        continue  # Ignora se o índice estiver fora do intervalo
+                    
+                    # Obtém dados da tarefa dependente utilizando o ID do item correspondente
+                    dependent_item_id = item_ids[dep_index]
+                    dependent_task_data = self.LCronograma.item(dependent_item_id)
+                    
+                    # Processa a tarefa dependente e atualiza a data precedentemente
+                    if dependent_task_data['values'][10]:  # Supondo que data_conclusao_realizada está na posição 10
+                        if dta_precedente is None or dta_precedente < datetime.strptime(dependent_task_data['values'][10], "%d/%m/%Y"):
+                            dta_precedente = datetime.strptime(dependent_task_data['values'][10], "%d/%m/%Y")
+                    else:
+                        # Se não tiver data de conclusão, usa a data de previsão
+                        if dta_precedente is None or dta_precedente < datetime.strptime(dependent_task_data['values'][9], "%d/%m/%Y"):
+                            dta_precedente = datetime.strptime(dependent_task_data['values'][9], "%d/%m/%Y")
+
+            # Atualiza a data inicial prevista da tarefa atual, considerando o tempo de espera
+            if dta_precedente:  # Se houver uma data precedentemente válida
+                task_data['values'][7] = (dta_precedente + timedelta(days=tempo_espera)).strftime("%d/%m/%Y")  # Atualiza data_inicial_prevista
+
+            # Atualiza a data de conclusão prevista, caso a tarefa seguinte corresponda nas dependências
+            if int(tarefa_id.split('.')[0]) + 1 <= len(self.LCronograma.get_children()):  # Verifica se existe uma tarefa seguinte
+                next_item_id = self.LCronograma.get_children()[int(tarefa_id.split('.')[0])]  # Ajuste de indexação
+                next_task_data = self.LCronograma.item(next_item_id)
+
+                #  Trata as datas de conclusão de acordo com a lógica da tarefa atual
+                if data_inicial_realizada := task_data['values'][8]:  # Verifica se tem data inicial realizada
+                    data_conclusao_prevista = datetime.strptime(data_inicial_realizada, "%d/%m/%Y") + timedelta(days=tempo_previsto)  # Adiciona o tempo previsto
+                    task_data['values'][9] = data_conclusao_prevista.strftime("%d/%m/%Y")
+                else:
+                    task_data['values'][9] = (datetime.strptime(task_data['values'][8], "%d/%m/%Y") + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
+
+        except Exception as e:
+            print(f"Erro na predessessora: {str(e)}")  # Exibe mensagem de erro caso ocorra uma exceção 
+    
+    def ajustar_list(self):
+        try:
+            for i in range(len(self.LCronograma.get_children())):  # Itera sobre os itens no Treeview
+                item_id = self.LCronograma.get_children()[i]
+                task_data = self.LCronograma.item(item_id)  # Obtém os dados do item
+                tarefa_id = str(task_data['values'][1])  # Assume tarefa_ID está na posição 1
+                nrcarat = len(tarefa_id.upper())
+                linha = i + 1
+
+                if linha < len(self.LCronograma.get_children()):
+                    next_item_id = self.LCronograma.get_children()[linha]
+                    next_task_data = self.LCronograma.item(next_item_id)
+                    next_tarefa_id = str(next_task_data['values'][1])  # Assume tarefa_ID está na posição 1
+                    nrcarat_seguinte = len(next_tarefa_id.upper())
+                else:
+                    nrcarat_seguinte = nrcarat
+
+                # Aplica formatação baseada nos critérios
+                if nrcarat_seguinte > nrcarat:
+                    self.LCronograma.item(item_id, tags=('bold_blue',))  # Usar tags para aplicar estilos
+                elif nrcarat_seguinte == nrcarat and nrcarat > 2:
+                    self.LCronograma.item(item_id, tags=('normal_black',))
+                elif nrcarat_seguinte == nrcarat and nrcarat <= 2:
+                    self.LCronograma.item(item_id, tags=('bold_blue',))
+
+                # Para última linha, verifica comparação com a linha anterior
+                if i == len(self.LCronograma.get_children()) - 1:
+                    tarefa_id = str(self.LCronograma.item(item_id)['values'][1])  # Assume tarefa_ID está na posição 1
+                    tarefa_id_anterior = str(self.LCronograma.item(self.LCronograma.get_children()[i - 1])['values'][1])
+                    if len(tarefa_id.upper()) < len(tarefa_id_anterior.upper()):
+                        self.LCronograma.item(item_id, tags=('bold_blue',))
+
+            # Configura as tags para o Treeview
+            self.LCronograma.tag_configure('bold_blue', font=('Helvetica', 10, 'bold'), foreground='blue')
+            self.LCronograma.tag_configure('normal_black', font=('Helvetica', 10), foreground='black')
+
+        except Exception as e:
+            messagebox.showerror("Erro!", f"Erro: {str(e)}")  # Exibe mensagem de erro        
+    
+    def dta_tarefa_mae(self):
+        dta_atualizacao = datetime.now()
+        for idx in range(len(self.LCronograma.get_children())):
+            values = self.LCronograma.item(idx, 'values')
+            nrcarat = 0
+            NrCampos = values[0]
+            tarefa_id = values[1]
+            nrcarat = len(tarefa_id)
+
+            Lin = idx + 1
+            if Lin > len(self.LCronograma.get_children()):
+                return
+            else:
+                NrCaraceteres_Reg_Seg = len(values[1])
+
+            nrcarat_seguinte = 0
+            nr_tarefas_concluidas = 0
+            data_inicial_prevista = None
+            data_inicial_realizada = None
+            data_conclusao_prevista = None
+            data_conclusao_realizada = None
+
+            values = self.LCronograma.item(Lin, 'values')
+            nrregistros = len(values[1])
+            linha = Lin + 1
+            while values[1][:nrcarat] == tarefa_id and len(self.LCronograma.get_children()) >= linha:
+                values = self.LCronograma.item(linha, 'values')
+                if len(values[1]) <= nrregistros:
+                    values = self.LCronograma.item(Lin, 'values')
+                    if values[8]:
+                        if not data_inicial_prevista:
+                            data_inicial_prevista = values[8]
+                        else:
+                            data_inicial_prevista = min(data_inicial_prevista, values[8])
+                    if values[9]:
+                        if not data_inicial_realizada:
+                            data_inicial_realizada = values[9]
+                        else:
+                            data_inicial_realizada = min(data_inicial_realizada, values[9])
+                    if values[10]:
+                        if not data_conclusao_prevista:
+                            data_conclusao_prevista = values[10]
+                        else:
+                            data_conclusao_prevista = max(data_conclusao_prevista, values[10])
+                    if values[11]:
+                        if not data_conclusao_realizada:
+                            data_conclusao_realizada = values[11]
+                        else:
+                            data_conclusao_realizada = max(data_conclusao_realizada, values[11])
+
+                    # Count completed tasks
+                    if values[7] == 1.0:
+                        nr_tarefas_concluidas += 1
+                    
+                    nrcarat_seguinte += 1
+        
+                    # Calcular o Percentual de Execução
+                    percentual_execucao = nr_tarefas_concluidas / nrcarat_seguinte if nrcarat_seguinte > 0 else 0
+
+                    # Atualização no List
+                    if idx < len(self.LCronograma.get_children()):
+                        if data_inicial_prevista:
+                            self.LCronograma[idx]['data_inicial_prevista'] = data_inicial_prevista
+                        if data_inicial_realizada:
+                            self.LCronograma[idx]['data_inicial_realizada'] = data_inicial_realizada
+                        if data_conclusao_prevista:
+                            self.LCronograma[idx]['data_conclusao_prevista'] = data_conclusao_prevista
+                        if data_conclusao_realizada:
+                            self.LCronograma[idx]['data_conclusao_realizada'] = data_conclusao_realizada
+                            
+                        self.LCronograma[idx]['percentual_execucao'] = percentual_execucao
+
+                        # Optionally display success message
+                        messagebox.showinfo("Success", f"Task dates and percentages updated for: {self.LCronograma[idx]['tarefa_id']}")
+                Lin += 1
+                values = self.LCronograma.item(Lin, 'values')
+                nrregistros = len(values[1])
+                linha += 1
+                if Lin > len(self.LCronograma.get_children()):
+                    return
+                elif linha > len(self.LCronograma.get_children()):
+                    return
+                    
+            if nr_tarefas_concluidas != 0:
+                percentual_execucao = (nr_tarefas_concluidas / nrcarat_seguinte)
+            else:
+                percentual_execucao = 0
+
+            if NrCaraceteres_Reg_Seg > nrcarat:
+                if data_inicial_realizada and data_conclusao_realizada and percentual_execucao >= 1:
+                    self.LCronograma[idx]['data_conclusao_realizada'] = data_conclusao_realizada - data_inicial_realizada
+                elif data_inicial_prevista and data_conclusao_prevista:
+                    self.LCronograma[idx]['data_conclusao_prevista'] = data_conclusao_prevista - data_inicial_prevista
+
+                self.LCronograma[idx]['percentual_execucao'] = percentual_execucao
+    
+    def gravar_cronograma_tarefa(self, selected_iid):
+        # try:
+            projeto_ds = Cronograma_Atividades.frame_cabecalho_cronograma_atividades()
+            projeto_id = Cronograma_Atividades.obter_Projeto_ID(Cronograma_Atividades.entry_projeto.get())
+            # projeto_ds = self.Cronograma_Atividades.entry_projeto.get()
+            # projeto_id = self.Cronograma_Atividades.obter_Projeto_ID(self.Cronograma_Atividades.entry_projeto.get())
+            print(projeto_ds)
+            # projeto_ds = self.entry_projeto.get()
+            # if self.entry_projeto.get() != '':
+            #     projeto_id = self.obter_Projeto_ID(self.entry_projeto.get())
+            # else:
+            #     messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto!!")
+            #     return
+            # selected_item = self.tree.item(selected_iid)
+            selected_item = self.item(selected_iid)
+            projeto_ID = ""
+            projeto_DS = ""
+            projeto_cr = 0
+            tarefa_id = ""
+            tarefa_DS = ""
+            responsavel_nome = ""
+            tarefa_dependencia = ""
+            Tempo_Espera = 0
+            Tempo_Previsto = 0
+            data_inicial_Prevista = ""
+            data_inicial_Realizada = ""
+            dias_diferenca_inicio = 0
+            data_Conclusao_Prevista = ""
+            data_Conclusao_Realizada = ""
+            prazo_fatal_dias = 0
+            dias_diferenca_Conclusao = 0
+            status_projeto = ""
+            observacao = ""
+            Anexos = ""
+            percentual_execucao = ""
+
+            # Assign values from the selected item (simulating UsrCronograma)
+            projeto_ID = projeto_id
+            projeto_DS = projeto_ds
+            tarefa_id = selected_item['values'][1]
+            tarefa_DS = selected_item['values'][2]
+            responsavel_nome = selected_item['values'][3]
+            tarefa_dependencia = selected_item['values'][4]
+            Tempo_Espera = selected_item['values'][5]
+            Tempo_Previsto = selected_item['values'][6]
+            percentual_execucao = selected_item['values'][7]
+            data_inicial_Prevista = datetime.strptime(selected_item['values'][8], "%d/%m/%Y")
+            data_inicial_Realizada = datetime.strptime(selected_item['values'][9], "%d/%m/%Y") if selected_item['data_inicial_Realizada'] else None
+            data_Conclusao_Prevista = datetime.strptime(selected_item['values'][10], "%d/%m/%Y")
+            data_Conclusao_Realizada = datetime.strptime(selected_item['values'][11], "%d/%m/%Y") if selected_item['data_Conclusao_Realizada'] else None
+            observacao = selected_item['values'][12]
+            Anexos = ''
+
+            # Calculate date differences
+            dias_diferenca_inicio = (data_inicial_Realizada - data_inicial_Prevista).days if data_inicial_Realizada else 0
+            prazo_fatal_dias = (datetime.now() - data_Conclusao_Prevista).days
+            dias_diferenca_Conclusao = (data_Conclusao_Prevista - data_Conclusao_Realizada).days if data_Conclusao_Realizada else 0
+
+            sql = """
+                        UPDATE programas_atividades SET
+                            projeto_DS = %s,
+                            projeto_cr = %s,
+                            tarefa_DS = %s,
+                            responsavel_nome = %s,
+                            tarefa_dependencia = %s,
+                            tempo_espera = %s,
+                            tempo_previsto = %s,
+                            percentual_execucao = %s,
+                            Data_inicial_prevista = %s,
+                            Data_inicial_Realizada = %s,
+                            dias_diferenca_inicio = %s,
+                            data_conclusao_prevista = %s,
+                            data_conclusao_realizada = %s,
+                            prazo_fatal_dias = %s,
+                            dias_diferenca = %s,
+                            status = %s,
+                            observacao = %s,
+                            anexos = %s
+                        WHERE projeto_ID = %s AND tarefa_ID = %s
+                """
+
+            parameters = (
+                projeto_DS,
+                projeto_cr,
+                tarefa_DS.replace("'", " "),
+                responsavel_nome,
+                tarefa_dependencia,
+                Tempo_Espera,
+                Tempo_Previsto,
+                float(percentual_execucao.strip('%')) / 100,
+                data_inicial_Prevista.strftime('%Y-%m-%d'),
+                data_inicial_Realizada.strftime('%Y-%m-%d') if data_inicial_Realizada else '1899-12-30',
+                dias_diferenca_inicio,
+                data_Conclusao_Prevista.strftime('%Y-%m-%d'),
+                data_Conclusao_Realizada.strftime('%Y-%m-%d') if data_Conclusao_Realizada else '1899-12-30',
+                prazo_fatal_dias,
+                dias_diferenca_Conclusao,
+                status_projeto,
+                observacao.replace("'", " "),
+                Anexos,
+                projeto_ID,
+                tarefa_id
+            )
+
+            # Execute the SQL command
+            db.executar_consulta(sql, parameters)
+            messagebox.showinfo("Sucesso", "Tarefa Alterada com sucesso!")
+
+        # except Exception as e:
+        #     print(f"Erro: {e}")
+        # finally:
+        #     pass
+
+    def base64_to_farois(self, icon_tpo):
+        
+        if icon_tpo == 'semafaro_azul':
+            icon_base = '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'
+        elif icon_tpo == 'semafaro_vermelho':
+            icon_base = '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'
+        elif icon_tpo == 'semafaro_verde':
+            icon_base = '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'
+        elif icon_tpo == 'semafaro_verde_conclusao':
+            icon_base = 'iVBORw0KGgoAAAANSUhEUgAAAuQAAALkCAIAAADIxrcyAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAP+lSURBVHhe7P1ZkyPJlif4/c9RVTPA19i3zIjc95v3Zt5bdesuXTVV0y3TUyIUsoUzD3zhl+AnqC/CB1I4DyNCPpAyPWx2l7RUTW13qbvmvkYusWRGZGy+ADAz1XP4oGYGONwjMiMzFrjH+QkSGQ4H4IDBYHpM9ehRUlUYY4wxxiwqnr/BGGOMMWaRWLBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYoxxhhjFpoFK8YYY4xZaBasGGOMMWahWbBijDHGmIVmwYox94r0/9Idt5tHjXSXGWq7Res2m2HXFjNmBqneZs8xB1r/uRNR/yMR5VvzL4kAgGaOLtr+3Gr/eSD3oL3flCqBiFRVBM51G0AVpIB00T/3/5rZWuagy/sMCSBQqAqRA9z0V4/gDjHzfrWNRabfDlWoghmikSBMDOSLMfMsWHlEqWoOU3bcCOQTnO5oIQAo/6QAoDseIQRAH7EjCwkAEaSkjh0RQCDKB+L+vND3/3L9A82BpwAJdKaPjRhCIiQKAojBj9jXZXewIgDAdVOHUMx8O4Tag5J9Y8zeLFgxbbeKqgoSMwuSAwGiSJrjE2UijxyakAC5F0EAJnUAt7c/Cte580lJlZigCkVugXL7JAoAvv/ZDr2PkBysAFBOMTrv29tnQ3zR+T3qQF/Pti4zpzpC7UbhmKIjz8wQxJj8bABjzAwLVh5Rfc9KvwOISNJIPncWKE+DFQKY4QDujrt9sJIb5vkemoNAVQmU3//MteTtJo6Zc2+TaH+63G8T1q5z6iBuGrOnrjcl9zVq+9krVDUpJyCKSODBI7ZTqAKEPL7M3VZSQJImAFBH6p1z3Vdnx4ON6Vmw8ohKKXHXxvbjQUlFwCAQhCB5aKMLVmhmOLlvldudh7qD84G/VqgAECJyjhgKSeB8NpiTFWDByqNpZ7ACqCIlKEfnoqIGGgCMAVDs3q8O6LUAIgCDZXqqkwBRxEaaAZeAVwmxIQciAofuXsbsZMHKI6rvWRERIiIiEamaiThJ1KhGkDhKOYxRVYIHuM2/zaZt8wHchXYn9AAAqKAVIACsAs9h/q232yQ3V5wP2eYR0A4CtkOiOatJwA7gCEwSNmvcUlWmZZJueOjAI9FuXAxw7ZbhBMQhXKUTT4XHYDQWSsPlpbX2O2ffGbMXC1YedSml3DbHGCfNzfc/+02NzZgmoMhOmaGaRPK8BiaZ9tJOu3QP4sFlz2CFpHzh2T9bL04QnIAdPMO18UobmMjModZ6tB8d0041gKGAIgrIQ1GN9KsLX7x749YF0YqobbMfCd35jObBYvUACBGUSGPTNIEDSalp5czxp8+cesZR6d1g/kmMASxYeXSllJxzs/8AMInX3/j4Hyq91sRxQnReiJNqStIw+Xwg5u5Q2+Zw4FE6FZLh6cMvnzr21GpYVzggeBRQQJAzffKdun88Mm2S2RmsKABFnaBcK4+vbZ3/7NJb2+OrxRKl1I0WPRK0y7HNIZoHhCBAIk2kCG4olXN06Olzrx5ff5JQMPJxxph5FqyYqYRxjau/ePu/ilau0O3JrcEwKMemqZxrZ/1QF6xwTi+l/P9HAkmZRkvPP/HqmaPnGAOGdygIPp9J7wpWMjvyHmQpqXM0G6wkBZTBiNqAmluTL85f+MOt0cVQNgkTpdDnMx18JERKRE2tIhRCcM5JbABU49GxI8e2b9VSF6+88GcnVs4lDBxKh654kTE7WbBiphKqGtdvpi/eefePUUdLa2Fz+4ZyLEqOMQrAOq3aRCp5DEgIrI/ENUlJ9dIgHHr63PPHlx5TOIdhQJBI3PVOWbDySMm5X6pJNDp2CohCSetUe8djvXH+87ev3vwEftsXVaIYhYR4z73rQF6rJiJSJYJzLmhMMUbPrgxlNWpIysdOPPvE6RdLHCYMGJ7BFqyYPVmwYqYSmgobQP3BpbcvXzk/WHHj+pbwxBUkEpXQdatw7lkREkCUdNcsgIN5DQ0+rcQRHT9y5ulzL63SMUbpEAguj8e3clKhhSmPijyfPR9JRSGKFFED8bNr73/02ZvJjYuhCMbkNKrs3q8O8HXO31dV5xwzxzpq1DIMCre0cX18/MhjLzz92jKOE0pGSXAMbqtQGrOT7RZmikEeSw7DZ868eGT91ObNUVEMgx80Tcq7ihKUkAc9hNBn1/Y5pgf9WhLGxYre2Pjy04sfKiZAXcVtQLsAxTxqJLfHXbaKCqJgQphcHZ2/eOX9qFvFEHASU2q6hJVd+9WBvSZiOCeEmOokDTvy3jOVmxv1ofXTj595aQnHExwQCE6RN6Mxe7CeFTOlEIFUMvacbtVfvvXhbxNtiqsb3VZWoJ2I2Ket5CyWnc9xoJGIxOXB8uaNpqTVl5/50cmVc0BRYhm5aF6/NboYzvq0DzbVFGP0viCiKAmIxE3EaIxr75///dVbl8IQ5CRpTCBVpUepprESqyCEEFOV4sR7DlxK47UptRm88PQPHz/0rCIgcvCBAVUbBDK39Si1NObrENjBD3mZwYeLY88+8WyqNVXRwec0WsoL9k3TCdupzI/MtfiQRvUtPxDh+sKl8zfHX3lwQuzOJIGZSMUcdG0CKXIJuKhgUkjC+Pynb9/c+iKUtStiFUeNJB9KRTtWuGu/OpjXpNDEEHLEnuEI0CQxacSZk08eXT9FGCCVpQ9OIXX7QGP2ZD0rZqcEMCbVzXIgEZvvXPjdV5sX67SNIEqCdmGgjHL4smdZ+gN6nVDEqmqGbo1lJW2FM0efffrxl5d4nVH2Za9mgxU7UTzQBJAkyXEJICYlFyM2Lt/44MNPf6PFFopa0MRESp7dsqqyVCDZtV8d0GuwSiBWUOU4gjRW4nV1ZXDy+XN/uurPMJZZCpfTW2KNwIC374zZk/ubv/mb+dvMI0sBQJoUyoFAQLy2tr41vnVr84bzBIqKvCpQDlMUmgvQ3/EaqeuJmbkogPSdrnc/552ff/d97nz/va4VGiWR9wQiUYJW4wmUj6we7dZOmgYrGSE3aTYidCARAInCzitEuAHqG+NLH3/+ZqQtV6QqjZKmcrisgkmVQgjQinbtVw/zevd34Q7fC83/5a/2zsd2v529VlIfkFItEr33JC5VtFQceezYU0eXzgYMHAqmtoYevHZb1L4pZg/Ws2JmCVQ0CrkChAZQGl+vPn7n/K/G8aofNFUzAclwsNo0sa7rwWDwDfafPe+we97A3V2LTBNaZ6vNMrOIqIKZABJJRMzc7uf9q91VoHb++fe8FrC6YlyNPE2Wy0IbTeNwaHD21NEXzh59ETJghLzikoh0Sy/lESJCn9GSnwzAznVou9dhfeEPl8ylYel86zmz44Eh0AgKSWhcYQsYv3n+11/e/KxYIuVaKeU8dGibOsrTyHVBru9s7v6AsuS3jVwMUUjzjt3lxnZbTwlCMerIOSeRnA68LuukOHP02ZfO/gAYMAJpmE/isUDF3Ib1rJhZCoqkAHlVNAnkgvcMn27c/FIQg3fE3DQRQPClSj9B6DaX9mg4e0y8V0ejHcfZPvjI3T3MzOxoWlZ2PliZcRevR+FEPTMHD1BUjZoaTZhMmkPrx0u/zMQpCjMTUYyiKv1ikd1l5x+c/ruLou7m9Zj7IKdl7fwUdvyUOxcVIAJBQYyEidDYYfLWJ/86itcbjMFJoQJF7jYAGHki3aK53Uvaez/MRYQUqqTUdqLkbzqQF2tHDlxIoQoBxzrFgpcggzQKJw8//eTjLxW8yihJPSlj7rRh7z9rjAUrZgfNi48ROyJEVcfK0OGgHFVbk/G2agqFr5uKiDj4mITaLJbbXfqnfUBUFcpMzjlPDFUVka5yV3eHb0uBKMIMhkoSUjhXqNBkUknCoUOHGaWIOvYASIkAaqc35JilC1ZmQpeZ586/tKP1Q5QHNRQ0/Sjaz4ryP4QAAlHbxioU4BR1zJQub3z6+eWPJ3HLBShFbSvNtxb1c727r0PeNPnbTapQUnD7bdc2QMkXUMrBmaPAOkiVWw5Hnj73/KHieFJy5AlMeVvOWtTNZB4663M2s1jViRIIShJcUkSGK7D6zOOvri2djBOKtQyKoXMUY5ztEl8MpEI5IunN3wX4DiGLOGoYUZNqZNHALlABLppLX3108eqHEVvOcx7qJwYxQxnq0XaV38G0NLB52NoBDsxGltgxANRTjpVuO5bNdOPdj94JA0eeojTfbvfaDwQQtMuv79xjcwI+CSiBUpvUkrh0K2nCBYbnzjx1aHAM4IKKLhK02MR8U3ZwNDspgZxCgMSkDIUwoVzjk2dPvLRUHqtHogrn3Exaxu4OlbnL3p0J38zuZ9v9nNMnz4Uy21EhZYJj8kwe7VAREXG+fIvXw9DgiQkOznEJDU3UKLWGSvz25WsffrV5UVEBEqNg91nrrmbvrl+BeUDyWE8Ox/vL3F0YEEGtVCeM3/3ojUSTqHUonSCBRNoWfcGD0N1fonzZ/Y1T5DGy7n0J5ZiOcupKd0lCUSgKRwCelpoRe1k6ffSJ04fPMoooAjDBTbNV2uewL4O5kwX+EpmHgsFMohEQQmQQIwQsiQ5OrT5x9sSzHqv1WCHsmYl3N8gPyO06Trz3fbzS65eVzvZ84DekqZGmViXnArkQVWqtEtflitwcfXnxykcbzVVB5TwA7LXEbt/s7dX+mQWS95C5CTL9LxWqglhjBFTvfvHWza0vh8u+itvjeisUro9UDrKZ/HBgZltNaxxw0GGzxYdXT5x77FmPZUIoeUhtdosxd8FyVsxUPp0EAUhKktfpIPUEpEacK4qhj6keV9tJInlN0rRJdre97D5X2n2fO1/2loON3IPSXxMRc55C3JbqygkrABTdP7rrLl7Z/RfvcBFNSRWq1C47zQkc29NNRTWpUtTV1fWCBwTPuYMnb4N2S/RNYP/u2jRgUusUf+jaEGPX55BvaKe95F0PJEKxwo1bcvXtD/5QDBExVhfrZuQKLxKBNqGWlHcmmy/U5Xb2/hWpkGqbuaIAuM+zVWoTVvo7sxSoltaHJ8+eeubo4CSjcG05IjfNzZquU5Ffz65tbwxgwYqZl48cjlQBBkOBxCByzikQOPgyjLY3RpMtcBRpds0BnrP7t3sfBO9e+8x99wnQTpvM0UgfrHTxyo4YJafcAnf7ejSEgohUtJaoSMQAUtJUN9Xq6ko9qcfbo/W1I8vlWozJuTDdANRv3dkOlZlJoXtuLfOgUfc57Pjkukilv1lAIqgiNn711j/5QiKqKJVQUwx8VU2ICHmmDEBtD0QfrOwLe77OtsukDdfy1y0HGdT3PClycKaO0yBthuef/MGJw2dEfaAB4KF5ml5nvgvKvgNmb1ZnxUwpIBAFHBgA5aOPcvsLhqBqeHR9+9N3P/n19e3P1w4XUVIueUJEyL0XJMzc7ldtZ2++JgB32z1OkgAQufwnZnZXyjFH/sE55zg45+oU8y05n0ZVY6y7peZ2ustXAoCn4/VILGiLSQggnkkjueipGR4aPPbcU39ypHwiRR9cIOrjJwUkl/fsn3J6bWeVCyB/vITZcbo2TElRXGBVpFQ7T1WzzSH94qP/MpHrVb0dtWIXyeeVhqXdY8XNjbXf7f5/X6mqA6uQIvVDqKraNM3ur0v+dhMrAEFetTGPrgqgSZrhsJyMxiEEVq6qWBbDtO2fPfXjM0efWSkPAQ4aHBXtk003dBu7a3vMMWZvNnBoZkmbNtfGAjNnkwwmOC4LrKwMj505/vSRlRPVKJE6ZsecD1vt7nQPI+Bpr8nOp83/JiJmds7lOCalNHuH75Kbcnt5w0RQ1OnZJMcmESsHSW58a3Ll80vv35hcdR5JG0CIhEjrZgKAQKKznSvdd9CO04ulm5/VZVcQc4oAIaFpMPYBn1x5d1TdHDebjUxAUXMwqmlnpD7rnu+N3wkRQdvsrmlaendWMPvdae9z+0UYmbmp6qIYVKNGxa8uHWlGWF85efr4ubXyCCMAnpRVobMrduzoZTTmTnZ/ncyja6bM6twBJSKPVwgIfokPnTn+1IlDj6UJSeI86abvpdvZ/3Gv7J2OmiMVx20dTBHpWoskEkWiau6YoTatZPZy96SvdYe8gQS54Kl6okBEYHFFijr64sZnX1z/OGGbOEatFUmRclom2mZsZq7yN0khMA/ezIRzVTAjaRJE8ilhcit9+enlD+o0EtQclD3YtesaMjN1BUlm9t1F/HTzeKjjwOT7EdX8term+uU+le57dDuiALOyo8CpTFUYuKNnTz23HNYJAXAaichPH28z48xdsmDF7JCLNO04arQ/p5SiKqDECCt06PjaE4eXTmt0IhCBCgFE1C3md4/c7vjYH1jzHfpzwT4lJWuHqO7dK5p2PbUbiVmZFUxeEpqmIdJiiYVGV259cuHm+4oxqG7SGIhF8ASI5CGqxZ7Q+ojbFVeIQAku0CRtAU2DrXc++G1NG+wa58k55F6HPqF7/sOlLrTdK+Z+WIgIJDk6metZcc718Ur/VZKELrjIKcPtGBBIVFPhfFM1y4NDlIpqE+dOPXdq7WmoT6Ipgtm3eWXT4c7ZrWHfBfM1bBcxs/qu7/lf5DiEHZiEwYzyyPJjT539fsHLKi5GUZ0JHWYrKOyhP2p/k0tLVVXz2mntwZSZoZwPoH1fjqoqBKQKEU07pyfsfvK7viip5jUMZ7pGKB+DE2LUJoI9UZm26qufffn2RnXVQbzTqLVCFGiaZvq963tT+oJaZhHMRsgEoC9Ym5xDhY0L1z/8auMzDpVwzMkcIpJSEhFNuZthuh5QJiTSfr7zO9UDu+ROx/w9Imr7QadB/x6lC/MDd/yczU1bZuaUEmtAJK3d8fXHzp54MWDZ0cCx975gZs05Xu1Sh3scY4y5AwtWzE75gDUtRpmPTtyehyECCVCIL+jImUPPHD1yqiwHKqRKTL4dSpo1TezIjfPdtcd9T0l/Sz6w5hPB2d/2vSlzgD2Oube/8U6UIByFpAvpPCkThFVYwey9GwKujk3iWsLWqPnq/OfvR1SElFItkJzGiNkwZapvVMwi2BE+kkMjqUEFpMs3P/v487eGh7jRTSCqSt7T8p7pnHMu7Himtltl7rvw8M1+j/ox3PxVSinl2Gv2G9cNDPH8ngsE5+pJE0I52qoGfv2l514fYD0mT/CzBwTVvq90djsw9v5GGDNlwYqZMU2eEKArmA3k5T9AqohAJCgpoQkeq4+deWJt7RBzHv3hfIq519jNjrS6u0CSpyr08Up7FriLKs1MVM4njv2p5GzI8l1iAskVaAQMdYCDEisIwqSk8G7g3aBJKhRdGeFH129cvnT5s4QYvGtipVDn3F4pPbOVV8xDt3MnoXxTqqW6Gb+6fOWzSbPhyipiDNdFM0SO2FHbNnOe3DK1oN1mjgORmwnr0Qcr8wubd9/EGe0YUO5bcs5pTMuDlSfOPrXi1oHCoUiiCgg0phwMYZoJA7E93nxzFqyYr9EdddtdJXcPgL0kiLrD9PhqeTJgicEM6lcNlGm/93c6Rs/1rMyGKX2tlO50MInG2ZpUO93u9rvW5+b2/1CCqlZNnVJSpq6nPTYyFr/9yeV3rmxcUCh5FhXdu7Jt7pTaIwgzD95cC6qAQpmT4+bCpQ82RleXVv3G9i32muNj0dhmdYiklOq67h66+4O+374mFs/1DAEmcoScp5JPSBLyucFML9HMo1SFuvBFdu6mQpCU0nC4MtpOxw8/du7oM4oQaw3siRzABOJ2RU8oNOWxW/TjzsZ8vfsxccPsZ3l32HEW2B9N2kMVujlDSohoIm59dvV3H1/8Q6JtKjRKo6zKCYgASD3UAT73Hc8d57onnJo7RDrKqSoMzTmAjojzGHnuvu5yBVJ+YJcWcL9oNy5G09F9yWfSQju3FUUoF1pKHdaXzj177rWjgycZJSk52jkSNJ1hJGTH7oenTYIVeEbuQRRVpkKBJo3Y1R9e+f0Hn/+eBiMU9ajZDsEjudtPLNv9xbnf54dt50ebgNJiAH33CVOfOcuq+cuVO05UBYq+b3JPwohwLMlDib1TxJjGDBqE4WSDTq4/99KTf7LmTpMOkJwquXCH95uHU435RixYMd9JE8G+GeuFjy7+9uJX74ufcEGTOHKBhITzHN3EedYM8tqC8yTHJXORSr6RIfl2Jk+U66m0fSpZd0Ib2z6YPZ7/IRJHyjSI28unDj/3vSd+4rDS1HGpGEKJlJErsvdTK6xr5aFSoI7wHgzENAnOA2iSpNSEQi/ceP+Ty7/fjFeorBM3UYWIWPn2wcqDl4MVzQF9F68wAJH8JcrLZuUSiw6QlBpQX825nc00U995jrCTuq69W/IuVE0V06QsnPdhdDMeWz339JnXziw/77Cs0TNzm5a85zMZc5cssDXfDdUABnT0sRMvLxcnU+WhykxQxxKgQaXNK8xrtOaTuZ2XHd3O+ccMgAq1iyezd67tVunH1FXbUKY9tnad2AuDkhKAutm8ev2zL259LNguCkoac78U2mVs5zeqeSjaAZL2J86pWkKJi7St1z679M6NzS9diCnVIhJ8meL85/3QEVEbqezU1lPZORuZqB237a9n778XUnFJWAHlpFJ7doEGMvGFrp08+vTx5SeQV/8x5l6ztYHMdyGONaaGuSzccqJmc+tGFbdD4VIiBakwkHM42oXO8jTf+acB+uPj3I0E5KGffBTu79Nfq2ruVlEk1W6JtYWhirqJZelFZXt7c2VtedmvVDEFVxARqB1x6wvwL9arf/Q4Rp6ywuwAimhANTB++/wvr29foHLCRaqbCUDeh3rSuMXqycsvJn8r+spDUFXmPNU//zp/fUhVYmx0JjLpe1bmn7jTRAk+KFLTVN5T6QepoWbLPfn4q48de3aJjiVxhOCcA3L67R6RkzHfgu1J5rsKzifxjKXHj7302IkXAtakyt3jubo2KVgJCuR65POPB/rgY3fIwuyJOFdNkQQVIjhCe4KYE1a6XpbbHmEfIiWIRA7RlZPN8eXPv3xvhBtlcGhXg0uAAgmIeeFl81AJ0NTVdv5wGkkESRhf3Pjg0rUPtNjyg5i0yrVemyqGPAt9kWgOU4RU20vuLQq+ILAqibS9LO3yFLSjp7MrVjs3b669KJCUXFGoJkl14XysU9zmoyuPP3Hy5TU+oygQg8sByt4DScZ8S5azYr4LSbFyPiTxCQBX2/LF2x//05XrH/llUUrSrjib5zcCAN+x76DfG7uMFBfYTwvRwrUjPpR7rVNK+QjbTq0kIlm0+JscKKZYBXZOB812ePz4K68+8VOHFUYx05VCgIetZfiQCZA0RnJDJdSoCNXN+Mlv3/77Gl+5ommkUqKyXKoriVGWlpaappp/jocqfx20y4HKXyIiKkIpIilpTk7PWSwpNaC2PMGcPXNWFCzMznNTb3mg5HJ0M64VZ7/33M+OLD/psELiuC8YrQm0q+qSMd+W7Unmu2AVD/WOoTEywjIfe+z4C4dWHkMKECWNlFtgZWWl9sg4d2n1fdGzf0AAAbcXQoJGjbFd+Cd3taDtxCFKOlvUfCEuisTMUapGKxekwdaX1z77YuvTBuMGtUC6+jN7VQ02DwO1Jd3EQTbS1U+/eG9jcpXLJnLdqIiyJAbYgdAu8T3/oT/US19YOU+da+P7GKOIMLdlTrrB03YO3TdFwo4m9ZgIzrm6kqXiyOMnnj2xfNbJQGt2uT9FVFKj4D5mMua7s54V893kI6SDaKxFvacGWxevv/3u+X9KfhMuKqDklVRdAyjL7tVo2x93jv60E5WZnGo7+p5rQqhqN8Ey5Rv7MlO3qUf30OT6K8pKGpnUaWAduLhCaeXfvP7XhGWvS049I+T+IljSykMmUlccQkyiPglG71z8zYcXf1Ws1DU24MA0kOQ0whF71phqcouWTJrzZ6nvnsyT/Ouq8d5775k5pT4/PbFrv1P9F/AO3yAlwNP2ZGulKL36atM/eeKlF8/9dICjHiuIgANIRBpmBgVVGwsy94z1rJjvph25aIil8AyQx+CxI8+dPvaUS2VqJHhWxJhqAJLXTJlfB0cAyQfWfKCcnRbU35iLfU/H2vN8ZubpCoZItEcd8IeMSAElcgqf2jGG7URbv3vnn32ue8uB2poxEZTP1M2D1uY8KTN7EJwnQnPx+oefXXrHl1FdDcdKPomDBsclEeV1gh662diiS0Zpq7d570MIzKyqofDEbY4X0HaxEKNPVclFn3Pd5ztckjSFDw5hvJUOLZ964rGXB3TI01Lbp0MR1LQdLDamae4pC1bMd8PtIYkUpPkn5zE4e/qlk0ee5lQ2VV0G8k5TnQZhMP/wTr8KSV7utdc0Te4vyUFJXptw5yF1ceXJ2mj7WByUhUS5ER5vTa6+f/GPirg12WzvzYp2GMs8CDk1O/+7XfWGAO9G421BdX18+bNL77pBTb5p0gTIy2Y5wAOs1JUfvM9FCG+ni9B1tj8yRyr57fQrZ80GNHl1T5H2+u671SWOq+ViqZnIMBw9d+bFFX+CUWrqth5yKchubPNun96Y27NgxXxnBCAAjiAEYYAQDhWPnTn+wsrweJwoVIKDKqWYD5rdMWymfyWf4fXrpfWlq2KMIhH9QsoSp7MV'
+        elif icon_tpo == 'semafaro_amarelo':
+            icon_base = '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'
+
+        # Corrigindo padding se necessário
+        missing_padding = len(icon_base) % 4
+        if missing_padding:
+            icon_base += '=' * (4 - missing_padding)
+
+        try:
+            # Decodifica a imagem
+            image_data = base64.b64decode(icon_base)
+            image = Image.open(io.BytesIO(image_data))
+            # original_image = Image.open(icon_path)
+            resized_image =  image.resize((18, 18), Image.LANCZOS)  # Redimensionando para 32x32 pixels
+            return ImageTk.PhotoImage(resized_image)
+        except Exception as e:
+            print(f"Erro ao decodificar a imagem: {e}")
+            return None  # Retorna None ou tratamento de erro apropriado

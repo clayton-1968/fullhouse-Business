@@ -16,6 +16,7 @@ from UsrCalcular_Orcamento            import Processar_Premissas_Orcamento
 from UsrRelatorio_Orcamento           import Relatorio_Orcamento
 from UsrCadastros                     import Versoes
 from BxFinanceiras                    import ConsultaAprovacoes
+from UsrCronograma                    import Cronograma_Atividades
 
 
 class PrimaryWindow(
@@ -34,7 +35,8 @@ class PrimaryWindow(
                     Processar_Premissas_Orcamento,
                     Relatorio_Orcamento,
                     Versoes,
-                    ConsultaAprovacoes
+                    ConsultaAprovacoes,
+                    Cronograma_Atividades
                     ):
     def __init__(self):
         customtkinter.set_appearance_mode("Dark")
@@ -77,6 +79,8 @@ class PrimaryWindow(
                 self.cad_versoes()
             elif modulo == 'Baixas_Financeiras':
                 self.baixas_financeiras()
+            elif modulo == 'Cronograma_Barra_Projetos':
+                self.cronograma_atividades()
 
     def login_screen(self):
         # Configura a janela principal
@@ -262,7 +266,7 @@ class PrimaryWindow(
         filemenu4.add_command(label="Relatório Cli/Fornec.", command=lambda: self.menu_conectar('Extrato_Financeiro'))
         filemenu4.add_command(label="Extrato Bancário")
 
-        filemenu5.add_command(label="Cronograma")  # , command=modo_escuro)
+        filemenu5.add_command(label="Cronograma", command=lambda: self.menu_conectar('Cronograma_Barra_Projetos'))
         filemenu5.add_command(label="Reuniões")  # , command=modo_escuro)
         filemenu5.add_command(label="Cad. Projetos")  # , command=modo_escuro)
         filemenu5.add_command(label="Envios de SMS")
