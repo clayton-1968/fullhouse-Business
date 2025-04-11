@@ -212,9 +212,9 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
         self.lb_descricao = customtkinter.CTkLabel(self.fr_descricao, text="Descrição")
         self.lb_descricao.place(relx=0.22, rely=0, relheight=0.25, relwidth=0.55)
 
-        self.entry_cpf_cnpj = customtkinter.CTkEntry(self.fr_descricao, fg_color="white", text_color="black",
+        self.entry_descricao = customtkinter.CTkEntry(self.fr_descricao, fg_color="white", text_color="black",
                                                            justify=tk.LEFT)
-        self.entry_cpf_cnpj.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_descricao.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
 
         # Nr. Documento
         self.fr_nr_documento = customtkinter.CTkFrame(self.ft_titulo, border_color="gray75", border_width=1)
@@ -316,6 +316,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
             self.tree.column(col, width=width)
 
         self.tree.grid(row=0, column=0, sticky="nsew")
+        self.tree.bind("<Double-1>", self.lbaixas_click)
 
         # Scrollbar
         scrollbar = ttk.Scrollbar(self.fr_tree, orient="vertical", command=self.tree.yview)
@@ -692,59 +693,54 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
 
     def lbaixas_click(self, event):
-        item = self.lbaixas.selection()
-        if item:
-            valores = self.lbaixas.item(item, "values")
+        self.selected_item = self.tree.selection()
+        if self.selected_item:
+            self.item = self.tree.item(self.selected_item)['values']
 
-            # Preencher campos com os valores selecionados
-            self.tbaixa_dta.delete(0, tk.END)
-            self.tbaixa_dta.insert(0, valores[0])
+            self.entry_dt_baixa.delete(0, tk.END)
+            self.entry_dt_baixa.insert(0, self.item[0])
 
-            self.tbaixa_cpf_cnpj.config(state='normal')
-            self.tbaixa_cpf_cnpj.delete(0, tk.END)
-            self.tbaixa_cpf_cnpj.insert(0, valores[1])
-            self.tbaixa_cpf_cnpj.config(state='readonly')
+            self.entry_cpf_cnpj.configure(state='normal')
+            self.entry_cpf_cnpj.delete(0, tk.END)
+            self.entry_cpf_cnpj.insert(0, self.item[1])
+            self.entry_cpf_cnpj.configure(state='readonly')
 
-            self.tbaixa_favorecido_ds.config(state='normal')
-            self.tbaixa_favorecido_ds.delete(0, tk.END)
-            self.tbaixa_favorecido_ds.insert(0, valores[2])
-            self.tbaixa_favorecido_ds.config(state='readonly')
+            self.entry_descricao.configure(state='normal')
+            self.entry_descricao.delete(0, tk.END)
+            self.entry_descricao.insert(0, self.item[2])
+            self.entry_descricao.configure(state='readonly')
 
-            self.tbaixa_documento_nr.config(state='normal')
-            self.tbaixa_documento_nr.delete(0, tk.END)
-            self.tbaixa_documento_nr.insert(0, valores[3])
-            self.tbaixa_documento_nr.config(state='readonly')
+            self.entry_nr_documento.configure(state='normal')
+            self.entry_nr_documento.delete(0, tk.END)
+            self.entry_nr_documento.insert(0, self.item[3])
+            self.entry_nr_documento.configure(state='readonly')
 
-            self.tbaixa_documento_valor.config(state='normal')
-            self.tbaixa_documento_valor.delete(0, tk.END)
-            self.tbaixa_documento_valor.insert(0, valores[4])
-            self.tbaixa_documento_valor.config(state='readonly')
+            self.entry_valor.configure(state='normal')
+            self.entry_valor.delete(0, tk.END)
+            self.entry_valor.insert(0, self.item[4])
+            self.entry_valor.configure(state='readonly')
 
-            self.tbaixa_parcela_nr.config(state='normal')
-            self.tbaixa_parcela_nr.delete(0, tk.END)
-            self.tbaixa_parcela_nr.insert(0, valores[5])
-            self.tbaixa_parcela_nr.config(state='readonly')
+            self.entry_nr_parc.configure(state='normal')
+            self.entry_nr_parc.delete(0, tk.END)
+            self.entry_nr_parc.insert(0, self.item[5])
+            self.entry_nr_parc.configure(state='readonly')
 
-            self.tbaixa_dtadocumento.config(state='normal')
-            self.tbaixa_dtadocumento.delete(0, tk.END)
-            self.tbaixa_dtadocumento.insert(0, valores[6])
-            self.tbaixa_dtadocumento.config(state='readonly')
+            self.entry_dt_doc.configure(state='normal')
+            self.entry_dt_doc.delete(0, tk.END)
+            self.entry_dt_doc.insert(0, self.item[6])
+            self.entry_dt_doc.configure(state='readonly')
 
-            self.tbaixa_situacao.config(state='normal')
-            self.tbaixa_situacao.delete(0, tk.END)
-            self.tbaixa_situacao.insert(0, valores[7])
-            self.tbaixa_situacao.config(state='readonly')
+            self.combo_situacao.configure(state='normal')
+            self.combo_situacao.set(self.item[7])
+            self.combo_situacao.configure(state='readonly')
 
-            self.tbaixa_unidade.config(state='normal')
-            self.tbaixa_unidade.delete(0, tk.END)
-            self.tbaixa_unidade.insert(0, valores[8])
-            self.tbaixa_unidade.config(state='readonly')
+            self.entry_unidade.configure(state='normal')
+            self.entry_unidade.delete(0, tk.END)
+            self.entry_unidade.insert(0, self.item[8])
+            self.entry_unidade.configure(state='readonly')
 
-            self.tbaixa_vlr_liquidacao.delete(0, tk.END)
-            self.tbaixa_vlr_liquidacao.insert(0, valores[9] if valores[9] else valores[4])
-
-            # Dar foco ao campo de data
-            self.tbaixa_dta.focus()
+            self.entry_valor_liquidado.delete(0, tk.END)
+            self.entry_valor_liquidado.insert(0, self.item[9] if self.item[9] else self.item[4])
 
 
 BaixasFinanceiras()
