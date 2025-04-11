@@ -72,7 +72,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
         # Botão de salvar
         icone_salvar = self.base64_to_photoimage('save')
         self.btn_salvar = customtkinter.CTkButton(self.fr_botao_box, image=icone_salvar, text='',
-                                                    fg_color='transparent', command=self.gravar_bxpagtos)
+                                                    fg_color='transparent', command=self.grava_bx_pagtos)
         self.btn_salvar.grid(row=3, column=2, padx=5, pady=2)
         self.btn_salvar.pack(pady=10)
         self.btn_salvar.place(relx=0.75, rely=0.25, relwidth=0.24, relheight=0.5)
@@ -550,40 +550,146 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
                 self.tree.insert('', 'end', values=formatted_item)
 
 
-    def gravar_bxpagtos(self):
-        # Validar campos obrigatórios
-        if not self.tbaixa_dta.get():
-            messagebox.showerror("Erro", "Data de baixa é obrigatória!")
-            return
+    def grava_bx_pagtos(self):
+        if not self.entry_dt_baixa.get():
+            self.dt_baixa = ""
+            self.id_banco = ""
+            self.id_agencia = ""
+            self.nr_conta = ""
+        else:
+            if not self.entry_banco.get() or not self.entry_agencia.get() or not self.entry_contacorrente.get():
+                messagebox.showerror("Erro", "Banco, Agência e Conta não podem ser vazios!")
+                return
 
-        if not self.tbaixa_vlr_liquidacao.get():
-            messagebox.showerror("Erro", "Valor de liquidação é obrigatório!")
-            return
+            self.dt_baixa = datetime.strptime(self.entry_dt_baixa.get(), "%d/%m/%Y").strftime("%Y-%m-%d")
+            self.id_banco = self.obter_banco(self.entry_banco.get())
 
-        if self.tbaixa_dta.get() and (not self.tbanco.get() or not self.tagencia.get() or not self.tconta.get()):
-            messagebox.showerror("Erro", "Preencher os dados do Agente Financeiro de Liquidação!")
-            return
+
+        if self.entry_dt_doc.get():
+            self.dt_doc = datetime.strptime(self.entry_dt_doc.get(), "%d/%m/%Y").strftime("%Y-%m-%d")
+
+        if self.combo_empresa.get():
+            self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+
+        if self.entry_cpf_cnpj:
+            self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get())
 
         try:
-            # Converter data para verificação
-            dta_baixa = datetime.strptime(self.tbaixa_dta.get(), "%d/%m/%Y")
-            dta_documento = datetime.strptime(self.tbaixa_dtadocumento.get(), "%d/%m/%Y")
+            if self.combo_baixa.get() == "EFETUAR BAIXA":
+                query = f"SELECT * FROM TB_TravaLancamento WHERE Empresa_ID = '{self.id_empresa}'"
 
-            if dta_baixa < dta_documento:
-                messagebox.showerror("Erro", "Data de Baixa não pode ser menor que a data do documento!")
-                return
-        except ValueError:
-            messagebox.showerror("Erro", "Data inválida!")
+                myresult = db._querying(query)
+                consulta = [(consulta) for consulta in myresult]
+
+                if not consulta:
+                    messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!")
+                    return
+                else:
+                    dta_trava_dia = consulta[0]['Dta_Trava'].day
+                    rvDta_trava_dia = f"{dta_trava_dia:02d}"
+                    dta_trava_mes = consulta[0]['Dta_Trava'].month
+                    rvDta_tava_mes = f"{dta_trava_mes:02d}"
+                    dta_trava_ano = consulta[0]['Dta_Trava'].year
+                    self.data_trava = f"{dta_trava_ano}-{rvDta_tava_mes}-{rvDta_trava_dia}"
+
+                    if self.data_trava > self.dt_baixa:
+                        messagebox.showinfo("Aviso", "Data de Baixa não pode ser anterior a data de trava do "
+                                                     f"sistema - {self.data_trava}")
+                        return
+
+                if self.dt_baixa and self.dt_doc > self.dt_baixa:
+                    messagebox.showinfo("Aviso", "Data de Baixa não pode ser menor que a data do documento!")
+                    return
+
+                if self.combo_situacao.get() == "L":
+                    query = f"""
+                        UPDATE TB_Financeiro SET 
+                        Fin_Dta_Liquidacao='{self.dt_baixa}', 
+                        Fin_VlR_Liquidacao={str(self.entry_valor_liquidado.get()).replace(",", ".")}, 
+                        ID_Bco_Liquidacao='{self.id_banco}', 
+                        Fin_Agencia_Liquidacao='{self.entry_agencia.get()}', 
+                        Fin_Conta_Liquidacao='{self.entry_contacorrente.get()}' 
+                        WHERE ID_Empresa='{self.id_empresa}' 
+                        AND ID_Pessoa='{self.entry_cpf_cnpj.get()}' 
+                        AND Fin_Parcela='{self.entry_nr_parc.get()}' 
+                        AND ID_Unidade='{self.entry_unidade.get()}' 
+                        AND Fin_Num_documento='{self.entry_nr_documento.get()}'
+                    """
+                else:
+                    query = f"""
+                        UPDATE TB_Faturas SET 
+                        Fat_DtaBaixa='{self.dt_baixa}', 
+                        Fat_VlrBaixa='{str(self.entry_valor_liquidado.get()).replace(",", ".")}' 
+                        WHERE Fat_NumDoc='{self.entry_nr_documento.get()}' 
+                        AND Fat_Pessoa='{self.entry_cpf_cnpj.get()}' 
+                        AND Fat_Empresa='{self.id_empresa}'
+                    """
+
+                myresult = db._querying(query)
+                if myresult:
+                    messagebox.showinfo("Aviso", "Registro salvo com sucesso!")
+                else:
+                    messagebox.showerror("Erro", "Erro ao salvar registro!")
+                    return
+
+            elif self.combo_baixa.get() == "CANCELAR BAIXA":
+                query = f"SELECT * FROM TB_TravaLancamento WHERE Empresa_ID='{self.id_empresa}'"
+
+                myresult = db._querying(query)
+                consulta = [(consulta) for consulta in myresult]
+
+                if not consulta:
+                    messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!")
+                    return
+                else:
+                    dta_trava_dia = consulta[0]['Dta_Trava'].day
+                    rvDta_trava_dia = f"{dta_trava_dia:02d}"
+                    dta_trava_mes = consulta[0]['Dta_Trava'].month
+                    rvDta_tava_mes = f"{dta_trava_mes:02d}"
+                    dta_trava_ano = consulta[0]['Dta_Trava'].year
+                    self.data_trava = f"{dta_trava_ano}-{rvDta_tava_mes}-{rvDta_trava_dia}"
+
+                    if self.data_trava > self.dt_baixa:
+                        messagebox.showinfo("Aviso", "Data de Baixa não pode ser anterior a data de trava do "
+                                                     f"sistema - {self.data_trava}")
+                        return
+
+                if self.combo_situacao.get() == "L":
+                    query = f"""
+                        UPDATE TB_Financeiro SET 
+                        Fin_Dta_Liquidacao=NULL, 
+                        Fin_VlR_Liquidacao=NULL, 
+                        ID_Bco_Liquidacao=NULL, 
+                        Fin_Conta_Liquidacao=NULL, 
+                        Fin_Agencia_Liquidacao=NULL 
+                        WHERE ID_Empresa='{self.id_empresa}' 
+                        AND ID_Pessoa='{self.entry_cpf_cnpj.get()}' 
+                        AND Fin_Parcela='{self.entry_nr_parc.get()}' 
+                        AND ID_Fazenda='{self.entry_unidade.get()}' 
+                        AND Fin_Num_documento='{self.entry_nr_documento.get()}'
+                    """
+                else:
+                    query = f"""
+                        UPDATE TB_Faturas SET 
+                        Fat_DtaBaixa=NULL, 
+                        Fat_VlrBaixa=NULL 
+                        WHERE Fat_NumDoc='{self.entry_nr_documento.get()}' 
+                        AND Fat_Pessoa='{self.entry_cpf_cnpj.get()}'
+                    """
+
+                myresult = db._querying(query)
+                if myresult:
+                    messagebox.showinfo("Aviso", "Registro salvo com sucesso!")
+                else:
+                    messagebox.showerror("Erro", "Erro ao salvar registro!")
+                    return
+
+            self.consulta_titulos()
+
+        except Exception as e:
+            print(str(e))
             return
 
-        # Simular gravação (substituir por operação real no banco de dados)
-        if self.tbaixa_tpo.get() == "EFETUAR BAIXA":
-            operacao = "baixa"
-        else:
-            operacao = "cancelamento"
-
-        messagebox.showinfo("Sucesso", f"Operação de {operacao} realizada com sucesso!")
-        self.consulta_titulos()  # Atualizar a lista
 
     def lbaixas_click(self, event):
         item = self.lbaixas.selection()
