@@ -2,6 +2,7 @@ from imports import *
 from PIL import ImageTk, Image
 
 ################# criando janela ###############
+# Cadastro de Fornecedores e Clientes
 class Pessoas(Icons, Functions):
 
     def cad_pessoas(self):
@@ -386,6 +387,7 @@ class Pessoas(Icons, Functions):
 
 Pessoas()
 
+# Cadastro de Produtos
 class Produtos(Icons, Functions):
 
     def cad_produtos(self):
@@ -601,7 +603,7 @@ class Versoes(Icons, Functions):
         # Botão Salvar
         bt_salvar_versao = customtkinter.CTkButton(janela, image=self.btsave_img, text='', command=self.gravar_versoes)
         bt_salvar_versao.place(relx=0.965, rely=0.01, relwidth=0.03, relheight=0.04)
-
+    
     def frame_versao_linha_2(self, janela):
         # Widgets - Listar Itens
         self.LItens_versao = ttk.Treeview(janela, height=12, column=('Id', 'Codigo', 'Descricao', 'dta'), show='headings')
@@ -720,3 +722,421 @@ class Versoes(Icons, Functions):
             self.LItens_versao.insert('', 'end', values=formatted_item)
 
 Versoes()
+
+#Cadastro de Novos Projetos
+class Projetos(Icons, Functions):
+    
+    def cad_projetos(self):
+        
+        self.janela_cadastro_projetos = customtkinter.CTkToplevel(self.window_one)
+        self.janela_cadastro_projetos.title('Cadastro de Projetos')
+        self.janela_cadastro_projetos.geometry("1680x800")
+        self.janela_cadastro_projetos.resizable(True, True)
+        self.janela_cadastro_projetos.lift()  # Traz a janela para frente   
+
+        self.frame_projetos_principal = customtkinter.CTkFrame(self.janela_cadastro_projetos, fg_color='black')
+        self.frame_projetos_principal.pack(pady=10, padx=10, fill="both", expand=True)
+        customtkinter.CTkLabel(self.frame_projetos_principal, text="", font=("Roboto", 30, "bold")).pack(pady=10)
+        
+        self.frame_cad_projetos_treeview = customtkinter.CTkFrame(self.frame_projetos_principal, fg_color='black') 
+        self.frame_cad_projetos_treeview.place(relx= 0.005, rely=0.085, relwidth=.99, relheight=0.91)
+        customtkinter.CTkLabel(self.frame_cad_projetos_treeview, text="", font=("Roboto", 30, "bold")).pack(pady=10)
+         
+        # Flag para controle do estado da aplicação
+        self.app_closing = False
+        
+        # Vincular o evento de fechamento da janela
+        self.janela_cadastro_projetos.protocol("WM_DELETE_WINDOW", lambda:  self.on_closing_tela(self.janela_cadastro_projetos))
+
+        self.images_base64()
+
+        self.frame_projetos_linha_1(self.frame_projetos_principal)
+        self.frame_projetos_linha_2(self.frame_projetos_principal)
+        self.frame_projetos_linha_3(self.frame_projetos_principal)
+        self.frame_projetos_linha_4(self.frame_projetos_principal)
+        
+        self.janela_cadastro_projetos.focus_force()
+        self.janela_cadastro_projetos.grab_set()
+        
+        self.consulta_projetos()
+            
+    def frame_projetos_linha_1(self, janela):
+        # Empresa
+        coordenadas_relx = 0.005
+        coordenadas_rely = 0.01
+        coordenadas_relwidth = 0.25
+        coordenadas_relheight = 0.07
+        fr_empresa = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_empresa.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_empresa = customtkinter.CTkLabel(fr_empresa, text="Empresa")
+        lb_empresa.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+
+        empresas = []
+
+        self.entry_empresa = AutocompleteCombobox(fr_empresa, width=30, font=('Times', 11), completevalues=empresas)
+        self.entry_empresa.pack()
+        self.entry_empresa.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_empresa.bind("<Button-1>", lambda event: self.atualizar_empresas(event, self.entry_empresa))
+        self.entry_empresa.bind("<KeyRelease>", lambda event: self.atualizar_empresas(event, self.entry_empresa))
+        self.entry_empresa.bind('<Down>', lambda event: self.atualizar_empresas(event, self.entry_empresa))
+        self.entry_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_uf))
+
+        # Estado
+        coordenadas_relx = 0.26
+        coordenadas_rely = 0.01
+        coordenadas_relwidth = 0.06
+        coordenadas_relheight = 0.07
+        fr_uf = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_uf.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_estado = customtkinter.CTkLabel(fr_uf, text="UF")
+        lb_estado.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+
+        uf = self.get_uf()
+        self.entry_uf = AutocompleteCombobox(fr_uf, width=30, font=('Times', 11), completevalues=uf)
+        self.entry_uf.pack()
+        self.entry_uf.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_uf.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_municipio))
+    
+        
+        # Municipio
+        coordenadas_relx = 0.325
+        coordenadas_rely = 0.01
+        coordenadas_relwidth = 0.20
+        coordenadas_relheight = 0.07
+        fr_municipio = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_municipio.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_municipio = customtkinter.CTkLabel(fr_municipio, text="Município")
+        lb_municipio.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+
+        municipios = self.get_municipios( self.entry_uf.get())
+        
+        self.entry_municipio = AutocompleteCombobox(fr_municipio, width=30, font=('Times', 11), completevalues=municipios)
+        self.entry_municipio.pack()
+        self.entry_municipio.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_municipio.bind("<Button-1>", lambda event: self.atualizar_municipio(event, self.entry_uf.get(), self.entry_municipio))
+        self.entry_municipio.bind("<KeyRelease>", lambda event: self.atualizar_municipio(event, self.entry_uf.get(), self.entry_municipio))
+        self.entry_municipio.bind('<Down>', lambda event: self.atualizar_municipio(event, self.entry_uf.get(), self.entry_municipio))
+        self.entry_municipio.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_tpo_projeto))      
+
+        # Tipo do Programa
+        coordenadas_relx=0.53
+        coordenadas_rely=0.01
+        coordenadas_relwidth=0.20
+        coordenadas_relheight=0.07
+        fr_tpo_programa = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_tpo_programa.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_tpo_programa = customtkinter.CTkLabel(fr_tpo_programa, text="Tipo do Programa")
+        lb_tpo_programa.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+
+        tpo_programa = [] #self.get_tpo_programa()
+        tpo_programa = [(tpo_projeto['Tipo_Empreendimento']) for tpo_projeto in tpo_programa]
+
+        self.entry_tpo_programa = AutocompleteCombobox(fr_tpo_programa, width=30, font=('Times', 11), completevalues=tpo_programa)
+        self.entry_tpo_programa.pack()
+        self.entry_tpo_programa.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        # self.entry_tpo_programa.bind("<Button-1>", lambda event: self.atualizar_tpo_programa(self, self.entry_tpo_programa))
+        # self.entry_tpo_programa.bind('<Down>', lambda event: self.atualizar_tpo_programa(self, self.entry_tpo_programa))
+        self.entry_tpo_programa.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_nome_cenario))
+
+        # Tipo do Empreendimento
+        coordenadas_relx=0.735
+        coordenadas_rely=0.01
+        coordenadas_relwidth=0.19
+        coordenadas_relheight=0.07
+        fr_tpo_projeto = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_tpo_projeto.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_tpo_projeto = customtkinter.CTkLabel(fr_tpo_projeto, text="Tipo do Empreendimento")
+        lb_tpo_projeto.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+
+        tpo_projeto = self.get_tpo_projetos()
+        tpo_projeto = [(tpo_projeto['Tipo_Empreendimento']) for tpo_projeto in tpo_projeto]
+
+        self.entry_tpo_projeto = AutocompleteCombobox(fr_tpo_projeto, width=30, font=('Times', 11), completevalues=tpo_projeto)
+        self.entry_tpo_projeto.pack()
+        self.entry_tpo_projeto.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_tpo_projeto.bind("<Button-1>", lambda event: self.atualizar_tpo_projeto(self, self.entry_tpo_projeto))
+        self.entry_tpo_projeto.bind('<Down>', lambda event: self.atualizar_tpo_projeto(self, self.entry_tpo_projeto))
+        self.entry_tpo_projeto.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_nome_cenario))
+
+        # Botão Consultar
+        bt_consultar_projetos = customtkinter.CTkButton(janela, image=self.btconsulta_img, text='', command=self.consulta_projetos)
+        bt_consultar_projetos.place(relx=0.93, rely=0.01, relwidth=0.03, relheight=0.04)
+
+        # Botão Salvar
+        bt_salvar_projetos = customtkinter.CTkButton(janela, image=self.btsave_img, text='', command=self.gravar_projetos)
+        bt_salvar_projetos.place(relx=0.965, rely=0.01, relwidth=0.03, relheight=0.04)
+
+    def frame_projetos_linha_2(self, janela):
+        # Centro de Resultado
+        coordenadas_relx = 0.005
+        coordenadas_rely = 0.085
+        coordenadas_relwidth = 0.25
+        coordenadas_relheight = 0.07
+        fr_itens_nota_centro_result = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_itens_nota_centro_result.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_itens_nota_centro = customtkinter.CTkLabel(fr_itens_nota_centro_result, text='Centro de Resultado')
+        lb_itens_nota_centro.place(relx=0.05, rely=0, relwidth=0.6, relheight=0.25)
+
+        self.centro_resultado = []
+        self.entry_itens_nota_centro = AutocompleteCombobox(fr_itens_nota_centro_result, width=30, font=('Times', 11), completevalues=self.centro_resultado)
+        self.entry_itens_nota_centro.place(relx=0.02, rely=0.5, relwidth=0.96, relheight=0.4)
+        self.entry_itens_nota_centro.bind("<Button-1>", lambda event: self.atualizar_centro_resultado(event, self.combo_empresa.get(), self.entry_itens_nota_centro))
+        self.entry_itens_nota_centro.bind('<Down>', lambda event: self.atualizar_centro_resultado(event, self.combo_empresa.get(), self.entry_itens_nota_centro))
+        self.entry_itens_nota_centro.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_itens_nota_natureza))
+
+        # Status
+        coordenadas_relx=0.26
+        coordenadas_rely=0.085
+        coordenadas_relwidth=0.19
+        coordenadas_relheight=0.07
+        fr_informacoes_status = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_informacoes_status.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_informacoes_status = customtkinter.CTkLabel(fr_informacoes_status, text="Status")
+        lb_informacoes_status.place(relx=0.01, rely=0.11, relheight=0.07, relwidth=0.70)
+
+        status = []
+
+        self.entry_informacoes_status = AutocompleteCombobox(fr_informacoes_status, width=30, font=('Times', 11), completevalues=status)
+        self.entry_informacoes_status.pack()
+        self.entry_informacoes_status.place(relx=0.02, rely=0.5, relwidth=0.96, relheight=0.4)
+        self.entry_informacoes_status.bind("<Button-1>", lambda event: self.atualizar_status(event, self.entry_empresa.get(), self.entry_informacoes_status))
+        self.entry_informacoes_status.bind('<Down>', lambda event: self.atualizar_status(event, self.entry_empresa.get(), self.entry_informacoes_status))
+        self.entry_informacoes_status.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_informacoes_anexos))
+
+        # Nome do Projeto
+        coordenadas_relx=0.455
+        coordenadas_rely=0.085
+        coordenadas_relwidth=0.255
+        coordenadas_relheight=0.07
+        fr_nome_projeto = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_nome_projeto.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_nome_projeto = customtkinter.CTkLabel(fr_nome_projeto, text="Nome do Projeto")
+        lb_nome_projeto.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+
+        nome_projeto = []
+
+        self.entry_nome_projeto = AutocompleteCombobox(fr_nome_projeto, width=30, font=('Times', 11), completevalues=nome_projeto)
+        self.entry_nome_projeto.pack()
+        self.entry_nome_projeto.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_nome_projeto.bind("<Button-1>", lambda event: 
+                                                                self.atualizar_nome_cenario(event,
+                                                                self.entry_empresa.get(), 
+                                                                self.entry_municipio.get(), 
+                                                                self.entry_uf.get(), 
+                                                                self.entry_tpo_projeto.get(), 
+                                                                self.entry_nome_projeto))
+        self.entry_nome_projeto.bind('<Down>', lambda event: 
+                                                                self.atualizar_nome_projeto(event,
+                                                                self.entry_empresa.get(), 
+                                                                self.entry_municipio.get(), 
+                                                                self.entry_uf.get(), 
+                                                                self.entry_tpo_projeto.get(), 
+                                                                self.entry_nome_projeto))
+        self.entry_nome_projeto.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_nome_empreendimento))
+
+        # Setor
+        coordenadas_relx=0.715
+        coordenadas_rely=0.085
+        coordenadas_relwidth=0.10
+        coordenadas_relheight=0.07
+        fr_setor = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_setor.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_setor = customtkinter.CTkLabel(fr_setor, text="Setor")
+        lb_setor.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
+        
+        self.entry_setor = customtkinter.CTkEntry(fr_setor, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_setor.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_setor.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_cep))
+        
+        # Prioridade
+        coordenadas_relx=0.82
+        coordenadas_rely=0.085
+        coordenadas_relwidth=0.10
+        coordenadas_relheight=0.07
+        fr_setor = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_setor.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_setor = customtkinter.CTkLabel(fr_setor, text="Prioridade")
+        lb_setor.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
+        
+        self.entry_setor = customtkinter.CTkEntry(fr_setor, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_setor.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_setor.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_cep))
+
+        # Opções Status
+        coordenadas_relx=0.925
+        coordenadas_rely=0.085
+        coordenadas_relwidth=0.07
+        coordenadas_relheight=0.07
+        fr_status = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_status.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_status = customtkinter.CTkLabel(fr_status, text="Status")
+        lb_status.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
+
+        self.check_var_ativo = customtkinter.StringVar(value="on")
+        self.checkbox_ativo = customtkinter.CTkCheckBox(fr_status, text='Sim', variable=self.check_var_ativo, onvalue="on", offvalue="off")
+        self.checkbox_ativo.place(relx=0.1, rely=0.30, relheight=0.5, relwidth=0.50)
+        
+    
+    def frame_projetos_linha_3(self, janela):
+        # Observação
+        coordenadas_relx=0.005
+        coordenadas_rely=0.16
+        coordenadas_relwidth=0.985
+        coordenadas_relheight=0.07
+        fr_obs = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_obs.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_obs = customtkinter.CTkLabel(fr_obs, text="Observação")
+        lb_obs.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
+        
+        self.entry_obs = customtkinter.CTkEntry(fr_obs, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_obs.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_obs.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_cep))
+    
+    def frame_projetos_linha_4(self, janela):
+        # Widgets - Listar Itens
+        self.LItens_projetos = ttk.Treeview(janela, height=12, column=(
+                                                                        'Id', 
+                                                                        'descricao', 
+                                                                        'uf', 
+                                                                        'municipio', 
+                                                                        'centro_resultado',
+                                                                        'tpo_programa',
+                                                                        'tpo_empreendimento',
+                                                                        'situacao',
+                                                                        'prioridade',
+                                                                        'setor',
+                                                                        'obs',
+                                                                        'status',
+
+                                                                        ), show='headings')
+        self.LItens_projetos.heading('Id', text="Nr.")
+        self.LItens_projetos.column('Id', width=5, anchor='e')
+        self.LItens_projetos.heading('descricao', text="Descrição")
+        self.LItens_projetos.column('descricao', width=300, anchor='w')
+        self.LItens_projetos.heading('uf', text="UF")
+        self.LItens_projetos.column('uf', width=5, anchor='w')
+        self.LItens_projetos.heading('municipio', text="Municipio")
+        self.LItens_projetos.column('municipio', width=50, anchor='c')
+        self.LItens_projetos.heading('centro_resultado', text="Centro Resultado")
+        self.LItens_projetos.column('centro_resultado', width=50, anchor='c')
+        self.LItens_projetos.heading('tpo_programa', text="Tipo Programa")
+        self.LItens_projetos.column('tpo_programa', width=50, anchor='c')
+        self.LItens_projetos.heading('tpo_empreendimento', text="Tipo Empreendimento")
+        self.LItens_projetos.column('tpo_empreendimento', width=50, anchor='c')
+        self.LItens_projetos.heading('situacao', text="Situação")
+        self.LItens_projetos.column('situacao', width=50, anchor='c')
+        self.LItens_projetos.heading('prioridade', text="Prioridade")
+        self.LItens_projetos.column('prioridade', width=50, anchor='c')
+        self.LItens_projetos.heading('setor', text="Setor")
+        self.LItens_projetos.column('setor', width=50, anchor='c')
+        self.LItens_projetos.heading('obs', text="Obs.")
+        self.LItens_projetos.column('obs', width=50, anchor='c')
+        self.LItens_projetos.heading('status', text="Status")
+        self.LItens_projetos.column('status', width=50, anchor='c')
+        
+        self.LItens_projetos.place(relx=0.001, rely=0.25, relwidth=1, relheight=0.985)
+        # self.LItens.bind("<Double-1>", self.OnDoubleClick)
+        self.entry_empresa.focus()
+        # self.limpar_campos_lcto()
+        
+    def gravar_projetos(self):
+        # Definição de variáveis
+        versao_id = self.entry_versao_id.get().strip()
+        versao_codigo = self.entry_versao_nr.get().strip()  
+        versao_descricao = self.entry_versao_ds.get().strip()  
+        versao_dta = datetime.strptime(self.entry_versao_dta.get(), "%d/%m/%Y")
+        versao_dta = versao_dta.strftime("%Y-%m-%d")  
+        
+        if not versao_codigo:
+            messagebox.showinfo('Gestor Negócios', 'Erro: Preencher o Campo Código da Versão!!!.')
+            self.entry_versao_nr.focus()
+            return
+
+        try:
+            datetime.strptime(versao_dta, "%Y-%m-%d")
+        except ValueError:
+            messagebox.showerror("Erro", "Data da versão com preenchimento errado!")
+            return
+        
+            
+        # Consulta para verificar se o produto já existe
+        vs_sql = """SELECT * FROM sys_versao 
+                    WHERE 
+                        versao_nr=%s
+                    """
+        myresult = db.executar_consulta(vs_sql, (str(versao_codigo)))
+        
+        if not myresult:  # Se não encontrou registros
+            # Inserção do novo produto
+            vs_sql = """INSERT INTO sys_versao 
+                        (
+                            versao_nr,
+                            versao_ds,
+                            versao_dta
+                                
+                        ) 
+                        VALUES (%s, %s, %s)
+                     """
+            values = (
+                    versao_codigo,
+                    versao_descricao,
+                    versao_dta
+                    )
+            myresult = db.executar_consulta(vs_sql,  values)
+            
+        else:
+            # Atualização do produto existente
+            vs_sql = """UPDATE TB_Produtos SET 
+                                versao_ds = %s, 
+                                versao_dta = %s, 
+                        WHERE 
+                            versao_nr=%s
+                        """
+            myresult = db.executar_consulta(vs_sql,  (versao_descricao, 
+                                                      versao_dta))
+    
+    def consulta_projetos(self):
+        
+        # Preparar a tabela
+        self.LItens_versao.delete(*self.LItens_versao.get_children())  # Limpa a tabela
+        self.LItens_versao.heading('Id', text="ID")
+        self.LItens_versao.column('Id', width=5, anchor='c')
+        self.LItens_versao.heading('Codigo', text="Código")
+        self.LItens_versao.column('Codigo', width=10, anchor='e')
+        self.LItens_versao.heading('Descricao', text="Descrição")
+        self.LItens_versao.column('Descricao', width=800, anchor='w')
+        self.LItens_versao.heading('dta', text="Data")
+        self.LItens_versao.column('dta', width=50, anchor='c')
+        
+        # SQL para buscar os dados
+        vs_sql = """
+                    SELECT
+                        versao_id,
+                        versao_nr,
+                        versao_ds,
+                        versao_dta
+                    FROM
+                        sys_versao
+                    ORDER BY versao_nr ASC """
+        
+        myresult = db._querying(vs_sql)
+        consulta = [(consulta) for consulta in myresult]
+        
+        if not consulta:
+            messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!")
+            return
+                
+        # Inserir dados na tabela
+        
+        for item in consulta:
+            Dta_Registro = item.get('versao_dta')
+            data_formatada = Dta_Registro.strftime('%d/%m/%Y')
+            formatted_item = (
+                    item.get('versao_id'),
+                    item.get('versao_nr'),
+                    item.get('versao_ds'),
+                    data_formatada
+                )
+            self.LItens_versao.insert('', 'end', values=formatted_item)
+
+Projetos()
