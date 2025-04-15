@@ -18,6 +18,8 @@ from UsrCadastros                     import Versoes
 from UsrAprovacaoLctos                import AprovacaoLctos
 from UsrExtratoBancario               import ExtratoBancario
 from UsrBaixasFinanceiras             import BaixasFinanceiras
+from UsrCronograma                    import Cronograma_Atividades
+
 
 class PrimaryWindow(
                     Login,
@@ -37,8 +39,10 @@ class PrimaryWindow(
                     Versoes,
                     AprovacaoLctos,
                     ExtratoBancario,
-                    BaixasFinanceiras
-):
+                    BaixasFinanceiras,
+                    Cronograma_Atividades
+                    ):
+
     def __init__(self):
         customtkinter.set_appearance_mode("Dark")
         customtkinter.set_default_color_theme("dark-blue")
@@ -83,6 +87,8 @@ class PrimaryWindow(
                 self.extrato_bancario(self.principal_frame)
             elif modulo == 'Baixas_Financeiras':
                 self.baixas_financeiras(self.principal_frame)
+            elif modulo == 'Cronograma_Barra_Projetos':
+                self.cronograma_atividades()
 
     def login_screen(self):
         # Configura a janela principal
@@ -268,7 +274,7 @@ class PrimaryWindow(
         filemenu4.add_command(label="Relatório Cli/Fornec.", command=lambda: self.menu_conectar('Extrato_Financeiro'))
         filemenu4.add_command(label="Extrato Bancário", command=lambda: self.menu_conectar('Extrato_Bancario'))
 
-        filemenu5.add_command(label="Cronograma")  # , command=modo_escuro)
+        filemenu5.add_command(label="Cronograma", command=lambda: self.menu_conectar('Cronograma_Barra_Projetos'))
         filemenu5.add_command(label="Reuniões")  # , command=modo_escuro)
         filemenu5.add_command(label="Cad. Projetos")  # , command=modo_escuro)
         filemenu5.add_command(label="Envios de SMS")

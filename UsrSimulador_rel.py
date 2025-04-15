@@ -1444,7 +1444,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.opcoes = ["Não", "Sim"]
         self.entry_financiamento_financiador = customtkinter.CTkComboBox(self.fr_financiamento, fg_color="black", text_color="white", justify=tk.RIGHT, values=self.opcoes)
         self.entry_financiamento_financiador.place(relx=0.01, rely=0.925, relwidth=0.97, relheight=0.055)
-        self.entry_financiamento_financiador.bind("<Return>", lambda event: self.muda_barrinha(event, self.text_observacoes ))
+        self.entry_financiamento_financiador.bind("<Return>", lambda event: self.muda_barrinha(event, self.text_observacoes))
 
         # Resultados
         self.fr_resultados = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1, fg_color="white")

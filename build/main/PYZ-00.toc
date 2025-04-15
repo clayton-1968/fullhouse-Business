@@ -253,6 +253,10 @@
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrCalcular_Orcamento.py',
    'PYMODULE'),
+  ('UsrCronograma',
+   'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
+   'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrCronograma.py',
+   'PYMODULE'),
   ('UsrExtratosClientes_Fornecedores',
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrExtratosClientes_Fornecedores.py',

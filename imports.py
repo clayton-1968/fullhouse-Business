@@ -10,7 +10,7 @@ from PIL import ImageTk, Image
 import io
 
 from tktooltip import ToolTip
-from tkinter import StringVar, OptionMenu, font, messagebox, ttk
+from tkinter import StringVar, OptionMenu, font, messagebox, ttk, PhotoImage
 from tkinter import *
 from tkinter import Toplevel
 
