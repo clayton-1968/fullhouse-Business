@@ -183,7 +183,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         """
 
         if self.combo_empresa.get():
-            self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+            self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
             query += f' AND ID_Empresa = "{self.id_empresa}"'
 
         if self.entry_unidade_negocio.get():

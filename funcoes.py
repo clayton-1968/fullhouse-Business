@@ -4875,165 +4875,201 @@ class Formularios():
                 target.tag_add("sel", "1.0", "end")  # Select all text
                 target.focus()  # Ensure the textbox is focused
 
-    def obter_Empresa_ID(self, Empresa_DS):
+    def obter_Empresa_ID(self, Empresa_DS, janela):
         if Empresa_DS !='':
             id_empresa = self.empresas_dict.get(Empresa_DS)  # Obtenha o ID correspondente
             if id_empresa:
                 return id_empresa
             else:
-                messagebox.showinfo('Gestor Negócios', 'Erro - Empresa Incorreta, selecione novamente!!!')
+                messagebox.showinfo('Gestor Negócios', 'Erro - Empresa Incorreta, selecione novamente!!!', parent = janela)
                 return None
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Empresa em Branco!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Empresa em Branco!!!', parent = janela)
             return
 
-    def obter_Projeto_ID(self, Projeto_DS):
+    def obter_tpo_programa_ID(self, Tpo_Programa_DS, janela):
+        if Tpo_Programa_DS !='':
+            id_tpo_programa = self.tpo_programa_dict.get(Tpo_Programa_DS)  # Obtenha o ID correspondente
+            if id_tpo_programa:
+                return id_tpo_programa
+            else:
+                messagebox.showinfo('Gestor Negócios', 'Erro - Tipo de Programa Incorreto, selecione novamente!!!', parent = janela)
+                return None
+        else:
+            messagebox.showinfo('Gestor Negócios', 'Erro - Tipo de Programa em Branco!!!', parent = janela)
+            return
+    
+    def obter_Situacao_Projeto_ID(self, Situacao_Projeto_DS, janela):
+        if Situacao_Projeto_DS !='':
+            id_situacao_projeto = self.projetos_situacao_dict.get(Situacao_Projeto_DS)  # Obtenha o ID correspondente
+            if id_situacao_projeto:
+                return id_situacao_projeto
+            else:
+                messagebox.showinfo('Gestor Negócios', 'Erro - Situação do Projeto Incorreto, selecione novamente!!!', parent = janela)
+                return None
+        else:
+            messagebox.showinfo('Gestor Negócios', 'Erro - Situação Projeto em Branco!!!', parent = janela)
+            return
+    
+    def obter_Tpo_Projeto(self, Tipo_Projeto_DS, janela):
+        if Tipo_Projeto_DS !='':
+            id_tpo_projeto = self.tpo_projeto_dict.get(Tipo_Projeto_DS)  # Obtenha o ID correspondente
+            if id_tpo_projeto:
+                return id_tpo_projeto
+            else:
+                messagebox.showinfo('Gestor Negócios', 'Erro - Tipo do Empreendimento Incorreto, selecione novamente!!!', parent = janela)
+                return None
+        else:
+            messagebox.showinfo('Gestor Negócios', 'Erro - Tipo do Empreendimento em Branco!!!', parent = janela)
+            return
+        
+    def obter_Projeto_ID(self, Projeto_DS, janela):
         if Projeto_DS !='':
             id_projeto = self.projetos_dict.get(Projeto_DS)  # Obtenha o ID correspondente
             if id_projeto:
                 return id_projeto
             else:
-                messagebox.showinfo('Gestor Negócios', 'Erro - Projeto Incorreto, selecione novamente!!!')
+                messagebox.showinfo('Gestor Negócios', 'Erro - Projeto Incorreto, selecione novamente!!!', parent = janela)
                 return None
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Projeto em Branco!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Projeto em Branco!!!', parent = janela)
             return
         
-    def obter_Unidade_ID(self, Unidade_DS):
+    def obter_Unidade_ID(self, Unidade_DS, janela):
         id_unidade = self.unidade_negocios_dict.get(Unidade_DS)  # Obtenha o ID correspondente
         if id_unidade:
             return id_unidade
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Unidade de Negócio em Branco ou Incorreta!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Unidade de Negócio em Branco ou Incorreta!!!', parent = janela)
         return None
     
-    def obter_FormaLiquidacao_ID(self, FormaLiquidacao_DS):
+    def obter_FormaLiquidacao_ID(self, FormaLiquidacao_DS, janela):
         id_formaliquidacao = self.tpo_pagto_dict.get(FormaLiquidacao_DS)  # Obtenha o ID correspondente
         if id_formaliquidacao:
             return id_formaliquidacao
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Meio de Pagamento em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Meio de Pagamento em Branco ou Incorreto!!!', parent = janela)
         return None
     
-    def obter_Frete_DS(self, Frete_ID):
+    def obter_Frete_DS(self, Frete_ID, janela):
         ds_frete = self.frete_dict_1.get(Frete_ID)  # Obtenha o ID correspondente
         if ds_frete:
             return ds_frete
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Tipo de Frete em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Tipo de Frete em Branco ou Incorreto!!!', parent = janela)
         return None
 
-    def obter_Frete_ID(self, Frete_DS):
+    def obter_Frete_ID(self, Frete_DS, janela):
         id_frete = self.frete_dict.get(str(Frete_DS))  # Obtenha o ID correspondente
         if id_frete:
             return id_frete
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Tipo de Frete em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Tipo de Frete em Branco ou Incorreto!!!', parent = janela)
         return None
     
-    def obter_Centro_ID(self, Centro_DS):
+    def obter_Centro_ID(self, Centro_DS, janela):
         id_centro = self.centro_dict.get(Centro_DS)  # Obtenha o ID correspondente
         if id_centro:
             return id_centro
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Centro de Resultado em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Centro de Resultado em Branco ou Incorreto!!!', parent = janela)
         return None
     
-    def obter_Spead_ID(self, Spead_DS):
+    def obter_Spead_ID(self, Spead_DS, janela):
         id_spead = self.produto_dict.get(Spead_DS)  # Obtenha o ID correspondente
         if id_spead:
             return id_spead
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Spead em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Spead em Branco ou Incorreto!!!', parent = janela)
         return None
     
-    def obter_UnidadeMedida_ID(self, UnidadeMedida_DS):
+    def obter_UnidadeMedida_ID(self, UnidadeMedida_DS, janela):
         id_unidademedida = self.unidade_medida_dict.get(UnidadeMedida_DS)  # Obtenha o ID correspondente
         if id_unidademedida:
             return id_unidademedida
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Unidade Medida em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Unidade Medida em Branco ou Incorreto!!!', parent = janela)
         return None
     
-    def obter_Produto_ID(self, Produto_DS):
+    def obter_Produto_ID(self, Produto_DS, janela):
         id_produto = self.produto_dict.get(Produto_DS)  # Obtenha o ID correspondente
         if id_produto:
             return id_produto
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Produto em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Produto em Branco ou Incorreto!!!', parent = janela)
         return None
     
-    def obter_Natureza_ID(self, Natureza_DS):
+    def obter_Natureza_ID(self, Natureza_DS, janela):
         id_natureza = self.natureza_dict.get(Natureza_DS)  # Obtenha o ID correspondente
         if id_natureza:
             return id_natureza
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Natureza Financeira em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Natureza Financeira em Branco ou Incorreto!!!', parent = janela)
         return None
     
-    def obter_Pessoa_ID(self, Pessoa_DS):
+    def obter_Pessoa_ID(self, Pessoa_DS, janela):
         id_pessoa = self.nome_pessoa_dict.get(Pessoa_DS)  # Obtenha o ID correspondente
         if id_pessoa:
             return id_pessoa
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Cliente/Fornecedor em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Cliente/Fornecedor em Branco ou Incorreto!!!', parent = janela)
         return None
     
-    def obter_municipio_IBGE(self, Municipio_DS):
+    def obter_municipio_IBGE(self, Municipio_DS, janela):
         id_municipio = self.municipios_dict.get(Municipio_DS)  # Obtenha o ID correspondente
         if id_municipio:
             return id_municipio
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Município em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Município em Branco ou Incorreto!!!', parent = janela)
         return None
 
-    def obter_banco(self, Banco_DS):
+    def obter_banco(self, Banco_DS, janela):
         id_banco = self.bancos_dict.get(Banco_DS)  # Obtenha o ID correspondente
         if id_banco:
             return id_banco
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Banco em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Banco em Branco ou Incorreto!!!', parent = janela)
         return None
 
-    def obter_Orc_ID(self, Orc_DS):
+    def obter_Orc_ID(self, Orc_DS, janela):
         id_orc = self.orcamentos_dict.get(Orc_DS)  # Obtenha o ID correspondente
         if id_orc:
             return id_orc
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Orcamento em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Orcamento em Branco ou Incorreto!!!', parent = janela)
         return None
 
-    def obter_Orc_Item_ID(self, Orc_Item_DS):
+    def obter_Orc_Item_ID(self, Orc_Item_DS, janela):
         id_item_preco = self.item_precos_orcamentos_dict.get(Orc_Item_DS)  # Obtenha o ID correspondente
         if id_item_preco:
             return id_item_preco
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Item em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Item em Branco ou Incorreto!!!', parent = janela)
             return
         return None
 
-    def obter_Periodicidade_ID(self, Periodicidade_DS):
+    def obter_Periodicidade_ID(self, Periodicidade_DS, janela):
         id_periodicidade = self.periodicidades_dict.get(Periodicidade_DS)  # Obtenha o ID correspondente
         if id_periodicidade:
             return id_periodicidade
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Periodicidade em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Periodicidade em Branco ou Incorreto!!!', parent = janela)
         return None
     
-    def obter_Indice_ID(self, Idx_DS):
+    def obter_Indice_ID(self, Idx_DS, janela):
         id_idx = self.idx_dict.get(Idx_DS)  # Obtenha o ID correspondente
         if id_idx:
             return id_idx
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Índice em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Índice em Branco ou Incorreto!!!', parent = janela)
         return None
 
-    def obter_Nat_Gerencial_ID(self, DS_Nat_Gerencial):
+    def obter_Nat_Gerencial_ID(self, DS_Nat_Gerencial, janela):
         id_natureza_gerencial = self.natureza_gerencial_dict.get(DS_Nat_Gerencial)  # Obtenha o ID correspondente
         if id_natureza_gerencial:
             return id_natureza_gerencial
         else:
-            messagebox.showinfo('Gestor Negócios', 'Erro - Natureza Gerencial em Branco ou Incorreto!!!')
+            messagebox.showinfo('Gestor Negócios', 'Erro - Natureza Gerencial em Branco ou Incorreto!!!', parent = janela)
         return None
     
 class Atualizar_Combo():
@@ -5063,11 +5099,24 @@ class Atualizar_Combo():
         self.empresas = [empresa[1] for empresa in self.empresas]
         target.set_completion_list(self.empresas)
 
+    def atualizar_projetos_situacao(self, event, target):
+        self.projetos_situacao = self.get_projetos_situacao()
+        self.projetos_situacao_dict = {nome: id for id, nome in self.projetos_situacao}
+        self.projetos_situacao = {nome: nome for id, nome in self.projetos_situacao}
+        target.set_completion_list(self.projetos_situacao)
+
+    def atualizar_tpo_programa(self, event, target):
+        self.tpo_programa = self.get_tpo_programa()
+        self.tpo_programa_dict = {nome: id for id, nome in self.tpo_programa}
+        self.tpo_programa = [tpo_programa[1] for tpo_programa in self.tpo_programa]
+        target.set_completion_list(self.tpo_programa)
+
     def atualizar_tpo_projeto(self, event, target):
         self.tpo_projeto = self.get_tpo_projetos()
         self.tpo_projeto_dict = {nome: id for id, nome, imposto in self.tpo_projeto}
-        self.impostos = [aliquota['Per_Imposto'] for aliquota in self.tpo_projeto]
-        self.tpo_projeto = [(tpo_projeto['Tipo_Empreendimento']) for tpo_projeto in self.tpo_projeto]
+        self.impostos = {nome: imposto for id, nome, imposto in self.tpo_projeto}
+        self.tpo_projeto = {nome: nome for id, nome, imposto in self.tpo_projeto}
+        # self.tpo_projeto = [tpo_projetos[1] for tpo_projetos in self.centro_resultado]
         target.set_completion_list(self.tpo_projeto)
     
     def atualizar_tpo_pagto(self, event, target):
@@ -5101,8 +5150,8 @@ class Atualizar_Combo():
 
         target.set_completion_list(sorted(self.natureza_gerencial, key=str.lower))  # Ordena e configura
     
-    def atualizar_centro_resultado(self, event, Empresa_DS, target):
-        self.centro_resultado = self.get_centrosresultados(Empresa_DS)
+    def atualizar_centro_resultado(self, event, Empresa_ID, target):
+        self.centro_resultado = self.get_centrosresultados(Empresa_ID)
         self.centro_dict = {nome: id for id, nome in self.centro_resultado}
         self.centro_resultado = [centro[1] for centro in self.centro_resultado]
         target.set_completion_list(self.centro_resultado)
@@ -5131,7 +5180,7 @@ class Atualizar_Combo():
         target.set_completion_list(self.nome_pessoa)
                 
     def atualizar_nome_cenario(self, event, entry_empresa, entry_municipio, entry_uf, entry_tpo_projeto, target):
-        ID_Empresa = self.obter_Empresa_ID(entry_empresa)
+        ID_Empresa = entry_empresa
         self.nome_cenario = self.get_nome_cenario(ID_Empresa, entry_municipio, entry_uf, entry_tpo_projeto)
         completion_list = [area['Nome_da_Area'] for area in self.nome_cenario]
         target.set_completion_list(completion_list)
@@ -5207,6 +5256,7 @@ class Atualizar_Combo():
             self.projetos = [item[1] for item in self.projetos]  # Extrai o nome do projeto
 
         target.set_completion_list(sorted(self.projetos, key=str.lower))  # Ordena e configura    
+
 class Icons():
     # Função para os farois
     def base64_to_farois(self, icon_tpo):
@@ -5501,8 +5551,7 @@ class Functions():
         return pessoas
 
     # Drop Centro Resultados
-    def get_centrosresultados(self, Empresa_DS):
-        Empresa_ID = self.obter_Empresa_ID(Empresa_DS)
+    def get_centrosresultados(self, Empresa_ID):
         strSql = """SELECT 
                         Cen_ID, 
                         Cen_Descricao 
@@ -5614,7 +5663,24 @@ class Functions():
         strSql = "SELECT projeto_tipo_id, Tipo_Empreendimento, Per_Imposto FROM Tipo_Empreendimento WHERE Tipo_Empreendimento IS NOT NULL ORDER BY Tipo_Empreendimento"
 
         myresult = db._querying(strSql)
-        return myresult
+        tpo_projetos = [(tpo['projeto_tipo_id'], tpo['Tipo_Empreendimento'], tpo['Per_Imposto']) for tpo in myresult]
+        return tpo_projetos
+    
+    # Drop Tipo Programa
+    def get_tpo_programa(self):
+        strSql = "SELECT projeto_status_id, projeto_status_ds FROM Projetos_Status ORDER BY projeto_status_ds"
+
+        myresult = db._querying(strSql)
+        projeto_result = [(projeto_status['projeto_status_id'], projeto_status['projeto_status_ds']) for projeto_status in myresult]
+        return projeto_result
+    
+    # Drop Tipo Status do Projeto
+    def get_projetos_situacao(self):
+        strSql = "SELECT projetos_situacao_id, projetos_situacao_ds FROM Projetos_Situacao ORDER BY projetos_situacao_ds"
+
+        myresult = db._querying(strSql)
+        projetos_situacao = [(tpo['projetos_situacao_id'], tpo['projetos_situacao_ds']) for tpo in myresult]
+        return projetos_situacao
     
     # Drop Tipo Pagtos
     def get_tpo_pagto(self):

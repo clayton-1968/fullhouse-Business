@@ -161,7 +161,7 @@ class Simulador_Estudos_Rel(Widgets):
                                                     image=icon_image, 
                                                     fg_color='transparent', 
                                                     command=lambda: [self.Fluxo_Caixa(
-                                                                                    self.obter_Empresa_ID(self.entry_empresa.get()), 
+                                                                                    self.obter_Empresa_ID(self.entry_empresa.get(), janela), 
                                                                                     self.entry_uf.get(), 
                                                                                     self.entry_municipio.get(), 
                                                                                     self.entry_tpo_projeto.get(),

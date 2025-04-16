@@ -54,7 +54,7 @@ class Cronograma_Atividades(Widgets, Projetos):
     def consulta_cronograma_atividades(self, janela):
         projeto_ds = self.entry_projeto.get()
         if self.entry_projeto.get() != '':
-            projeto_id = self.obter_Projeto_ID(self.entry_projeto.get())
+            projeto_id = self.obter_Projeto_ID(self.entry_projeto.get(), janela)
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto!!")
             return

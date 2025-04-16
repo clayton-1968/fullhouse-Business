@@ -752,13 +752,11 @@ class Projetos(Icons, Functions):
 
         self.frame_projetos_linha_1(self.frame_projetos_principal)
         self.frame_projetos_linha_2(self.frame_projetos_principal)
-        self.frame_projetos_linha_3(self.frame_projetos_principal)
-        self.frame_projetos_linha_4(self.frame_projetos_principal)
         
         self.janela_cadastro_projetos.focus_force()
         self.janela_cadastro_projetos.grab_set()
         
-        self.consulta_projetos()
+        # self.consulta_projetos()
             
     def frame_projetos_linha_1(self, janela):
         # Empresa
@@ -816,7 +814,7 @@ class Projetos(Icons, Functions):
         self.entry_municipio.bind("<Button-1>", lambda event: self.atualizar_municipio(event, self.entry_uf.get(), self.entry_municipio))
         self.entry_municipio.bind("<KeyRelease>", lambda event: self.atualizar_municipio(event, self.entry_uf.get(), self.entry_municipio))
         self.entry_municipio.bind('<Down>', lambda event: self.atualizar_municipio(event, self.entry_uf.get(), self.entry_municipio))
-        self.entry_municipio.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_tpo_projeto))      
+        self.entry_municipio.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_tpo_programa))      
 
         # Tipo do Programa
         coordenadas_relx=0.53
@@ -828,15 +826,14 @@ class Projetos(Icons, Functions):
         lb_tpo_programa = customtkinter.CTkLabel(fr_tpo_programa, text="Tipo do Programa")
         lb_tpo_programa.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
 
-        tpo_programa = [] #self.get_tpo_programa()
-        tpo_programa = [(tpo_projeto['Tipo_Empreendimento']) for tpo_projeto in tpo_programa]
-
+        tpo_programa = [] 
+        
         self.entry_tpo_programa = AutocompleteCombobox(fr_tpo_programa, width=30, font=('Times', 11), completevalues=tpo_programa)
         self.entry_tpo_programa.pack()
         self.entry_tpo_programa.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        # self.entry_tpo_programa.bind("<Button-1>", lambda event: self.atualizar_tpo_programa(self, self.entry_tpo_programa))
-        # self.entry_tpo_programa.bind('<Down>', lambda event: self.atualizar_tpo_programa(self, self.entry_tpo_programa))
-        self.entry_tpo_programa.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_nome_cenario))
+        self.entry_tpo_programa.bind("<Button-1>", lambda event: self.atualizar_tpo_programa(self, self.entry_tpo_programa))
+        self.entry_tpo_programa.bind('<Down>', lambda event: self.atualizar_tpo_programa(self, self.entry_tpo_programa))
+        self.entry_tpo_programa.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_tpo_projeto))
 
         # Tipo do Empreendimento
         coordenadas_relx=0.735
@@ -848,65 +845,77 @@ class Projetos(Icons, Functions):
         lb_tpo_projeto = customtkinter.CTkLabel(fr_tpo_projeto, text="Tipo do Empreendimento")
         lb_tpo_projeto.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
 
-        tpo_projeto = self.get_tpo_projetos()
-        tpo_projeto = [(tpo_projeto['Tipo_Empreendimento']) for tpo_projeto in tpo_projeto]
-
+        tpo_projeto = []
+        
         self.entry_tpo_projeto = AutocompleteCombobox(fr_tpo_projeto, width=30, font=('Times', 11), completevalues=tpo_projeto)
         self.entry_tpo_projeto.pack()
         self.entry_tpo_projeto.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
         self.entry_tpo_projeto.bind("<Button-1>", lambda event: self.atualizar_tpo_projeto(self, self.entry_tpo_projeto))
         self.entry_tpo_projeto.bind('<Down>', lambda event: self.atualizar_tpo_projeto(self, self.entry_tpo_projeto))
-        self.entry_tpo_projeto.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_nome_cenario))
+        self.entry_tpo_projeto.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_centro))
 
         # Botão Consultar
-        bt_consultar_projetos = customtkinter.CTkButton(janela, image=self.btconsulta_img, text='', command=self.consulta_projetos)
+        bt_consultar_projetos = customtkinter.CTkButton(janela, image=self.btconsulta_img, text='', command=lambda:self.consulta_projetos(janela))
         bt_consultar_projetos.place(relx=0.93, rely=0.01, relwidth=0.03, relheight=0.04)
 
         # Botão Salvar
-        bt_salvar_projetos = customtkinter.CTkButton(janela, image=self.btsave_img, text='', command=self.gravar_projetos)
+        bt_salvar_projetos = customtkinter.CTkButton(janela, image=self.btsave_img, text='', command=lambda:self.gravar_projetos(janela))
         bt_salvar_projetos.place(relx=0.965, rely=0.01, relwidth=0.03, relheight=0.04)
 
-    def frame_projetos_linha_2(self, janela):
         # Centro de Resultado
         coordenadas_relx = 0.005
         coordenadas_rely = 0.085
         coordenadas_relwidth = 0.25
         coordenadas_relheight = 0.07
-        fr_itens_nota_centro_result = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_itens_nota_centro_result.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
-        lb_itens_nota_centro = customtkinter.CTkLabel(fr_itens_nota_centro_result, text='Centro de Resultado')
-        lb_itens_nota_centro.place(relx=0.05, rely=0, relwidth=0.6, relheight=0.25)
+        fr_centro_result = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_centro_result.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_centro = customtkinter.CTkLabel(fr_centro_result, text='Centro de Resultado')
+        lb_centro.place(relx=0.05, rely=0, relwidth=0.6, relheight=0.25)
 
         self.centro_resultado = []
-        self.entry_itens_nota_centro = AutocompleteCombobox(fr_itens_nota_centro_result, width=30, font=('Times', 11), completevalues=self.centro_resultado)
-        self.entry_itens_nota_centro.place(relx=0.02, rely=0.5, relwidth=0.96, relheight=0.4)
-        self.entry_itens_nota_centro.bind("<Button-1>", lambda event: self.atualizar_centro_resultado(event, self.combo_empresa.get(), self.entry_itens_nota_centro))
-        self.entry_itens_nota_centro.bind('<Down>', lambda event: self.atualizar_centro_resultado(event, self.combo_empresa.get(), self.entry_itens_nota_centro))
-        self.entry_itens_nota_centro.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_itens_nota_natureza))
+        self.entry_centro = AutocompleteCombobox(fr_centro_result, width=30, font=('Times', 11), completevalues=self.centro_resultado)
+        self.entry_centro.place(relx=0.02, rely=0.5, relwidth=0.96, relheight=0.4)
+        self.entry_centro.bind("<Button-1>", lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_centro))
+        self.entry_centro.bind('<Down>', lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_centro))
+        self.entry_centro.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_status))
 
         # Status
         coordenadas_relx=0.26
         coordenadas_rely=0.085
         coordenadas_relwidth=0.19
         coordenadas_relheight=0.07
-        fr_informacoes_status = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_informacoes_status.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
-        lb_informacoes_status = customtkinter.CTkLabel(fr_informacoes_status, text="Status")
-        lb_informacoes_status.place(relx=0.01, rely=0.11, relheight=0.07, relwidth=0.70)
+        fr_status = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_status.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_status = customtkinter.CTkLabel(fr_status, text='Situação')
+        lb_status.place(relx=0.05, rely=0, relwidth=0.6, relheight=0.25)
+        
 
         status = []
 
-        self.entry_informacoes_status = AutocompleteCombobox(fr_informacoes_status, width=30, font=('Times', 11), completevalues=status)
-        self.entry_informacoes_status.pack()
-        self.entry_informacoes_status.place(relx=0.02, rely=0.5, relwidth=0.96, relheight=0.4)
-        self.entry_informacoes_status.bind("<Button-1>", lambda event: self.atualizar_status(event, self.entry_empresa.get(), self.entry_informacoes_status))
-        self.entry_informacoes_status.bind('<Down>', lambda event: self.atualizar_status(event, self.entry_empresa.get(), self.entry_informacoes_status))
-        self.entry_informacoes_status.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_informacoes_anexos))
+        self.entry_status = AutocompleteCombobox(fr_status, width=30, font=('Times', 11), completevalues=status)
+        self.entry_status.pack()
+        self.entry_status.place(relx=0.02, rely=0.5, relwidth=0.96, relheight=0.4)
+        self.entry_status.bind("<Button-1>", lambda event: self.atualizar_projetos_situacao(event, self.entry_status))
+        self.entry_status.bind('<Down>', lambda event: self.atualizar_projetos_situacao(event, self.entry_status))
+        self.entry_status.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_nome_projeto))
 
-        # Nome do Projeto
+         # IDX do Projeto
         coordenadas_relx=0.455
         coordenadas_rely=0.085
-        coordenadas_relwidth=0.255
+        coordenadas_relwidth=0.045
+        coordenadas_relheight=0.07
+        fr_idx = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_idx.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_idx = customtkinter.CTkLabel(fr_idx, text="IdX")
+        lb_idx.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
+        
+        self.entry_idx = customtkinter.CTkEntry(fr_idx, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_idx.place(relx=0.05, rely=0.5, relwidth=0.90, relheight=0.4)
+        
+        # Nome do Projeto
+        coordenadas_relx=0.505
+        coordenadas_rely=0.085
+        coordenadas_relwidth=0.205
         coordenadas_relheight=0.07
         fr_nome_projeto = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         fr_nome_projeto.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
@@ -920,19 +929,19 @@ class Projetos(Icons, Functions):
         self.entry_nome_projeto.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
         self.entry_nome_projeto.bind("<Button-1>", lambda event: 
                                                                 self.atualizar_nome_cenario(event,
-                                                                self.entry_empresa.get(), 
+                                                                self.obter_Empresa_ID(self.entry_empresa.get(), janela),
                                                                 self.entry_municipio.get(), 
                                                                 self.entry_uf.get(), 
                                                                 self.entry_tpo_projeto.get(), 
                                                                 self.entry_nome_projeto))
         self.entry_nome_projeto.bind('<Down>', lambda event: 
-                                                                self.atualizar_nome_projeto(event,
-                                                                self.entry_empresa.get(), 
+                                                                self.atualizar_nome_cenario(event,
+                                                                self.obter_Empresa_ID(self.entry_empresa.get(), janela), 
                                                                 self.entry_municipio.get(), 
                                                                 self.entry_uf.get(), 
                                                                 self.entry_tpo_projeto.get(), 
                                                                 self.entry_nome_projeto))
-        self.entry_nome_projeto.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_nome_empreendimento))
+        self.entry_nome_projeto.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_setor))
 
         # Setor
         coordenadas_relx=0.715
@@ -946,38 +955,37 @@ class Projetos(Icons, Functions):
         
         self.entry_setor = customtkinter.CTkEntry(fr_setor, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_setor.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_setor.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_cep))
+        self.entry_setor.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_prioridade))
         
         # Prioridade
         coordenadas_relx=0.82
         coordenadas_rely=0.085
         coordenadas_relwidth=0.10
         coordenadas_relheight=0.07
-        fr_setor = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_setor.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
-        lb_setor = customtkinter.CTkLabel(fr_setor, text="Prioridade")
-        lb_setor.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
+        fr_prioridade = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_prioridade.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_prioridade = customtkinter.CTkLabel(fr_prioridade, text="Prioridade")
+        lb_prioridade.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
         
-        self.entry_setor = customtkinter.CTkEntry(fr_setor, fg_color="black", text_color="white", justify=tk.RIGHT)
-        self.entry_setor.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_setor.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_cep))
-
-        # Opções Status
+        self.opcoes = ['', '0', '1', '2', '3', '4', '5']
+        self.entry_prioridade = customtkinter.CTkComboBox(fr_prioridade, fg_color="white", text_color="black", justify=tk.CENTER, values=self.opcoes)
+        self.entry_prioridade.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_prioridade.bind("<Return>", lambda event: self.muda_barrinha(event, self.checkbox_ativo))
+        
+        # Opções Status Ativo ou Não Ativo
         coordenadas_relx=0.925
         coordenadas_rely=0.085
         coordenadas_relwidth=0.07
         coordenadas_relheight=0.07
-        fr_status = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_status.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
-        lb_status = customtkinter.CTkLabel(fr_status, text="Status")
-        lb_status.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
+        fr_ativo = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_ativo.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_ativo = customtkinter.CTkLabel(fr_ativo, text="Status")
+        lb_ativo.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
         self.check_var_ativo = customtkinter.StringVar(value="on")
-        self.checkbox_ativo = customtkinter.CTkCheckBox(fr_status, text='Sim', variable=self.check_var_ativo, onvalue="on", offvalue="off")
+        self.checkbox_ativo = customtkinter.CTkCheckBox(fr_ativo, text='Sim', variable=self.check_var_ativo, onvalue="on", offvalue="off")
         self.checkbox_ativo.place(relx=0.1, rely=0.30, relheight=0.5, relwidth=0.50)
-        
-    
-    def frame_projetos_linha_3(self, janela):
+            
         # Observação
         coordenadas_relx=0.005
         coordenadas_rely=0.16
@@ -988,11 +996,11 @@ class Projetos(Icons, Functions):
         lb_obs = customtkinter.CTkLabel(fr_obs, text="Observação")
         lb_obs.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
         
-        self.entry_obs = customtkinter.CTkEntry(fr_obs, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_obs = customtkinter.CTkEntry(fr_obs, fg_color="black", text_color="white", justify=tk.LEFT)
         self.entry_obs.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
         self.entry_obs.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_cep))
     
-    def frame_projetos_linha_4(self, janela):
+    def frame_projetos_linha_2(self, janela):
         # Widgets - Listar Itens
         self.LItens_projetos = ttk.Treeview(janela, height=12, column=(
                                                                         'Id', 
@@ -1035,108 +1043,328 @@ class Projetos(Icons, Functions):
         self.LItens_projetos.column('status', width=50, anchor='c')
         
         self.LItens_projetos.place(relx=0.001, rely=0.25, relwidth=1, relheight=0.985)
-        # self.LItens.bind("<Double-1>", self.OnDoubleClick)
+        self.LItens_projetos.bind("<Double-1>", self.OnDoubleClick_Projetos)
         self.entry_empresa.focus()
-        # self.limpar_campos_lcto()
         
-    def gravar_projetos(self):
+    def gravar_projetos(self, janela):
         # Definição de variáveis
-        versao_id = self.entry_versao_id.get().strip()
-        versao_codigo = self.entry_versao_nr.get().strip()  
-        versao_descricao = self.entry_versao_ds.get().strip()  
-        versao_dta = datetime.strptime(self.entry_versao_dta.get(), "%d/%m/%Y")
-        versao_dta = versao_dta.strftime("%Y-%m-%d")  
+        if not self.entry_empresa.get().strip():
+            messagebox.showinfo('Gestor Negócios', 'Erro: Preencher o Campo da Empresa!!!.', parent=self.janela_cadastro_projetos)
+            return
         
-        if not versao_codigo:
-            messagebox.showinfo('Gestor Negócios', 'Erro: Preencher o Campo Código da Versão!!!.')
-            self.entry_versao_nr.focus()
+        if not self.entry_nome_projeto.get().strip():
+            messagebox.showinfo('Gestor Negócios', 'Erro: Preencher o Campo do Nome do Projeto!!!.', parent=self.janela_cadastro_projetos)
             return
 
-        try:
-            datetime.strptime(versao_dta, "%Y-%m-%d")
-        except ValueError:
-            messagebox.showerror("Erro", "Data da versão com preenchimento errado!")
-            return
+        ID_Projeto =self.entry_idx.get()
+        DS_Projeto = self.entry_nome_projeto.get().strip()
+        ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get(), janela)
+        ID_Cidade = self.obter_municipio_IBGE(self.entry_municipio.get(), janela) 
+        UF = self.entry_uf.get() 
+        ID_Projeto_Status = self.obter_tpo_programa_ID(self.entry_tpo_programa.get(), janela)
+        ID_Tpo_Projeto = self.obter_Tpo_Projeto(self.entry_tpo_projeto.get(), janela) 
+        ID_Situacao_Projeto = self.obter_Situacao_Projeto_ID(self.entry_status.get(), janela)
+        Centro_Resultado = str(self.entry_centro.get()) if self.entry_centro.get().strip() != '' else '0'
+        Prioridade_Projeto = self.entry_prioridade.get() if self.entry_prioridade.get().strip() != '' or not str(self.entry_prioridade.get()).isnumeric() else 0
+        Setor_Projeto = self.entry_setor.get() if self.entry_setor.get().strip() != '' else 'N/A'
+        Ativo_Projeto = '' if self.check_var_ativo.get() == 'on' else 'x'
+        Observacao = self.entry_obs.get()
         
+        # Buscar Codigo Novo Projeto
+        if ID_Projeto == '':
+            strSql = "SELECT Max(pc.projeto_id) AS Nr FROM projetos_cronograma pc"
+            myresult = db._querying(strSql)
+            ID_Projeto = myresult['Nr']
             
         # Consulta para verificar se o produto já existe
-        vs_sql = """SELECT * FROM sys_versao 
+        vs_sql = """SELECT * FROM projetos_cronograma 
                     WHERE 
-                        versao_nr=%s
+                        projeto_id=%s
                     """
-        myresult = db.executar_consulta(vs_sql, (str(versao_codigo)))
-        
-        if not myresult:  # Se não encontrou registros
-            # Inserção do novo produto
-            vs_sql = """INSERT INTO sys_versao 
-                        (
-                            versao_nr,
-                            versao_ds,
-                            versao_dta
-                                
-                        ) 
-                        VALUES (%s, %s, %s)
-                     """
-            values = (
-                    versao_codigo,
-                    versao_descricao,
-                    versao_dta
-                    )
-            myresult = db.executar_consulta(vs_sql,  values)
+        myresult = db.executar_consulta(vs_sql, (str(ID_Projeto)))
+        if not myresult:  # Se não encontrou registrosif 
+            # Inserção do novo produtoif 
             
+            vs_sql = """INSERT INTO projetos_cronograma
+                            (
+                             projeto_id, 
+                             projeto_ds, 
+                             projeto_cr, 
+                             projeto_uf, 
+                             projeto_municipio, 
+                             projeto_observacao, 
+                             projeto_tipo_id, 
+                             projeto_prioridade, 
+                             projeto_setor, 
+                             projeto_status_id, 
+                             projeto_situacao_id, 
+                             projeto_empresa, 
+                             projeto_ativo
+                             )
+
+                        VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    """            
+            values = (
+                        ID_Projeto,
+                        DS_Projeto, 
+                        Centro_Resultado,
+                        UF,
+                        ID_Cidade,
+                        Observacao,
+                        ID_Tpo_Projeto,
+                        Prioridade_Projeto,
+                        Setor_Projeto,
+                        ID_Projeto_Status,
+                        ID_Situacao_Projeto,
+                        ID_Empresa,
+                        Ativo_Projeto
+                     )
+            
+            myresult = db.executar_consulta(vs_sql,  values)
         else:
             # Atualização do produto existente
-            vs_sql = """UPDATE TB_Produtos SET 
-                                versao_ds = %s, 
-                                versao_dta = %s, 
-                        WHERE 
-                            versao_nr=%s
-                        """
-            myresult = db.executar_consulta(vs_sql,  (versao_descricao, 
-                                                      versao_dta))
-    
-    def consulta_projetos(self):
+            vs_sql = """UPDATE projetos_cronograma SET 
+                            projeto_DS=%s,
+                            projeto_cr=%s,
+                            projeto_uf=%s,
+                            projeto_municipio=%s,
+                            projeto_observacao=%s,
+                            projeto_tipo_id=%s,
+                            projeto_prioridade=%s,
+                            projeto_setor=%s,
+                            projeto_status_id=%s,
+                            projeto_situacao_id=%s,
+                            projeto_empresa=%s,
+                            projeto_ativo=%s
+                        WHERE projeto_id=%s
+                    """
+            values = (
+                        DS_Projeto, 
+                        Centro_Resultado,
+                        UF,
+                        ID_Cidade,
+                        Observacao,
+                        ID_Tpo_Projeto,
+                        Prioridade_Projeto,
+                        Setor_Projeto,
+                        ID_Projeto_Status,
+                        ID_Situacao_Projeto,
+                        ID_Empresa,
+                        Ativo_Projeto,
+                        ID_Projeto
+                     )
+            myresult = db.executar_consulta(vs_sql,  (values))
+            self.entry_idx.delete(0, tk.END)
+            self.entry_nome_projeto.delete(0, tk.END)
+            self.entry_municipio.delete(0, tk.END)
+            self.entry_uf.delete(0, tk.END)
+            self.entry_tpo_programa.delete(0, tk.END)
+            self.entry_tpo_projeto.delete(0, tk.END)
+            self.entry_status.delete(0, tk.END)
+            self.entry_centro.delete(0, tk.END)
+            self.entry_setor.delete(0, tk.END)
+            self.entry_obs.delete(0, tk.END)
+            self.consulta_projetos(janela)
+            
+    def consulta_projetos(self, janela):
+        if not self.entry_empresa.get().strip():
+            messagebox.showinfo('Gestor Negócios', 'Erro: Preencher o Campo da Empresa!!!.', parent=self.janela_cadastro_projetos)
+            return
+        
+        ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get(), janela)
+        ID_Cidade = self.obter_municipio_IBGE(self.entry_municipio.get(), janela) if self.entry_municipio.get().strip() != '' else None
+        UF = self.entry_uf.get() if self.entry_uf.get().strip() != '' else None
+        ID_Projeto_Status = self.obter_tpo_programa_ID(self.entry_tpo_programa.get(), janela) if self.entry_tpo_programa.get().strip() != '' else None
+        ID_Tpo_Projeto = self.obter_Projeto_ID(self.entry_tpo_projeto.get(), janela) if self.entry_tpo_projeto.get().strip() != '' else None
+        ID_Situacao_Projeto = self.obter_Situacao_Projeto_ID(self.entry_status.get(), janela) if self.entry_status.get().strip() != '' else None
+        Setor_Projeto = self.entry_setor.get() if self.entry_setor.get().strip() != '' else None
+        Prioridade_Projeto = self.entry_prioridade.get() if self.entry_prioridade.get().strip() != '' else None
+        Ativo_Projeto = '' if self.check_var_ativo.get() == 'on' else None
         
         # Preparar a tabela
-        self.LItens_versao.delete(*self.LItens_versao.get_children())  # Limpa a tabela
-        self.LItens_versao.heading('Id', text="ID")
-        self.LItens_versao.column('Id', width=5, anchor='c')
-        self.LItens_versao.heading('Codigo', text="Código")
-        self.LItens_versao.column('Codigo', width=10, anchor='e')
-        self.LItens_versao.heading('Descricao', text="Descrição")
-        self.LItens_versao.column('Descricao', width=800, anchor='w')
-        self.LItens_versao.heading('dta', text="Data")
-        self.LItens_versao.column('dta', width=50, anchor='c')
+        self.LItens_projetos.delete(*self.LItens_projetos.get_children())  # Limpa a tabela
+
+        self.LItens_projetos.heading('Id', text="Nr.")
+        self.LItens_projetos.column('Id', width=5, anchor='c')
+        self.LItens_projetos.heading('descricao', text="Descrição")
+        self.LItens_projetos.column('descricao', width=300, anchor='w')
+        self.LItens_projetos.heading('uf', text="UF")
+        self.LItens_projetos.column('uf', width=5, anchor='c')
+        self.LItens_projetos.heading('municipio', text="Municipio")
+        self.LItens_projetos.column('municipio', width=50, anchor='w')
+        self.LItens_projetos.heading('centro_resultado', text="Centro Resultado")
+        self.LItens_projetos.column('centro_resultado', width=50, anchor='c')
+        self.LItens_projetos.heading('tpo_programa', text="Tipo Programa")
+        self.LItens_projetos.column('tpo_programa', width=50, anchor='w')
+        self.LItens_projetos.heading('tpo_empreendimento', text="Tipo Empreendimento")
+        self.LItens_projetos.column('tpo_empreendimento', width=50, anchor='w')
+        self.LItens_projetos.heading('situacao', text="Situação")
+        self.LItens_projetos.column('situacao', width=50, anchor='w')
+        self.LItens_projetos.heading('prioridade', text="Prioridade")
+        self.LItens_projetos.column('prioridade', width=50, anchor='c')
+        self.LItens_projetos.heading('setor', text="Setor")
+        self.LItens_projetos.column('setor', width=50, anchor='w')
+        self.LItens_projetos.heading('obs', text="Obs.")
+        self.LItens_projetos.column('obs', width=50, anchor='w')
+        self.LItens_projetos.heading('status', text="Status")
+        self.LItens_projetos.column('status', width=50, anchor='c')
         
+        # Parametros da consulta
+        conditions = []  
+        # Condições iniciais
+        if ID_Empresa is not None:
+            conditions.append("pc.projeto_empresa= %s")
+            params = [ID_Empresa]
+        
+        if UF is not None:
+            conditions.append("projeto_uf = %s")
+            params.append(UF)
+        
+        if ID_Cidade is not None:
+            conditions.append("pc.projeto_municipio = %s")
+            params.append(ID_Cidade)
+        
+        if ID_Projeto_Status is not None:
+            conditions.append("pc.projeto_status_id = %s")
+            params.append(ID_Projeto_Status)
+        
+        if ID_Tpo_Projeto is not None:
+            conditions.append("pc.projeto_tipo_id = %s")
+            params.append(ID_Tpo_Projeto)
+        
+        if ID_Situacao_Projeto is not None:
+            conditions.append("pc.projeto_situacao_id = %s")
+            params.append(ID_Situacao_Projeto)
+        
+        if Setor_Projeto is not None:
+            conditions.append("pc.projeto_setor = %s")
+            params.append(Setor_Projeto)
+        
+        if Prioridade_Projeto is not None:
+            conditions.append("pc.projeto_prioridade = %s")
+            params.append(Prioridade_Projeto)
+
+        if Ativo_Projeto is not None:
+            conditions.append("pc.projeto_ativo = %s")
+            params.append(Ativo_Projeto)
+
         # SQL para buscar os dados
-        vs_sql = """
+        vs_sql = f"""
                     SELECT
-                        versao_id,
-                        versao_nr,
-                        versao_ds,
-                        versao_dta
-                    FROM
-                        sys_versao
-                    ORDER BY versao_nr ASC """
+                        pc.projeto_id           AS projeto_id,
+                        pc.projeto_ds           AS projeto_ds,
+                        pc.projeto_cr           AS projeto_cr,
+                        pc.projeto_observacao   AS projeto_observacao,
+                        pc.projeto_empresa      AS projeto_empresa,
+                        em.Pri_Descricao        AS Pri_Descricao,
+                        pc.projeto_uf           AS projeto_uf,
+                        pc.projeto_municipio    AS projeto_municipio,
+                        mu.Município            AS Municipio,
+                        pc.projeto_tipo_id      AS projeto_tipo_id,
+                        te.Tipo_Empreendimento  AS Tipo_Empreendimento,
+                        pc.projeto_prioridade   AS projeto_prioridade,
+                        pc.projeto_setor        AS projeto_setor,
+                        pc.projeto_status_id    AS projeto_status_id,
+                        ps.projeto_status_ds    AS projeto_status_ds,
+                        pc.projeto_situacao_id  AS projeto_situacao_id,
+                        po.projetos_situacao_ds AS projetos_situacao_ds,
+                        pc.projeto_ativo        AS projeto_ativo
+                    FROM projetos_cronograma AS pc
+                        LEFT JOIN Projetos_Status     ps ON pc.projeto_status_id   = ps.projeto_status_id
+                        LEFT JOIN Tipo_Empreendimento te ON pc.projeto_tipo_id     = te.projeto_tipo_id
+                        LEFT JOIN Municipios_IBGE     mu ON pc.projeto_municipio   = mu.IBGE
+                        LEFT JOIN Projetos_Situacao   po ON pc.projeto_situacao_id = po.projetos_situacao_id
+                        LEFT JOIN TB_Empresas         em ON pc.projeto_empresa     = em.Pri_Cnpj
+                    WHERE {' AND '.join(conditions)}
+                    ORDER BY mu.Município, pc.projeto_ds
+                """
         
-        myresult = db._querying(vs_sql)
+        myresult = db.executar_consulta(vs_sql, params)
         consulta = [(consulta) for consulta in myresult]
         
         if not consulta:
-            messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!")
+            messagebox.showinfo('Aviso', 'Não Existem Dados de Projetos Para Esta Consulta!', parent=self.janela_cadastro_projetos)
             return
                 
         # Inserir dados na tabela
-        
         for item in consulta:
-            Dta_Registro = item.get('versao_dta')
-            data_formatada = Dta_Registro.strftime('%d/%m/%Y')
+            str_projeto_ativo = item.get('projeto_ativo')
+            if str_projeto_ativo == '':
+                status_projeeto_ativo = 'Ativo'
+            else:
+                status_projeeto_ativo = 'Inativo'
+
             formatted_item = (
-                    item.get('versao_id'),
-                    item.get('versao_nr'),
-                    item.get('versao_ds'),
-                    data_formatada
+                    item.get('projeto_id'),
+                    item.get('projeto_ds'),
+                    item.get('projeto_uf'),
+                    item.get('Municipio'),
+                    item.get('projeto_cr'),
+                    item.get('projeto_status_ds'),
+                    item.get('Tipo_Empreendimento'),
+                    item.get('projetos_situacao_ds'),
+                    item.get('projeto_prioridade'),
+                    item.get('projeto_setor'),
+                    item.get('projeto_observacao'),
+                    status_projeeto_ativo
                 )
-            self.LItens_versao.insert('', 'end', values=formatted_item)
+            
+            self.LItens_projetos.insert('', 'end', values=formatted_item)
+
+    def OnDoubleClick_Projetos(self, event):
+        selected_item = self.LItens_projetos.selection()
+        if selected_item:
+            # Get the text of the selected item
+            item_text = self.LItens_projetos.item(selected_item, 'text')
+            # Get associated values as a tuple
+            values = self.LItens_projetos.item(selected_item, 'values')
+            
+            
+            ID_Projeto = values[0]
+            DS_Projeto = values[1]
+            UF = values[2]
+            Cidade = values[3]
+            Centro_Resultado = values[4]
+            DS_Projeto_Status = values[5]
+            DS_Tpo_Projeto = values[6]
+            DS_Situacao_Projeto = values[7]
+            Prioridade_Projeto = values[8]
+            Setor_Projeto = values[9]
+            Observacao = values[10]
+            Ativo_Projeto = values[11]
+            
+            self.entry_idx.delete(0, tk.END)
+            self.entry_nome_projeto.delete(0, tk.END)
+            self.entry_municipio.delete(0, tk.END)
+            self.entry_uf.delete(0, tk.END)
+            self.entry_tpo_programa.delete(0, tk.END)
+            self.entry_tpo_projeto.delete(0, tk.END)
+            self.entry_status.delete(0, tk.END)
+            self.entry_centro.delete(0, tk.END)
+            self.entry_setor.delete(0, tk.END)
+            self.entry_obs.delete(0, tk.END)
+
+            self.entry_idx.insert(0, ID_Projeto)           
+            self.entry_nome_projeto.insert(0, DS_Projeto)  
+            self.entry_municipio.insert(0, Cidade)     
+            self.entry_uf.insert(0, UF)            
+            self.entry_tpo_programa.insert(0, DS_Projeto_Status)  
+            self.entry_tpo_projeto.insert(0, DS_Tpo_Projeto)   
+            self.entry_status.insert(0, DS_Situacao_Projeto)        
+            self.entry_centro.insert(0, Centro_Resultado)   
+            self.entry_prioridade.set(Prioridade_Projeto)
+            self.entry_setor.insert(0, Setor_Projeto)         
+            self.entry_obs.insert(0, Observacao)           
+            if Ativo_Projeto == 'Ativo':
+                self.check_var_ativo.set('on') 
+            else:
+                self.check_var_ativo.set('off') 
+
+            self.atualizar_empresas(event, self.entry_empresa)
+            self.atualizar_municipio(event, self.entry_uf.get(), self.entry_municipio)
+            self.atualizar_tpo_programa(self, self.entry_tpo_programa)
+            self.atualizar_tpo_projeto(self, self.entry_tpo_projeto)
+            self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.entry_empresa.get(), self.janela_cadastro_projetos), self.entry_centro)
+            self.atualizar_projetos_situacao(event, self.entry_status)
 
 Projetos()
