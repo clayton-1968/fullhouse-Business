@@ -1098,15 +1098,15 @@ class Projetos(Icons, Functions):
     def consulta_projetos(self):
         
         # Preparar a tabela
-        self.LItens_versao.delete(*self.LItens_versao.get_children())  # Limpa a tabela
-        self.LItens_versao.heading('Id', text="ID")
-        self.LItens_versao.column('Id', width=5, anchor='c')
-        self.LItens_versao.heading('Codigo', text="Código")
-        self.LItens_versao.column('Codigo', width=10, anchor='e')
-        self.LItens_versao.heading('Descricao', text="Descrição")
-        self.LItens_versao.column('Descricao', width=800, anchor='w')
-        self.LItens_versao.heading('dta', text="Data")
-        self.LItens_versao.column('dta', width=50, anchor='c')
+        self.LItens_projetos.delete(*self.LItens_versao.get_children())  # Limpa a tabela
+        self.LItens_projetos.heading('Id', text="ID")
+        self.LItens_projetos.column('Id', width=5, anchor='c')
+        self.LItens_projetos.heading('Codigo', text="Código")
+        self.LItens_projetos.column('Codigo', width=10, anchor='e')
+        self.LItens_projetos.heading('Descricao', text="Descrição")
+        self.LItens_projetos.column('Descricao', width=800, anchor='w')
+        self.LItens_projetos.heading('dta', text="Data")
+        self.LItens_projetos.column('dta', width=50, anchor='c')
         
         # SQL para buscar os dados
         vs_sql = """
@@ -1137,6 +1137,6 @@ class Projetos(Icons, Functions):
                     item.get('versao_ds'),
                     data_formatada
                 )
-            self.LItens_versao.insert('', 'end', values=formatted_item)
+            self.LItens_projetos.insert('', 'end', values=formatted_item)
 
 Projetos()
