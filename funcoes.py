@@ -2179,9 +2179,9 @@ class Consultas():
         tpo_site = self.entry_tipo_site_descr.get()
 
         if self.combo_empresa.get() != '': 
-            ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+            ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
         else:
-            messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!.', parent=self.window_one)
             return
         
         # Limpa a lista atual antes de inserir novos resultados
@@ -2823,8 +2823,8 @@ class Consultas():
         consulta = [(consulta) for consulta in myresult]
         return consulta
 
-    def Consulta_Prazo_Curvas(self, curva):
-        Empresa_ID = self.obter_Empresa_ID(self.combo_empresa.get())
+    def Consulta_Prazo_Curvas(self, curva, janela):
+        Empresa_ID = self.obter_Empresa_ID(self.combo_empresa.get(), janela)
 
         conditions = []  # Lista para armazenar as condições
         conditions.append("ct.Empresa_ID = %s ")
@@ -2891,7 +2891,7 @@ class Consultas():
         self.TPer_Desconto_VPL = 0.12
 
         # INVESTIMENTOS - Aquisição de Área
-        self.curva_de_investimentos = self.Consulta_Prazo_Curvas(self.entry_investimento_curva_investimento.get()) 
+        self.curva_de_investimentos = self.Consulta_Prazo_Curvas(self.entry_investimento_curva_investimento.get(), Tela) 
         self.prazo_investimentos = [prazo['Prazo_Curva'] for prazo in self.curva_de_investimentos]
         if isinstance(self.prazo_investimentos, list) and len(self.prazo_investimentos) > 0:
             self.prazo_investimentos = float(self.prazo_investimentos[0])
@@ -2910,7 +2910,7 @@ class Consultas():
         self.ComAporte = self.entry_investimento_aporte.get()
 
         # ADIANTAMENTO A PARCEIRO
-        self.curva_de_adto = self.Consulta_Prazo_Curvas(self.entry_adto_parceiro_curva_adto.get()) 
+        self.curva_de_adto = self.Consulta_Prazo_Curvas(self.entry_adto_parceiro_curva_adto.get(), Tela) 
         self.prazo_adto = [prazo['Prazo_Curva'] for prazo in self.curva_de_adto]
         if isinstance(self.prazo_adto, list) and len(self.prazo_adto) > 0:
             self.prazo_adto = float(self.prazo_adto[0])
@@ -2928,7 +2928,7 @@ class Consultas():
                 mes_inicio += 1
         
         # VENDAS
-        self.curva_de_vendas = self.Consulta_Prazo_Curvas(self.entry_vendas_curva.get()) 
+        self.curva_de_vendas = self.Consulta_Prazo_Curvas(self.entry_vendas_curva.get(), Tela) 
         self.prazo_vendas = [prazo['Prazo_Curva'] for prazo in self.curva_de_vendas]
         if isinstance(self.prazo_vendas, list) and len(self.prazo_vendas) > 0:
             self.prazo_vendas = float(self.prazo_vendas[0])
@@ -2946,7 +2946,7 @@ class Consultas():
                 mes_inicio += 1
         
         # PROJETOS
-        self.curva_de_projetos = self.Consulta_Prazo_Curvas(self.entry_projetos_curva_projeto.get()) 
+        self.curva_de_projetos = self.Consulta_Prazo_Curvas(self.entry_projetos_curva_projeto.get(), Tela) 
         self.prazo_projetos = [prazo['Prazo_Curva'] for prazo in self.curva_de_projetos]
         if isinstance(self.prazo_projetos, list) and len(self.prazo_projetos) > 0:
             self.prazo_projetos = float(self.prazo_projetos[0])
@@ -2964,7 +2964,7 @@ class Consultas():
                 mes_inicio += 1
 
         # MkT
-        self.curva_de_mkt = self.Consulta_Prazo_Curvas(self.entry_mkt_curva_mkt.get()) 
+        self.curva_de_mkt = self.Consulta_Prazo_Curvas(self.entry_mkt_curva_mkt.get(), Tela) 
         self.prazo_mkt = [prazo['Prazo_Curva'] for prazo in self.curva_de_mkt]
         if isinstance(self.prazo_mkt, list) and len(self.prazo_mkt) > 0:
             self.prazo_mkt = float(self.prazo_mkt[0])
@@ -2982,7 +2982,7 @@ class Consultas():
                 mes_inicio += 1
 
         # OBRAS
-        self.curva_de_obras = self.Consulta_Prazo_Curvas(self.entry_obras_curva_obras.get()) 
+        self.curva_de_obras = self.Consulta_Prazo_Curvas(self.entry_obras_curva_obras.get(), Tela) 
         self.prazo_obras = [prazo['Prazo_Curva'] for prazo in self.curva_de_obras]
         if isinstance(self.prazo_obras, list) and len(self.prazo_obras) > 0:
             self.prazo_obras = float(self.prazo_obras[0])
@@ -3039,7 +3039,7 @@ class Consultas():
         self.i_am = ((1 + self.per_taxajuros) ** (1/12))
         self.Financiador = self.entry_financiamento_financiador.get()
 
-        self.curva_de_financiamento = self.Consulta_Prazo_Curvas(self.entry_financiamento_curva_liberacao.get()) 
+        self.curva_de_financiamento = self.Consulta_Prazo_Curvas(self.entry_financiamento_curva_liberacao.get(), Tela) 
         self.prazo_financiamento = [prazo['Prazo_Curva'] for prazo in self.curva_de_financiamento]
         if isinstance(self.prazo_financiamento, list) and len(self.prazo_financiamento) > 0:
             self.prazo_financiamento = float(self.prazo_financiamento[0])
@@ -5125,19 +5125,19 @@ class Atualizar_Combo():
         self.tpo_pagto = [tpo_pagto[1] for tpo_pagto in self.tpo_pagto]
         target.set_completion_list(self.tpo_pagto)
     
-    def atualizar_produto_fx(self, Empresa_DS):
-        self.produtos = self.get_produtos(Empresa_DS)
+    def atualizar_produto_fx(self, Empresa_ID):
+        self.produtos = self.get_produtos(Empresa_ID)
         self.produto_dict = {nome: id for id, nome, tpo in self.produtos}
         self.produtos = [produto[1] for produto in self.produtos]
 
-    def atualizar_produto(self, event, Empresa_DS, target):
-        self.produtos = self.get_produtos(Empresa_DS)
+    def atualizar_produto(self, event, Empresa_ID, target):
+        self.produtos = self.get_produtos(Empresa_ID)
         self.produto_dict = {nome: id for id, nome, tpo in self.produtos}
         self.produtos = [produto[1] for produto in self.produtos]
         target.set_completion_list(self.produtos)
     
-    def atualizar_natureza_financeira(self, event, Empresa_DS, target):
-        self.natureza_financeira = self.get_natureza_financeira(Empresa_DS)
+    def atualizar_natureza_financeira(self, event, Empresa_ID, target):
+        self.natureza_financeira = self.get_natureza_financeira(Empresa_ID)
         self.natureza_dict = {nome: id for id, nome, tpo in self.natureza_financeira}
         self.natureza_financeira = [natureza[1] for natureza in self.natureza_financeira]
         target.set_completion_list(self.natureza_financeira)
@@ -5185,19 +5185,10 @@ class Atualizar_Combo():
         completion_list = [area['Nome_da_Area'] for area in self.nome_cenario]
         target.set_completion_list(completion_list)
     
-    def atualizar_curvas(self, event, target):
-        Empresa_ID = None  # Initialize to None
-        if hasattr(self, 'entry_empresa') and self.entry_empresa is not None:
-            Empresa_ID = self.obter_Empresa_ID(self.entry_empresa.get())
-        elif hasattr(self, 'combo_empresa') and self.combo_empresa is not None:
-            Empresa_ID = self.obter_Empresa_ID(self.combo_empresa.get())
-            
-        if Empresa_ID is not None:
-            self.nome_curva = self.get_nome_curvas(Empresa_ID)
-            completion_list = [curva['Nome_Curva'] for curva in self.nome_curva]
-            target.set_completion_list(completion_list)
-        else:
-            messagebox.showinfo('Gestor Negócios', 'Empresa não foi encontrada. Verifique se combo_empresa ou entry_empresa estão disponíveis.')
+    def atualizar_curvas(self, event, Empresa_ID, target):
+        self.nome_curva = self.get_nome_curvas(Empresa_ID)
+        completion_list = [curva['Nome_Curva'] for curva in self.nome_curva]
+        target.set_completion_list(completion_list)
     
     def atualizar_sistema_amortizacao(self, event, target):
         completion_list = self.get_sistema_amortizacao() 
@@ -5225,13 +5216,11 @@ class Atualizar_Combo():
         self.frete = [frete[1] for frete in self.frete]
         target.set_completion_list(self.frete)
 
-    def atualizar_status(self, event, Empresa_DS, target):
-        Empresa_ID = self.obter_Empresa_ID(Empresa_DS)
+    def atualizar_status(self, event, Empresa_ID, target):
         self.status = self.get_status(Empresa_ID)
         target.set_completion_list(self.status)
     
-    def atualizar_orcamentos(self, event, entry_empresa, target):
-        Empresa_ID = self.obter_Empresa_ID(entry_empresa)
+    def atualizar_orcamentos(self, event, Empresa_ID, target):
         self.orcamentos = self.get_orcamentos(Empresa_ID)
         self.orcamentos_dict = {nome: id for id, nome in self.orcamentos}
         if self.orcamentos and isinstance(self.orcamentos[0], tuple):
@@ -5240,8 +5229,8 @@ class Atualizar_Combo():
         target.set_completion_list(sorted(self.orcamentos, key=str.lower))  # Ordena e configura
     
     def atualizar_item_precos_orcamentos(self, event, entry_empresa, entry_orc, target):
-        Empresa_ID = self.obter_Empresa_ID(entry_empresa)
-        Orc_ID = self.obter_Orc_ID(entry_orc)
+        Empresa_ID = entry_empresa
+        Orc_ID = entry_orc
         self.item_precos_orcamentos = self.get_precos_orc(Empresa_ID, Orc_ID)
         self.item_precos_orcamentos_dict = {nome: id for id, nome in self.item_precos_orcamentos}
         if self.item_precos_orcamentos and isinstance(self.item_precos_orcamentos[0], tuple):
@@ -5434,8 +5423,7 @@ class Functions():
         bancos = [(banco['ID_Banco'], banco['DS_Banco']) for banco in myresult]
         return bancos
     
-    def get_natureza_financeira(self, Empresa_DS):
-        Empresa_ID = self.obter_Empresa_ID(Empresa_DS)
+    def get_natureza_financeira(self, Empresa_ID):
         strSql = """SELECT 
                         nt.Nat_ID           AS Codigo, 
                         nt.Nat_Descricao    AS Nome, 
@@ -5464,8 +5452,7 @@ class Functions():
         return naturezas_gerencial
     
     # Drop Produtos
-    def get_produtos(self, Empresa_DS):
-        Empresa_ID = self.obter_Empresa_ID(Empresa_DS)
+    def get_produtos(self, Empresa_ID):
         strSql = """SELECT 
                         pp.Produto_ID           AS Codigo, 
                         pp.Produto_Descricao    AS Nome, 
@@ -5534,8 +5521,7 @@ class Functions():
         return projetos
     
     # Drop Pessoas
-    def get_pessoas(self, entry_empresa):
-        Empresa_ID = self.obter_Empresa_ID(entry_empresa)
+    def get_pessoas(self, Empresa_ID):
         UserName = os.environ['Usr_login']
         strSql = """
                 SELECT 
@@ -5593,8 +5579,7 @@ class Functions():
         return municipios
     
     # Drop Unidade Negocio
-    def get_unegocios(self, entry_empresa):
-        Empresa_ID = self.obter_Empresa_ID(entry_empresa)
+    def get_unegocios(self, Empresa_ID):
         UserName = os.environ['Usr_login']
 
         strSql = """
@@ -5611,8 +5596,7 @@ class Functions():
         return unidades_negocios
     
     # Drop Orçamentos
-    def get_orcamentos(self, entry_empresa):
-        Empresa_ID = entry_empresa
+    def get_orcamentos(self, Empresa_ID):
         strSql = """
                 SELECT 
                     Empresa_ID,
@@ -5631,14 +5615,12 @@ class Functions():
         return orcamentos
     
     # Drop Item de Preços Orçamento
-    def get_precos_orc(self, entry_empresa, entry_orc_id):
-        Empresa_ID = entry_empresa
-        Orc_ID =  entry_orc_id
+    def get_precos_orc(self, Empresa_ID, Orc_ID):
         conditions = []  # Lista para armazenar as condições
         conditions.append("Empresa_ID = %s ")
         params = [Empresa_ID]
 
-        if entry_orc_id != '':
+        if Orc_ID != '':
             conditions.append("Orc_ID = %s ")
             params.append(Orc_ID)
         

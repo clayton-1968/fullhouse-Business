@@ -90,8 +90,8 @@ class Simulador_Estudos_Rel(Widgets):
         lb_tpo_projeto = customtkinter.CTkLabel(fr_tpo_projeto, text="Tipo do Projeto")
         lb_tpo_projeto.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
 
-        tpo_projeto = self.get_tpo_projetos()
-        tpo_projeto = [(tpo_projeto['Tipo_Empreendimento']) for tpo_projeto in tpo_projeto]
+        tpo_projeto = []
+        # tpo_projeto = [(tpo_projeto['Tipo_Empreendimento']) for tpo_projeto in tpo_projeto]
 
         self.entry_tpo_projeto = AutocompleteCombobox(fr_tpo_projeto, width=30, font=('Times', 11), completevalues=tpo_projeto)
         self.entry_tpo_projeto.pack()
@@ -117,14 +117,14 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_nome_cenario.place(relx=0.01, rely=0.5, relwidth=0.95, relheight=0.4)
         self.entry_nome_cenario.bind("<Button-1>", lambda event: 
                                                                 self.atualizar_nome_cenario(event,
-                                                                self.entry_empresa.get(), 
+                                                                self.obter_Empresa_ID(self.entry_empresa.get(), janela), 
                                                                 self.entry_municipio.get(), 
                                                                 self.entry_uf.get(), 
                                                                 self.entry_tpo_projeto.get(), 
                                                                 self.entry_nome_cenario))
         self.entry_nome_cenario.bind('<Down>', lambda event: 
                                                                 self.atualizar_nome_cenario(event,
-                                                                self.entry_empresa.get(), 
+                                                                self.obter_Empresa_ID(self.entry_empresa.get(), janela), 
                                                                 self.entry_municipio.get(), 
                                                                 self.entry_uf.get(), 
                                                                 self.entry_tpo_projeto.get(), 
@@ -860,9 +860,9 @@ class Simulador_Estudos_Rel(Widgets):
         self.nome_curva = []
         self.entry_investimento_curva_investimento = AutocompleteCombobox(self.fr_investimento, width=30, justify=tk.LEFT, font=('Times', 8), completevalues=self.nome_curva)
         self.entry_investimento_curva_investimento.place(relx=0.005, rely=0.60, relwidth=0.97, relheight=0.15)
-        self.entry_investimento_curva_investimento.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.entry_investimento_curva_investimento))
-        self.entry_investimento_curva_investimento.bind('<Down>', lambda event: self.atualizar_curvas(event, self.entry_investimento_curva_investimento))
-        self.entry_investimento_curva_investimento.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_investimento_aporte))
+        self.entry_investimento_curva_investimento.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela),  self.entry_investimento_curva_investimento))
+        self.entry_investimento_curva_investimento.bind('<Down>', lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_investimento_curva_investimento))
+        self.entry_investimento_curva_investimento.bind("<Return>", lambda event: self.muda_barrinha(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_investimento_aporte))
 
         self.lb_investimento_aporte = customtkinter.CTkLabel(self.fr_investimento, text="Aporte?", text_color="black", font=('Arial', 10), anchor=tk.W)
         self.lb_investimento_aporte.place(relx=0.01, rely=0.76, relheight=0.05, relwidth=0.97)
@@ -908,9 +908,9 @@ class Simulador_Estudos_Rel(Widgets):
         self.nome_curva = []
         self.entry_adto_parceiro_curva_adto = AutocompleteCombobox(self.fr_adto_parceiro, width=30, justify=tk.LEFT, font=('Times', 8), completevalues=self.nome_curva)
         self.entry_adto_parceiro_curva_adto.place(relx=0.005, rely=0.88, relwidth=0.97, relheight=0.114)
-        self.entry_adto_parceiro_curva_adto.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.entry_adto_parceiro_curva_adto))
-        self.entry_adto_parceiro_curva_adto.bind('<Down>', lambda event: self.atualizar_curvas(event, self.entry_adto_parceiro_curva_adto))
-        self.entry_adto_parceiro_curva_adto.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_vendas_preco_m2))
+        self.entry_adto_parceiro_curva_adto.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_adto_parceiro_curva_adto))
+        self.entry_adto_parceiro_curva_adto.bind('<Down>', lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_adto_parceiro_curva_adto))
+        self.entry_adto_parceiro_curva_adto.bind("<Return>", lambda event: self.muda_barrinha(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_vendas_preco_m2))
 
         # Preço de Venda m2
         self.fr_vendas = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1, fg_color="#006400")
@@ -1060,9 +1060,9 @@ class Simulador_Estudos_Rel(Widgets):
         self.nome_curva = []
         self.entry_vendas_curva = AutocompleteCombobox(self.fr_politica_vendas, width=30, justify=tk.LEFT, font=('Times', 8), completevalues=self.nome_curva)
         self.entry_vendas_curva.place(relx=0.505, rely=0.6720, relwidth=0.49, relheight=0.114)
-        self.entry_vendas_curva.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.entry_vendas_curva))
-        self.entry_vendas_curva.bind('<Down>', lambda event: self.atualizar_curvas(event, self.entry_vendas_curva))
-        self.entry_vendas_curva.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_projetos_per_obra))
+        self.entry_vendas_curva.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_vendas_curva))
+        self.entry_vendas_curva.bind('<Down>', lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_vendas_curva))
+        self.entry_vendas_curva.bind("<Return>", lambda event: self.muda_barrinha(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_projetos_per_obra))
 
 
         self.lb_vendas_parcela_price = customtkinter.CTkLabel(
@@ -1129,9 +1129,9 @@ class Simulador_Estudos_Rel(Widgets):
         self.nome_curva = []
         self.entry_projetos_curva_projeto = AutocompleteCombobox(self.fr_projetos, width=30, justify=tk.LEFT, font=('Times', 8), completevalues=self.nome_curva)
         self.entry_projetos_curva_projeto.place(relx=0.005, rely=0.82, relwidth=0.97, relheight=0.15)
-        self.entry_projetos_curva_projeto.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.entry_projetos_curva_projeto))
-        self.entry_projetos_curva_projeto.bind('<Down>', lambda event: self.atualizar_curvas(event, self.entry_projetos_curva_projeto))
-        self.entry_projetos_curva_projeto.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_mkt_per_vgv))
+        self.entry_projetos_curva_projeto.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_projetos_curva_projeto))
+        self.entry_projetos_curva_projeto.bind('<Down>', lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_projetos_curva_projeto))
+        self.entry_projetos_curva_projeto.bind("<Return>", lambda event: self.muda_barrinha(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_mkt_per_vgv))
 
         # Marketing
         self.fr_mkt = customtkinter.CTkFrame(
@@ -1168,9 +1168,9 @@ class Simulador_Estudos_Rel(Widgets):
         self.nome_curva = []
         self.entry_mkt_curva_mkt = AutocompleteCombobox(self.fr_mkt, width=30, justify=tk.LEFT, font=('Times', 8), completevalues=self.nome_curva)
         self.entry_mkt_curva_mkt.place(relx=0.005, rely=0.82, relwidth=0.97, relheight=0.15)
-        self.entry_mkt_curva_mkt.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.entry_mkt_curva_mkt))
-        self.entry_mkt_curva_mkt.bind('<Down>', lambda event: self.atualizar_curvas(event, self.entry_mkt_curva_mkt))
-        self.entry_mkt_curva_mkt.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_overhead_per_vgv))
+        self.entry_mkt_curva_mkt.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_mkt_curva_mkt))
+        self.entry_mkt_curva_mkt.bind('<Down>', lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_mkt_curva_mkt))
+        self.entry_mkt_curva_mkt.bind("<Return>", lambda event: self.muda_barrinha(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_overhead_per_vgv))
 
         # OverHead
         self.fr_overhead = customtkinter.CTkFrame(self.fr_custos, border_color="gray75", border_width=1, fg_color="#8B0000")
@@ -1205,8 +1205,8 @@ class Simulador_Estudos_Rel(Widgets):
         self.nome_curva = []
         self.entry_overhead_curva_overhead = AutocompleteCombobox(self.fr_overhead, width=30, justify=tk.LEFT, font=('Times', 8), completevalues=self.nome_curva)
         self.entry_overhead_curva_overhead.place(relx=0.005, rely=0.82, relwidth=0.97, relheight=0.15)
-        self.entry_overhead_curva_overhead.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.entry_overhead_curva_overhead))
-        self.entry_overhead_curva_overhead.bind('<Down>', lambda event: self.atualizar_curvas(event, self.entry_overhead_curva_overhead))
+        self.entry_overhead_curva_overhead.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_overhead_curva_overhead))
+        self.entry_overhead_curva_overhead.bind('<Down>', lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_overhead_curva_overhead))
         self.entry_overhead_curva_overhead.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_obras_valor_m2))
 
         # Obras
@@ -1250,8 +1250,8 @@ class Simulador_Estudos_Rel(Widgets):
         self.nome_curva = []
         self.entry_obras_curva_obras = AutocompleteCombobox(self.fr_obras, width=30, justify=tk.LEFT, font=('Times', 8), completevalues=self.nome_curva)
         self.entry_obras_curva_obras.place(relx=0.005, rely=0.82, relwidth=0.97, relheight=0.15)
-        self.entry_obras_curva_obras.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.entry_obras_curva_obras))
-        self.entry_obras_curva_obras.bind('<Down>', lambda event: self.atualizar_curvas(event, self.entry_obras_curva_obras))
+        self.entry_obras_curva_obras.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_obras_curva_obras))
+        self.entry_obras_curva_obras.bind('<Down>', lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_obras_curva_obras))
         self.entry_obras_curva_obras.bind("<Return>", lambda event: self.format_custo_admobras(event))
         self.entry_obras_curva_obras.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_pos_obras_per_obras))
 
@@ -1292,8 +1292,8 @@ class Simulador_Estudos_Rel(Widgets):
         self.nome_curva = []
         self.entry_pos_obras_curva_obras = AutocompleteCombobox(self.fr_pos_obras, width=30, justify=tk.LEFT, font=('Times', 8), completevalues=self.nome_curva)
         self.entry_pos_obras_curva_obras.place(relx=0.005, rely=0.82, relwidth=0.97, relheight=0.15)
-        self.entry_pos_obras_curva_obras.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.entry_pos_obras_curva_obras))
-        self.entry_pos_obras_curva_obras.bind('<Down>', lambda event: self.atualizar_curvas(event, self.entry_pos_obras_curva_obras))
+        self.entry_pos_obras_curva_obras.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_pos_obras_curva_obras))
+        self.entry_pos_obras_curva_obras.bind('<Down>', lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_pos_obras_curva_obras))
         self.entry_pos_obras_curva_obras.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_adm_per_obras))
 
         # Adm Obras
@@ -1333,8 +1333,8 @@ class Simulador_Estudos_Rel(Widgets):
         self.nome_curva = []
         self.entry_adm_curva_obras = AutocompleteCombobox(self.fr_adm_obras, width=30, justify=tk.LEFT, font=('Times', 8), completevalues=self.nome_curva)
         self.entry_adm_curva_obras.place(relx=0.005, rely=0.82, relwidth=0.97, relheight=0.15)
-        self.entry_adm_curva_obras.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.entry_adm_curva_obras))
-        self.entry_adm_curva_obras.bind('<Down>', lambda event: self.atualizar_curvas(event, self.entry_adm_curva_obras))
+        self.entry_adm_curva_obras.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_adm_curva_obras))
+        self.entry_adm_curva_obras.bind('<Down>', lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_adm_curva_obras))
         self.entry_adm_curva_obras.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_financiamento_valor_captacao))
 
         # financiamento
@@ -1434,8 +1434,8 @@ class Simulador_Estudos_Rel(Widgets):
         self.nome_curva = []
         self.entry_financiamento_curva_liberacao = AutocompleteCombobox(self.fr_financiamento, width=30, justify=tk.LEFT, font=('Times', 8), completevalues=self.nome_curva)
         self.entry_financiamento_curva_liberacao.place(relx=0.01, rely=0.83, relwidth=0.97, relheight=0.055)
-        self.entry_financiamento_curva_liberacao.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.entry_financiamento_curva_liberacao))
-        self.entry_financiamento_curva_liberacao.bind('<Down>', lambda event: self.atualizar_curvas(event, self.entry_financiamento_curva_liberacao))
+        self.entry_financiamento_curva_liberacao.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_financiamento_curva_liberacao))
+        self.entry_financiamento_curva_liberacao.bind('<Down>', lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_financiamento_curva_liberacao))
         self.entry_financiamento_curva_liberacao.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_financiamento_financiador))
 
         # Financiador é o Parceiro?
@@ -1631,8 +1631,8 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_informacoes_status = AutocompleteCombobox(self.fr_informacoes, width=30, font=('Times', 11), completevalues=status)
         self.entry_informacoes_status.pack()
         self.entry_informacoes_status.place(relx=0.01, rely=0.19, relwidth=0.30, relheight=0.25)
-        self.entry_informacoes_status.bind("<Button-1>", lambda event: self.atualizar_status(event, self.entry_empresa.get(), self.entry_informacoes_status))
-        self.entry_informacoes_status.bind('<Down>', lambda event: self.atualizar_status(event, self.entry_empresa.get(), self.entry_informacoes_status))
+        self.entry_informacoes_status.bind("<Button-1>", lambda event: self.atualizar_status(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_informacoes_status))
+        self.entry_informacoes_status.bind('<Down>', lambda event: self.atualizar_status(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_informacoes_status))
         self.entry_informacoes_status.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_informacoes_anexos))
 
         # Anexos

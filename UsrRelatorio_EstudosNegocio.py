@@ -45,7 +45,7 @@ class Resumo_Estudos(Widgets):
 
         def consultar():
             if self.combo_empresa.get() != '':
-                ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+                ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), janela)
             else:
                 messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!")
                 return
@@ -171,7 +171,7 @@ class Resumo_Estudos(Widgets):
                     # Get associated values as a tuple
                     values = self.list_g.item(selected_item, 'values')
                     
-                    ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+                    ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), janela)
                     DS_Empresa = self.combo_empresa.get()
                     UF = values[6]
                     Cidade = values[5]
@@ -187,7 +187,7 @@ class Resumo_Estudos(Widgets):
                     # Get associated values as a tuple
                     values = self.list_g.item(selected_item, 'values')
                     
-                    ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+                    ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), janela)
                     DS_Empresa = self.combo_empresa.get()
                     UF = values[6]
                     Cidade = values[5]
@@ -203,7 +203,7 @@ class Resumo_Estudos(Widgets):
                     # Obtém os valores associados (como uma tupla)
                     values = self.list_g.item(self.list_g.selection(), 'values')
                     
-                    ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+                    ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), janela)
                     UF = values[6]
                     Cidade = values[5]
                     Tipo = values[3]
@@ -231,7 +231,7 @@ class Resumo_Estudos(Widgets):
                     # Get associated values as a tuple
                     values = self.list_g.item(selected_item, 'values')
                     
-                    ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+                    ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), janela)
                     DS_Empresa = self.combo_empresa.get()
                     UF = values[6]
                     Cidade = values[5]
@@ -284,7 +284,7 @@ class Resumo_Estudos(Widgets):
         # Botão Incluir Novo Estudo
         def novo_estudo():
             if self.combo_empresa.get() != '':
-                ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+                ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), janela)
             else:
                 messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!")
                 return

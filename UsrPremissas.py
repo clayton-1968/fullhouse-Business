@@ -73,11 +73,11 @@ class Premissas_Orcamento(Widgets):
         self.entry_orcamento = AutocompleteCombobox(fr_orcamento, width=30, font=('Times', 11), completevalues=orcamentos)
         self.entry_orcamento.pack()
         self.entry_orcamento.place(relx=0.01, rely=0.5, relwidth=0.985, relheight=0.4)
-        self.entry_orcamento.bind("<Button-1>", lambda event: self.atualizar_orcamentos(event, self.entry_empresa.get(), self.entry_orcamento))
-        self.entry_orcamento.bind("<KeyRelease>", lambda event: self.atualizar_orcamentos(event, self.entry_empresa.get(), self.entry_orcamento))
-        self.entry_orcamento.bind('<Down>', lambda event: self.atualizar_orcamentos(event, self.entry_empresa.get(), self.entry_orcamento))
+        self.entry_orcamento.bind("<Button-1>", lambda event: self.atualizar_orcamentos(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_orcamento))
+        self.entry_orcamento.bind("<KeyRelease>", lambda event: self.atualizar_orcamentos(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_orcamento))
+        self.entry_orcamento.bind('<Down>', lambda event: self.atualizar_orcamentos(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_orcamento))
         self.entry_orcamento.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_tipo_lcto_descr))
-
+        
         # Tipo Lançamento
         fr_tpo_lancamento = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         fr_tpo_lancamento.place(relx=0.64, rely=0.01,relwidth=0.10, relheight=0.07)
@@ -135,9 +135,9 @@ class Premissas_Orcamento(Widgets):
         centro_debito = []
         self.entry_centro_debito = AutocompleteCombobox(fr_centro_debito, width=30, font=('Times', 11), completevalues=centro_debito)
         self.entry_centro_debito.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_centro_debito.bind("<Button-1>", lambda event: self.atualizar_centro_resultado(event, self.entry_empresa.get(), self.entry_centro_debito))
-        self.entry_centro_debito.bind("<KeyRelease>", lambda event: self.atualizar_centro_resultado(event, self.entry_empresa.get(), self.entry_centro_debito))
-        self.entry_centro_debito.bind('<Down>', lambda event: self.atualizar_centro_resultado(event, self.entry_empresa.get(), self.entry_centro_debito))
+        self.entry_centro_debito.bind("<Button-1>", lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_centro_debito))
+        self.entry_centro_debito.bind("<KeyRelease>", lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_centro_debito))
+        self.entry_centro_debito.bind('<Down>', lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_centro_debito))
         self.entry_centro_debito.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_natureza_debito))
         
         
@@ -150,9 +150,9 @@ class Premissas_Orcamento(Widgets):
         natureza_debito = []
         self.entry_natureza_debito = AutocompleteCombobox(fr_natureza_debito, width=30, font=('Times', 11), completevalues=natureza_debito)
         self.entry_natureza_debito.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_natureza_debito.bind("<Button-1>", lambda event: self.atualizar_natureza_financeira(event, self.entry_empresa.get(), self.entry_natureza_debito))
-        self.entry_natureza_debito.bind("<KeyRelease>", lambda event: self.atualizar_natureza_financeira(event, self.entry_empresa.get(), self.entry_natureza_debito))
-        self.entry_natureza_debito.bind('<Down>', lambda event: self.atualizar_natureza_financeira(event, self.entry_empresa.get(), self.entry_natureza_debito))
+        self.entry_natureza_debito.bind("<Button-1>", lambda event: self.atualizar_natureza_financeira(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_natureza_debito))
+        self.entry_natureza_debito.bind("<KeyRelease>", lambda event: self.atualizar_natureza_financeira(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_natureza_debito))
+        self.entry_natureza_debito.bind('<Down>', lambda event: self.atualizar_natureza_financeira(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_natureza_debito))
         self.entry_natureza_debito.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_centro_credito))
 
     def frame_linha_3(self, janela):
@@ -175,9 +175,9 @@ class Premissas_Orcamento(Widgets):
         centro_credito = []
         self.entry_centro_credito = AutocompleteCombobox(fr_centro_credito, width=30, font=('Times', 11), completevalues=centro_credito)
         self.entry_centro_credito.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_centro_credito.bind("<Button-1>", lambda event: self.atualizar_centro_resultado(event, self.entry_empresa.get(), self.entry_centro_credito))
-        self.entry_centro_credito.bind("<KeyRelease>", lambda event: self.atualizar_centro_resultado(event, self.entry_empresa.get(), self.entry_centro_credito))
-        self.entry_centro_credito.bind('<Down>', lambda event: self.atualizar_centro_resultado(event, self.entry_empresa.get(), self.entry_centro_credito))
+        self.entry_centro_credito.bind("<Button-1>", lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_centro_credito))
+        self.entry_centro_credito.bind("<KeyRelease>", lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_centro_credito))
+        self.entry_centro_credito.bind('<Down>', lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_centro_credito))
         self.entry_centro_credito.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_natureza_credito))
         
         # Natureza Crédito
@@ -189,9 +189,9 @@ class Premissas_Orcamento(Widgets):
         natureza_credito = []
         self.entry_natureza_credito = AutocompleteCombobox(fr_natureza_credito, width=30, font=('Times', 11), completevalues=natureza_credito)
         self.entry_natureza_credito.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_natureza_credito.bind("<Button-1>", lambda event: self.atualizar_natureza_financeira(event, self.entry_empresa.get(), self.entry_natureza_credito))
-        self.entry_natureza_credito.bind("<KeyRelease>", lambda event: self.atualizar_natureza_financeira(event, self.entry_empresa.get(), self.entry_natureza_credito))
-        self.entry_natureza_credito.bind('<Down>', lambda event: self.atualizar_natureza_financeira(event, self.entry_empresa.get(), self.entry_natureza_credito))
+        self.entry_natureza_credito.bind("<Button-1>", lambda event: self.atualizar_natureza_financeira(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_natureza_credito))
+        self.entry_natureza_credito.bind("<KeyRelease>", lambda event: self.atualizar_natureza_financeira(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_natureza_credito))
+        self.entry_natureza_credito.bind('<Down>', lambda event: self.atualizar_natureza_financeira(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_natureza_credito))
         self.entry_natureza_credito.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_item_preco))
     
     def frame_linha_4(self, janela):
@@ -215,9 +215,9 @@ class Premissas_Orcamento(Widgets):
 
         self.entry_item_preco = AutocompleteCombobox(fr_item, width=30, font=('Times', 11), completevalues=item_preco)
         self.entry_item_preco.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_item_preco.bind("<Button-1>", lambda event: self.atualizar_item_precos_orcamentos(event, self.entry_empresa.get(), self.entry_orcamento.get(), self.entry_item_preco))
-        self.entry_item_preco.bind("<KeyRelease>", lambda event: self.atualizar_item_precos_orcamentos(event, self.entry_empresa.get(), self.entry_orcamento.get(), self.entry_item_preco))
-        self.entry_item_preco.bind('<Down>', lambda event: self.atualizar_item_precos_orcamentos(event, self.entry_empresa.get(), self.entry_orcamento.get(), self.entry_item_preco))
+        self.entry_item_preco.bind("<Button-1>", lambda event: self.atualizar_item_precos_orcamentos(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.obter_Orc_ID(self.entry_orcamento.get(), janela), self.entry_item_preco))
+        self.entry_item_preco.bind("<KeyRelease>", lambda event: self.atualizar_item_precos_orcamentos(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.obter_Orc_ID(self.entry_orcamento.get(), janela), self.entry_item_preco))
+        self.entry_item_preco.bind('<Down>', lambda event: self.atualizar_item_precos_orcamentos(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.obter_Orc_ID(self.entry_orcamento.get(), janela), self.entry_item_preco))
         self.entry_item_preco.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_volume_valor))
         
         # Volume
@@ -682,7 +682,7 @@ class Premissas_Orcamento(Widgets):
         DS_Historico = self.text_historico.get("1.0", "end")
         
         if Empresa_DS != '':
-            ID_Empresa = self.obter_Empresa_ID(Empresa_DS)
+            ID_Empresa = self.obter_Empresa_ID(Empresa_DS, self.janela_premissas)
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!", parent=self.janela_premissas)
             return
@@ -694,49 +694,49 @@ class Premissas_Orcamento(Widgets):
             return
           
         if Cen_DS_Debito != '':
-            ID_Cen_Debito = self.obter_Centro_ID(Cen_DS_Debito)
+            ID_Cen_Debito = self.obter_Centro_ID(Cen_DS_Debito, self.janela_premissas)
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher Centro de Custos à Débito!!", parent=self.janela_premissas)
             return
 
         if Cen_DS_Credito != '':
-            ID_Cen_Credito = self.obter_Centro_ID(Cen_DS_Credito)
+            ID_Cen_Credito = self.obter_Centro_ID(Cen_DS_Credito, self.janela_premissas)
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher Centro de Custos à Crédito!!", parent=self.janela_premissas)
             return
 
         if Nat_DS_Debito != '':
-            ID_Nat_Debito = self.obter_Natureza_ID(Nat_DS_Debito)
+            ID_Nat_Debito = self.obter_Natureza_ID(Nat_DS_Debito, self.janela_premissas)
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher Natureza à Débito!!", parent=self.janela_premissas)
             return
 
         if Nat_DS_Credito != '':
-            ID_Nat_Credito = self.obter_Natureza_ID(Nat_DS_Credito)
+            ID_Nat_Credito = self.obter_Natureza_ID(Nat_DS_Credito, self.janela_premissas)
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher Natureza à Crédito!!", parent=self.janela_premissas)
             return
         
         if DS_Item != '':
-            ID_Item = self.obter_Orc_Item_ID(DS_Item)
+            ID_Item = self.obter_Orc_Item_ID(DS_Item, self.janela_premissas)
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher Natureza à Crédito!!", parent=self.janela_premissas)
             return
         
         if DS_Indice != '':
-            ID_Indice = self.obter_Indice_ID(DS_Indice)
+            ID_Indice = self.obter_Indice_ID(DS_Indice, self.janela_premissas)
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher Ìndice de Reajuste!!", parent=self.janela_premissas)
             return
         
         if DS_Periodicidade != '':
-            ID_Periodicidade = self.obter_Periodicidade_ID(DS_Periodicidade)
+            ID_Periodicidade = self.obter_Periodicidade_ID(DS_Periodicidade, self.janela_premissas)
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher Periodicidade!!", parent=self.janela_premissas)
             return
         
         if DS_Nat_Gerencial != '':
-            ID_Nat_Gerencial = self.obter_Nat_Gerencial_ID(DS_Nat_Gerencial)
+            ID_Nat_Gerencial = self.obter_Nat_Gerencial_ID(DS_Nat_Gerencial, self.janela_premissas)
             Nat_Tipo = 'R'
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher Periodicidade!!", parent=self.janela_premissas)

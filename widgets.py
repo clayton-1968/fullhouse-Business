@@ -33,8 +33,8 @@ class Widgets(Consultas, Limpeza, Formatos, Formularios, Functions, Gravar, Atua
         self.combo_unidade_negocio = AutocompleteCombobox(self.fr_unidade_negocio, width=30, font=('Times', 11), completevalues=self.unidade_negocios)
         self.combo_unidade_negocio.pack()
         self.combo_unidade_negocio.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.combo_unidade_negocio.bind("<Button-1>", lambda event: self.atualizar_unidade_negocios(event,self.combo_empresa.get(), self.combo_unidade_negocio))
-        self.combo_unidade_negocio.bind('<Down>', lambda event: self.atualizar_unidade_negocios(event, self.combo_empresa.get(), self.combo_unidade_negocio))
+        self.combo_unidade_negocio.bind("<Button-1>", lambda event: self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.combo_empresa.get(), janela), self.combo_unidade_negocio))
+        self.combo_unidade_negocio.bind('<Down>', lambda event: self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.combo_empresa.get(), janela), self.combo_unidade_negocio))
 
     def frame_pessoa(self, janela, coordenadas_relx, coordenadas_rely, coordenadas_relwidth, coordenadas_relheight):
         # Pessoa
@@ -47,8 +47,8 @@ class Widgets(Consultas, Limpeza, Formatos, Formularios, Functions, Gravar, Atua
         self.combo_pessoa = AutocompleteCombobox(self.fr_pessoa, width=30, font=('Times', 11), completevalues=self.pessoas)
         self.combo_pessoa.pack()
         self.combo_pessoa.place(relx=0.01, rely=0.5, relwidth=0.89, relheight=0.4)
-        self.combo_pessoa.bind("<Button-1>", lambda event:  self.atualizar_pessoa(event, self.combo_empresa.get(),self.combo_pessoa))
-        self.combo_pessoa.bind('<Down>', lambda event:  self.atualizar_pessoa(event, self.combo_empresa.get(), self.combo_pessoa))
+        self.combo_pessoa.bind("<Button-1>", lambda event:  self.atualizar_pessoa(event, self.obter_Empresa_ID(self.combo_empresa.get(), janela),self.combo_pessoa))
+        self.combo_pessoa.bind('<Down>', lambda event:  self.atualizar_pessoa(event, self.obter_Empresa_ID(self.combo_empresa.get(), janela), self.combo_pessoa))
 
     def frame_uf(self, janela, coordenadas_relx, coordenadas_rely, coordenadas_relwidth, coordenadas_relheight):
         # Estado
@@ -107,14 +107,14 @@ class Widgets(Consultas, Limpeza, Formatos, Formularios, Functions, Gravar, Atua
         self.entry_nome_cenario.place(relx=0.01, rely=0.5, relwidth=0.95, relheight=0.4)
         self.entry_nome_cenario.bind("<Button-1>", lambda event: 
                                                                 self.atualizar_nome_cenario(event,
-                                                                self.combo_empresa.get(), 
+                                                                self.obter_Empresa_ID(self.combo_empresa.get(), janela), 
                                                                 self.combo_municipio.get(), 
                                                                 self.combo_uf.get(), 
                                                                 self.combo_tpo_projeto.get(), 
                                                                 self.entry_nome_cenario))
         self.entry_nome_cenario.bind('<Down>', lambda event: 
                                                                 self.atualizar_nome_cenario(event,
-                                                                self.combo_empresa.get(), 
+                                                                self.obter_Empresa_ID(self.combo_empresa.get(), janela), 
                                                                 self.combo_municipio.get(), 
                                                                 self.combo_uf.get(), 
                                                                 self.combo_tpo_projeto.get(), 
@@ -131,8 +131,8 @@ class Widgets(Consultas, Limpeza, Formatos, Formularios, Functions, Gravar, Atua
         self.combo_status = AutocompleteCombobox(self.fr_status, width=30, font=('Times', 11), completevalues=status)
         self.combo_status.pack()
         self.combo_status.place(relx=0.01, rely=0.5,relwidth=0.98, relheight=0.4)
-        self.combo_status.bind("<Button-1>", lambda event: self.atualizar_status(event, self.combo_empresa.get(), self.combo_status))
-        self.combo_status.bind('<Down>', lambda event: self.atualizar_status(event, self.combo_empresa.get(), self.combo_status))
+        self.combo_status.bind("<Button-1>", lambda event: self.atualizar_status(event, self.obter_Empresa_ID(self.combo_empresa.get(), janela), self.combo_status))
+        self.combo_status.bind('<Down>', lambda event: self.atualizar_status(event, self.obter_Empresa_ID(self.combo_empresa.get(), janela), self.combo_status))
     
     def fram_frete(self, janela, coordenadas_relx, coordenadas_rely, coordenadas_relwidth, coordenadas_relheight):
         # Frete

@@ -47,8 +47,8 @@ class Relatorio_Orcamento(Widgets):
         self.entry_orcamento = AutocompleteCombobox(fr_orcamento, width=30, font=('Times', 11), completevalues=orcamentos)
         self.entry_orcamento.pack()
         self.entry_orcamento.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_orcamento.bind("<Button-1>", lambda event: self.atualizar_orcamentos(event, self.entry_empresa.get(), self.entry_orcamento))
-        self.entry_orcamento.bind('<Down>', lambda event: self.atualizar_orcamentos(event, self.entry_empresa.get(), self.entry_orcamento))
+        self.entry_orcamento.bind("<Button-1>", lambda event: self.atualizar_orcamentos(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_orcamento))
+        self.entry_orcamento.bind('<Down>', lambda event: self.atualizar_orcamentos(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_orcamento))
         self.entry_orcamento.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_dt_inicio))
 
         # Data Início da Projeção Orçamentária
@@ -87,8 +87,8 @@ class Relatorio_Orcamento(Widgets):
         self.entry_centro_resultado = AutocompleteCombobox(fr_centro_resultado, width=30, font=('Times', 11), completevalues=centro_resultados)
         self.entry_centro_resultado.pack()
         self.entry_centro_resultado.place(relx=0.01, rely=0.5, relwidth=0.985, relheight=0.4)
-        self.entry_centro_resultado.bind("<Button-1>", lambda event:  self.atualizar_centro_resultado(event, self.entry_empresa.get(), self.entry_centro_resultado))
-        self.entry_centro_resultado.bind('<Down>', lambda event:  self.atualizar_centro_resultado(event, self.entry_empresa.get(), self.entry_centro_resultado))
+        self.entry_centro_resultado.bind("<Button-1>", lambda event:  self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_centro_resultado))
+        self.entry_centro_resultado.bind('<Down>', lambda event:  self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_centro_resultado))
         self.entry_centro_resultado.bind("<Return>", lambda event: self.muda_barrinha(event, self.opcoes_relatorio_menu))
         
         # Opções
@@ -105,7 +105,7 @@ class Relatorio_Orcamento(Widgets):
         opcoes_relatorio = ['Natureza Financeira', 'Centro Resultado']
         self.opcoes_relatorio_menu = ctk.CTkOptionMenu(fr_opcoes, values=opcoes_relatorio)
         self.opcoes_relatorio_menu.set(opcoes_relatorio[0])
-        self.opcoes_relatorio_menu.place(relx=0.005, rely=0.50, relheight=0.25, relwidth=0.40)
+        self.opcoes_relatorio_menu.place(relx=0.005, rely=0.30, relheight=0.35, relwidth=0.40)
 
         # Opções Extras
         self.check_var_premissas = customtkinter.StringVar(value="off")
@@ -113,10 +113,10 @@ class Relatorio_Orcamento(Widgets):
         self.check_var_reais_mil = customtkinter.StringVar(value="off")
         
         self.checkbox_excel = customtkinter.CTkCheckBox(fr_opcoes, text='Gerar Excel?', variable=self.check_var_excel, onvalue="on", offvalue="off")
-        self.checkbox_excel.place(relx=0.42, rely=0.50, relheight=0.35, relwidth=0.40)
+        self.checkbox_excel.place(relx=0.42, rely=0.25, relheight=0.45, relwidth=0.40)
 
         self.checkbox_reais_mil = customtkinter.CTkCheckBox(fr_opcoes, text='Em R$/1.000', variable=self.check_var_reais_mil, onvalue="on", offvalue="off")
-        self.checkbox_reais_mil.place(relx=0.73, rely=0.50, relheight=0.35, relwidth=0.265)
+        self.checkbox_reais_mil.place(relx=0.73, rely=0.25, relheight=0.45, relwidth=0.265)
 
         # Botão de Consultar
         def consultar():
@@ -124,18 +124,18 @@ class Relatorio_Orcamento(Widgets):
             Orc_DS = self.entry_orcamento.get()
 
             if self.entry_empresa.get() != '':
-                ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get())
+                ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get(), self.window_one)
             else:
                 messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!")
                 return
             
             if self.entry_orcamento.get() != '':
-                ID_Orcamento = self.obter_Orc_ID(self.entry_orcamento.get())
+                ID_Orcamento = self.obter_Orc_ID(self.entry_orcamento.get(), self.window_one)
             else:
                 ID_Orcamento = self.entry_orcamento.get()
                 
             if self.entry_centro_resultado.get() != '':
-                ID_Centro_Resultado = self.obter_Centro_ID(self.entry_centro_resultado.get())
+                ID_Centro_Resultado = self.obter_Centro_ID(self.entry_centro_resultado.get(), self.window_one)
             else:
                 ID_Centro_Resultado = self.entry_centro_resultado.get()
                     

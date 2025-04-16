@@ -48,8 +48,8 @@ class Resumo_Premissas(Widgets):
         self.combo_orcamento = AutocompleteCombobox(fr_orcamento, width=30, font=('Times', 11), completevalues=orcamentos)
         self.combo_orcamento.pack()
         self.combo_orcamento.place(relx=0.01, rely=0.5, relwidth=0.985, relheight=0.4)
-        self.combo_orcamento.bind("<Button-1>", lambda event: self.atualizar_orcamentos(event, self.combo_empresa_empresa.get(), self.combo_orcamento))
-        self.combo_orcamento.bind('<Down>', lambda event: self.atualizar_orcamentos(event, self.combo_empresa_empresa.get(), self.combo_orcamento))
+        self.combo_orcamento.bind("<Button-1>", lambda event: self.atualizar_orcamentos(event, self.obter_Empresa_ID(self.combo_empresa_empresa.get(), janela), self.combo_orcamento))
+        self.combo_orcamento.bind('<Down>', lambda event: self.atualizar_orcamentos(event, self.obter_Empresa_ID(self.combo_empresa_empresa.get(), janela), self.combo_orcamento))
         self.combo_orcamento.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_tipo_lcto_descr))
 
         # Tipo Lançamento
@@ -73,8 +73,8 @@ class Resumo_Premissas(Widgets):
         centro = []
         self.entry_centro = AutocompleteCombobox(fr_centro, width=30, font=('Times', 11), completevalues=centro)
         self.entry_centro.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_centro.bind("<Button-1>", lambda event: self.atualizar_centro_resultado(event, self.combo_empresa_empresa.get(), self.entry_centro))
-        self.entry_centro.bind('<Down>', lambda event: self.atualizar_centro_resultado(event, self.combo_empresa_empresa.get(), self.entry_centro))
+        self.entry_centro.bind("<Button-1>", lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.combo_empresa_empresa.get(), janela), self.entry_centro))
+        self.entry_centro.bind('<Down>', lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.combo_empresa_empresa.get(), janela), self.entry_centro))
         self.entry_centro.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_natureza))
         
         
@@ -87,8 +87,8 @@ class Resumo_Premissas(Widgets):
         natureza = []
         self.entry_natureza = AutocompleteCombobox(fr_natureza, width=30, font=('Times', 11), completevalues=natureza)
         self.entry_natureza.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_natureza.bind("<Button-1>", lambda event: self.atualizar_natureza_financeira(event, self.combo_empresa_empresa.get(), self.entry_natureza))
-        self.entry_natureza.bind('<Down>', lambda event: self.atualizar_natureza_financeira(event, self.combo_empresa_empresa.get(), self.entry_natureza))
+        self.entry_natureza.bind("<Button-1>", lambda event: self.atualizar_natureza_financeira(event, self.obter_Empresa_ID(self.combo_empresa_empresa.get(), janela), self.entry_natureza))
+        self.entry_natureza.bind('<Down>', lambda event: self.atualizar_natureza_financeira(event, self.obter_Empresa_ID(self.combo_empresa_empresa.get(), janela), self.entry_natureza))
         self.entry_natureza.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_centro_credito))
 
 
@@ -100,24 +100,24 @@ class Resumo_Premissas(Widgets):
             Nat_DS     = self.entry_natureza.get()
             
             if Empresa_DS != '':
-                ID_Empresa = self.obter_Empresa_ID(Empresa_DS)
+                ID_Empresa = self.obter_Empresa_ID(Empresa_DS, self.window_one)
             else:
                 messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!")
                 return
             
             if Orc_DS != '':
-                ID_Orc = self.obter_Orc_ID(Orc_DS)
+                ID_Orc = self.obter_Orc_ID(Orc_DS, self.window_one)
             else:
                 messagebox.showinfo("Gestor de Negócios", "Preencher Orçamento!!")
                 return
             
             if Cen_DS != '':
-                ID_Cen = self.obter_Centro_ID(Cen_DS)
+                ID_Cen = self.obter_Centro_ID(Cen_DS, self.window_one)
             else:
                 ID_Cen = ''
 
             if Nat_DS != '':
-                ID_Nat = self.obter_Natureza_ID(Nat_DS)
+                ID_Nat = self.obter_Natureza_ID(Nat_DS, self.window_one)
             else:
                 ID_Nat = ''
             
@@ -287,13 +287,13 @@ class Resumo_Premissas(Widgets):
             ID_Lcto    = ''
             
             if Empresa_DS != '':
-                ID_Empresa = self.obter_Empresa_ID(Empresa_DS)
+                ID_Empresa = self.obter_Empresa_ID(Empresa_DS, self.window_one)
             else:
                 messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!")
                 return
             
             if Orc_DS != '':
-                ID_Orc = self.obter_Orc_ID(Orc_DS)
+                ID_Orc = self.obter_Orc_ID(Orc_DS, self.window_one)
             else:
                 messagebox.showinfo("Gestor de Negócios", "Preencher Orçamento!!")
                 return

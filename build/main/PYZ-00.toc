@@ -1,10 +1,6 @@
 ('C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
  'LTDA\\Documentos\\GitHub\\fullhouse-Business\\build\\main\\PYZ-00.pyz',
- [('BxFinanceiras',
-   'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
-   'LTDA\\Documentos\\GitHub\\fullhouse-Business\\BxFinanceiras.py',
-   'PYMODULE'),
-  ('LancFinanceiro',
+ [('LancFinanceiro',
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\LancFinanceiro.py',
    'PYMODULE'),
@@ -245,6 +241,14 @@
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\Usr.py',
    'PYMODULE'),
+  ('UsrAprovacaoLctos',
+   'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
+   'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrAprovacaoLctos.py',
+   'PYMODULE'),
+  ('UsrBaixasFinanceiras',
+   'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
+   'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrBaixasFinanceiras.py',
+   'PYMODULE'),
   ('UsrCadastros',
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrCadastros.py',
@@ -256,6 +260,10 @@
   ('UsrCronograma',
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrCronograma.py',
+   'PYMODULE'),
+  ('UsrExtratoBancario',
+   'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
+   'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrExtratoBancario.py',
    'PYMODULE'),
   ('UsrExtratosClientes_Fornecedores',
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
@@ -2500,18 +2508,6 @@
    'PYMODULE'),
   ('socketserver',
    'C:\\Users\\Clayton\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\socketserver.py',
-   'PYMODULE'),
-  ('sqlite3',
-   'C:\\Users\\Clayton\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\sqlite3\\__init__.py',
-   'PYMODULE'),
-  ('sqlite3.__main__',
-   'C:\\Users\\Clayton\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\sqlite3\\__main__.py',
-   'PYMODULE'),
-  ('sqlite3.dbapi2',
-   'C:\\Users\\Clayton\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\sqlite3\\dbapi2.py',
-   'PYMODULE'),
-  ('sqlite3.dump',
-   'C:\\Users\\Clayton\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\sqlite3\\dump.py',
    'PYMODULE'),
   ('ssl',
    'C:\\Users\\Clayton\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\ssl.py',

@@ -104,9 +104,8 @@ class Pesquisa_Mercado(Widgets):
         lb_tpo_projeto = customtkinter.CTkLabel(fr_tpo_projeto, text="Tipo do Projeto")
         lb_tpo_projeto.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
 
-        tpo_projeto = self.get_tpo_projetos()
-        tpo_projeto = [(tpo_projeto['Tipo_Empreendimento']) for tpo_projeto in tpo_projeto]
-
+        tpo_projeto = []
+        
         self.entry_tpo_projeto = AutocompleteCombobox(fr_tpo_projeto, width=30, font=('Times', 11), completevalues=tpo_projeto)
         self.entry_tpo_projeto.pack()
         self.entry_tpo_projeto.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
@@ -294,7 +293,7 @@ class Pesquisa_Mercado(Widgets):
                 messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!.')
                 return
             else:
-                Empresa_ID = self.obter_Empresa_ID(Empresa_DS)
+                Empresa_ID = self.obter_Empresa_ID(Empresa_DS, janela)
             
             conditions = []  # Lista para armazenar as condições
             conditions.append("Empresa_ID = %s ")
