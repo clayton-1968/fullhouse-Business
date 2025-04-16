@@ -1182,72 +1182,16 @@ class Projetos(Icons, Functions):
         Ativo_Projeto = '' if self.check_var_ativo.get() == 'on' else None
         
         # Preparar a tabela
-        self.LItens_projetos.delete(*self.LItens_projetos.get_children())  # Limpa a tabela
-
-        self.LItens_projetos.heading('Id', text="Nr.")
-        self.LItens_projetos.column('Id', width=5, anchor='c')
-        self.LItens_projetos.heading('descricao', text="Descrição")
-        self.LItens_projetos.column('descricao', width=300, anchor='w')
-        self.LItens_projetos.heading('uf', text="UF")
-        self.LItens_projetos.column('uf', width=5, anchor='c')
-        self.LItens_projetos.heading('municipio', text="Municipio")
-        self.LItens_projetos.column('municipio', width=50, anchor='w')
-        self.LItens_projetos.heading('centro_resultado', text="Centro Resultado")
-        self.LItens_projetos.column('centro_resultado', width=50, anchor='c')
-        self.LItens_projetos.heading('tpo_programa', text="Tipo Programa")
-        self.LItens_projetos.column('tpo_programa', width=50, anchor='w')
-        self.LItens_projetos.heading('tpo_empreendimento', text="Tipo Empreendimento")
-        self.LItens_projetos.column('tpo_empreendimento', width=50, anchor='w')
-        self.LItens_projetos.heading('situacao', text="Situação")
-        self.LItens_projetos.column('situacao', width=50, anchor='w')
-        self.LItens_projetos.heading('prioridade', text="Prioridade")
-        self.LItens_projetos.column('prioridade', width=50, anchor='c')
-        self.LItens_projetos.heading('setor', text="Setor")
-        self.LItens_projetos.column('setor', width=50, anchor='w')
-        self.LItens_projetos.heading('obs', text="Obs.")
-        self.LItens_projetos.column('obs', width=50, anchor='w')
-        self.LItens_projetos.heading('status', text="Status")
-        self.LItens_projetos.column('status', width=50, anchor='c')
+        self.LItens_versao.delete(*self.LItens_versao.get_children())  # Limpa a tabela
+        self.LItens_versao.heading('Id', text="ID")
+        self.LItens_versao.column('Id', width=5, anchor='c')
+        self.LItens_versao.heading('Codigo', text="Código")
+        self.LItens_versao.column('Codigo', width=10, anchor='e')
+        self.LItens_versao.heading('Descricao', text="Descrição")
+        self.LItens_versao.column('Descricao', width=800, anchor='w')
+        self.LItens_versao.heading('dta', text="Data")
+        self.LItens_versao.column('dta', width=50, anchor='c')
         
-        # Parametros da consulta
-        conditions = []  
-        # Condições iniciais
-        if ID_Empresa is not None:
-            conditions.append("pc.projeto_empresa= %s")
-            params = [ID_Empresa]
-        
-        if UF is not None:
-            conditions.append("projeto_uf = %s")
-            params.append(UF)
-        
-        if ID_Cidade is not None:
-            conditions.append("pc.projeto_municipio = %s")
-            params.append(ID_Cidade)
-        
-        if ID_Projeto_Status is not None:
-            conditions.append("pc.projeto_status_id = %s")
-            params.append(ID_Projeto_Status)
-        
-        if ID_Tpo_Projeto is not None:
-            conditions.append("pc.projeto_tipo_id = %s")
-            params.append(ID_Tpo_Projeto)
-        
-        if ID_Situacao_Projeto is not None:
-            conditions.append("pc.projeto_situacao_id = %s")
-            params.append(ID_Situacao_Projeto)
-        
-        if Setor_Projeto is not None:
-            conditions.append("pc.projeto_setor = %s")
-            params.append(Setor_Projeto)
-        
-        if Prioridade_Projeto is not None:
-            conditions.append("pc.projeto_prioridade = %s")
-            params.append(Prioridade_Projeto)
-
-        if Ativo_Projeto is not None:
-            conditions.append("pc.projeto_ativo = %s")
-            params.append(Ativo_Projeto)
-
         # SQL para buscar os dados
         vs_sql = f"""
                     SELECT
@@ -1295,76 +1239,11 @@ class Projetos(Icons, Functions):
                 status_projeeto_ativo = 'Inativo'
 
             formatted_item = (
-                    item.get('projeto_id'),
-                    item.get('projeto_ds'),
-                    item.get('projeto_uf'),
-                    item.get('Municipio'),
-                    item.get('projeto_cr'),
-                    item.get('projeto_status_ds'),
-                    item.get('Tipo_Empreendimento'),
-                    item.get('projetos_situacao_ds'),
-                    item.get('projeto_prioridade'),
-                    item.get('projeto_setor'),
-                    item.get('projeto_observacao'),
-                    status_projeeto_ativo
+                    item.get('versao_id'),
+                    item.get('versao_nr'),
+                    item.get('versao_ds'),
+                    data_formatada
                 )
-            
-            self.LItens_projetos.insert('', 'end', values=formatted_item)
-
-    def OnDoubleClick_Projetos(self, event):
-        selected_item = self.LItens_projetos.selection()
-        if selected_item:
-            # Get the text of the selected item
-            item_text = self.LItens_projetos.item(selected_item, 'text')
-            # Get associated values as a tuple
-            values = self.LItens_projetos.item(selected_item, 'values')
-            
-            
-            ID_Projeto = values[0]
-            DS_Projeto = values[1]
-            UF = values[2]
-            Cidade = values[3]
-            Centro_Resultado = values[4]
-            DS_Projeto_Status = values[5]
-            DS_Tpo_Projeto = values[6]
-            DS_Situacao_Projeto = values[7]
-            Prioridade_Projeto = values[8]
-            Setor_Projeto = values[9]
-            Observacao = values[10]
-            Ativo_Projeto = values[11]
-            
-            self.entry_idx.delete(0, tk.END)
-            self.entry_nome_projeto.delete(0, tk.END)
-            self.entry_municipio.delete(0, tk.END)
-            self.entry_uf.delete(0, tk.END)
-            self.entry_tpo_programa.delete(0, tk.END)
-            self.entry_tpo_projeto.delete(0, tk.END)
-            self.entry_status.delete(0, tk.END)
-            self.entry_centro.delete(0, tk.END)
-            self.entry_setor.delete(0, tk.END)
-            self.entry_obs.delete(0, tk.END)
-
-            self.entry_idx.insert(0, ID_Projeto)           
-            self.entry_nome_projeto.insert(0, DS_Projeto)  
-            self.entry_municipio.insert(0, Cidade)     
-            self.entry_uf.insert(0, UF)            
-            self.entry_tpo_programa.insert(0, DS_Projeto_Status)  
-            self.entry_tpo_projeto.insert(0, DS_Tpo_Projeto)   
-            self.entry_status.insert(0, DS_Situacao_Projeto)        
-            self.entry_centro.insert(0, Centro_Resultado)   
-            self.entry_prioridade.set(Prioridade_Projeto)
-            self.entry_setor.insert(0, Setor_Projeto)         
-            self.entry_obs.insert(0, Observacao)           
-            if Ativo_Projeto == 'Ativo':
-                self.check_var_ativo.set('on') 
-            else:
-                self.check_var_ativo.set('off') 
-
-            self.atualizar_empresas(event, self.entry_empresa)
-            self.atualizar_municipio(event, self.entry_uf.get(), self.entry_municipio)
-            self.atualizar_tpo_programa(self, self.entry_tpo_programa)
-            self.atualizar_tpo_projeto(self, self.entry_tpo_projeto)
-            self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.entry_empresa.get(), self.janela_cadastro_projetos), self.entry_centro)
-            self.atualizar_projetos_situacao(event, self.entry_status)
+            self.LItens_versao.insert('', 'end', values=formatted_item)
 
 Projetos()
