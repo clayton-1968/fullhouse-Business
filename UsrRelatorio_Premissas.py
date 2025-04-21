@@ -123,6 +123,15 @@ class Resumo_Premissas(Widgets):
             
             lista = self.Consulta_Premissas(ID_Empresa, ID_Orc, Orc_Tpo, ID_Cen, ID_Nat)
             
+            bg_color = '#FFFFFF'  # Fundo branco
+            text_color = '#000000'  # Texto preto
+            selected_color = '#0078d7'  # Azul para selecionados
+
+            treestyle = ttk.Style()
+            treestyle.theme_use('default')
+            treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+            treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
+
             self.fr_list_premissas = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
             self.fr_list_premissas.place(relx=0.005, rely=0.16, relwidth=0.986, relheight=0.83)
             

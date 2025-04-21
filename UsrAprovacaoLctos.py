@@ -133,7 +133,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         # "CpfCnpj", "Descricao", "Unid_ID", "Unidade_Negocio", "Centro_ID", "Centro_Resultado", "Natureza_ID",
         # "Natureza_Financeira", "Valor", "Nr_Documento", "Status", "Anexo"), show='headings')
 
-        col_widths = [80, 200, 30, 80, 40, 100, 50, 100]
+        col_widths = [10, 30, 30, 30, 300, 10, 50, 5]
         headers = ["Unid_ID", "Centro_ID", "Natureza_ID", "Pessoa_ID", "Pessoas_Descricao", "Nr_Documento", "Valor", "Status"]
 
         for col, header, width in zip(self.tree['columns'], headers, col_widths):
@@ -187,15 +187,15 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
             query += f' AND ID_Empresa = "{self.id_empresa}"'
 
         if self.entry_unidade_negocio.get():
-            self.id_unidade = self.obter_Unidade_ID(self.entry_unidade_negocio.get())
+            self.id_unidade = self.obter_Unidade_ID(self.entry_unidade_negocio.get(), self.window_one)
             query += f' AND ID_Unidade = "{self.id_unidade}"'
 
         if self.entry_centro.get():
-            self.id_cr = self.obter_Centro_ID(self.entry_centro.get())
+            self.id_cr = self.obter_Centro_ID(self.entry_centro.get(), self.window_one)
             query += f' AND ID_CR = "{self.id_cr}"'
 
         if self.entry_natureza.get():
-            self.id_natureza = self.obter_Natureza_ID(self.entry_natureza.get())
+            self.id_natureza = self.obter_Natureza_ID(self.entry_natureza.get(), self.window_one)
             query += f' AND ID_Natureza = "{self.id_natureza}"'
 
         if self.aprovados_var.get():

@@ -24,15 +24,6 @@ class Pesquisa_Mercado(Widgets):
         self.frame_list_pesquisa(self.janela_pesquisa_mercado)
         self.frame_carregar_dados_pesquisa(Empresa_ID, Empresa_DS, UF, Cidade, Tipo, Nome_da_Area)
         
-        # style = ttkthemes.ThemedStyle(self.janela_pesquisa_mercado)
-        # style.theme_use('clam')
-        # style.configure('Treeview', font=('Verdana', 8), foreground='#2b2b2b', cellpadding=19)
-        # style.configure('Treeview.Heading', font=('Verdana', 10, 'bold'), foreground='#444', background='silver')
-        # style.map('Treeview', background=[('selected', 'darkgreen')], foreground=[('selected', 'orange')])
-
-        # self.scrollbar = ttk.Scrollbar(self.janela_pesquisa_mercado, orient='vertical')
-        # self.scrollbar.pack(side='right', fill='y')
-
         self.janela_pesquisa_mercado.focus_force()
         self.janela_pesquisa_mercado.grab_set()    
         
@@ -201,9 +192,10 @@ class Pesquisa_Mercado(Widgets):
 
     def frame_list_pesquisa(self, janela):
         ## Listbox _ Informações Pesquisa
-        bg_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkFrame"]["fg_color"])
-        text_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkLabel"]["text_color"])
-        selected_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkButton"]["fg_color"])
+        # Definindo cores
+        bg_color = '#FFFFFF'  # Fundo branco
+        text_color = '#000000'  # Texto preto
+        selected_color = '#0078d7'  # Azul para selecionados
 
         treestyle = ttk.Style()
         treestyle.theme_use('default')

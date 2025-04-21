@@ -4,16 +4,16 @@ from datetime import datetime
 from PIL import ImageTk, Image
 from UsrCadastros import Projetos
 
+
 ################# criando janela ###############
-
-
 class Cronograma_Atividades(Widgets, Projetos):
     def cronograma_atividades(self):
         self.window_one.title('Cronograma Atividades')
         self.clearFrame_principal()
         self.frame_cabecalho_cronograma_atividades(self.principal_frame)
-        # self.frame_list_cronograma_atividades(self.principal_frame)
+
 ################# dividindo a janela ###############
+    
     def frame_cabecalho_cronograma_atividades(self, janela):
         # Projeto
         coordenadas_relx = 0.005
@@ -39,17 +39,30 @@ class Cronograma_Atividades(Widgets, Projetos):
         self.entry_projeto.bind(
             '<Down>', lambda event: self.atualizar_projetos(event, self.entry_projeto))
 
-        # Botão Incluir Novo Estudo
-        icon_image = self.base64_to_photoimage('open_book')
-        self.btn_novo_projeto = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=self.cad_projetos)
-        self.btn_novo_projeto.pack(pady=10)
-        self.btn_novo_projeto.place(relx=0.91, rely=0.02, relwidth=0.04, relheight=0.05)
-
         # Botão de Consultar
         icon_image = self.base64_to_photoimage('lupa')
         self.btn_consultar_projeto = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=lambda: self.consulta_cronograma_atividades(janela))
         self.btn_consultar_projeto.pack(pady=10)
-        self.btn_consultar_projeto.place(relx=0.955, rely=0.02, relwidth=0.04, relheight=0.05)
+        self.btn_consultar_projeto.place(relx=0.51, rely=0.02, relwidth=0.04, relheight=0.05)
+    
+        # Botão de Salvar Cronograma
+        icon_image = self.base64_to_photoimage('save')
+        self.btn_salvar_projeto = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=lambda: self.gravar_cronograma_total(janela))
+        self.btn_salvar_projeto.pack(pady=10)
+        self.btn_salvar_projeto.place(relx=0.545, rely=0.02, relwidth=0.04, relheight=0.05)
+               
+        
+        # Botão Incluir Cronograma
+        icon_image = self.base64_to_photoimage('open_book')
+        self.btn_novo_projeto = customtkinter.CTkButton(janela, text='Novo', image=icon_image, fg_color='transparent', command=self.cad_projetos)
+        self.btn_novo_projeto.pack(pady=10)
+        self.btn_novo_projeto.place(relx=0.865, rely=0.02, relwidth=0.04, relheight=0.05)
+        
+        # # Botão Sair Cronograma
+        # icon_image = self.base64_to_photoimage('sair')
+        # self.btn_sair_projeto = customtkinter.CTkButton(janela, text='Sair', image=icon_image, fg_color='transparent', command=self.tela_principal)
+        # self.btn_sair_projeto.pack(pady=10)
+        # self.btn_sair_projeto.place(relx=0.955, rely=0.02, relwidth=0.04, relheight=0.05)
 
     def consulta_cronograma_atividades(self, janela):
         projeto_ds = self.entry_projeto.get()
@@ -60,16 +73,15 @@ class Cronograma_Atividades(Widgets, Projetos):
             return
 
         # Listbox _ Cronograma de Atividades
-        bg_color = janela._apply_appearance_mode(
-            customtkinter.ThemeManager.theme["CTkFrame"]["fg_color"])
-        text_color = janela._apply_appearance_mode(
-            customtkinter.ThemeManager.theme["CTkLabel"]["text_color"])
-        selected_color = janela._apply_appearance_mode(
-            customtkinter.ThemeManager.theme["CTkButton"]["fg_color"])
+        # Definindo cores
+        bg_color = '#FFFFFF'  # Fundo branco
+        text_color = '#000000'  # Texto preto
+        selected_color = '#0078d7'  # Azul para selecionados
+        
         treestyle = ttk.Style()
-        # treestyle.theme_use('default')
-        # treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
-        # treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
+        treestyle.theme_use('default')
+        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+        treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
 
         self.fr_list = customtkinter.CTkFrame(
             janela, border_color="gray75", border_width=1)
@@ -141,13 +153,29 @@ class Cronograma_Atividades(Widgets, Projetos):
         self.LCronograma.delete(*self.LCronograma.get_children())
 
         sql_query = """
-                        SELECT projeto_ID, projeto_DS, tarefa_ID, tarefa_DS, responsavel_nome,
-                            tarefa_dependencia, tempo_espera, tempo_previsto, percentual_execucao,
-                            data_Inicial_Prevista, data_Inicial_Realizada, dias_diferenca_inicio,
-                            data_conclusao_prevista, data_conclusao_realizada, prazo_fatal_dias,
-                            dias_diferenca, status, observacao
-                        FROM programas_atividades 
-                        WHERE projeto_ID = %s
+                        SELECT 
+                            pc.projeto_empresa          AS projeto_empresa,
+                            pa.projeto_ID               AS projeto_ID, 
+                            pa.projeto_DS               AS projeto_DS, 
+                            pa.tarefa_ID                AS tarefa_ID, 
+                            pa.tarefa_DS                AS tarefa_DS, 
+                            pa.responsavel_nome         AS responsavel_nome,
+                            pa.tarefa_dependencia       AS tarefa_dependencia, 
+                            pa.tempo_espera             AS tempo_espera, 
+                            pa.tempo_previsto           AS tempo_previsto, 
+                            pa.percentual_execucao      AS percentual_execucao,
+                            pa.data_Inicial_Prevista    AS data_Inicial_Prevista, 
+                            pa.data_Inicial_Realizada   AS data_Inicial_Realizada, 
+                            pa.dias_diferenca_inicio    AS dias_diferenca_inicio,
+                            pa.data_conclusao_prevista  AS data_conclusao_prevista, 
+                            pa.data_conclusao_realizada AS data_conclusao_realizada, 
+                            pa.prazo_fatal_dias         AS prazo_fatal_dias,
+                            pa.dias_diferenca           AS dias_diferenca, 
+                            pa.status                   AS status, 
+                            pa.observacao               AS observacao
+                        FROM programas_atividades pa
+                        INNER JOIN projetos_cronograma pc ON pc.projeto_id=pa.projeto_id 
+                        WHERE pa.projeto_ID = %s
                         ORDER BY tarefa_ID
                     """
 
@@ -158,7 +186,7 @@ class Cronograma_Atividades(Widgets, Projetos):
         self.icon_image_verde = self.base64_to_farois('semafaro_verde')
         self.icon_image_amarelo = self.base64_to_farois('semafaro_amarelo')
         self.icon_image_vermelho = self.base64_to_farois('semafaro_vermelho')
-
+        
         if not self.list_tarefas:
             # Tarefa em Branco
             tarefa_info = []
@@ -204,6 +232,7 @@ class Cronograma_Atividades(Widgets, Projetos):
             tarefa_info = []
             nrregistros = 1
             for record in self.list_tarefas:
+                empresa_projeto_id = record.get('projeto_empresa')
                 nrcarat = len(record.get('tarefa_ID'))
                 dta_branco = str('1899-12-30')
                 data_realizada = datetime.strftime(
@@ -302,34 +331,31 @@ class Cronograma_Atividades(Widgets, Projetos):
         def selected_anexar():
             selected_item = self.LCronograma.selection()
             if selected_item:
-                # Texto do item selecionado
-                item_text = self.LCronograma.item(
-                    self.LCronograma.selection(), 'text')
-                # Obtém os valores associados (como uma tupla)
-                values = self.LCronograma.item(
-                    self.LCronograma.selection(), 'values')
+                item_text = self.LCronograma.item(selected_item, 'text')
+                values = self.LCronograma.item(selected_item, 'values')
+                lin = self.LCronograma.index(selected_item)
+                tarefa_id = values[1]
+                self.tarefa_anexo(lin, empresa_projeto_id, projeto_id, tarefa_id)
+            else:
+                messagebox.showinfo("Erro", "Selecione a posição para inclusão do Anexo!", janela)
+                return
 
-                ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get())
-                UF = values[6]
-                Cidade = values[5]
-                Tipo = values[3]
-                Nome_da_Area = values[4]
-
-                self.lista_negocio = self.Consulta_Negocio(
-                    ID_Empresa, UF, Cidade, Tipo, Nome_da_Area)
-                if self.lista_negocio[0].get('Http') != '':
-                    url = self.lista_negocio[0].get('Http')
-                else:
-                    messagebox.showwarning(
-                        "Maps", "Coordenadas Não Cadastrada!!!")
-                    return
-
-                url = url.strip()  # Remove espaços em branco no início e no fim
-                webbrowser.open(url)
-
+        def selected_pesquisar():
+            selected_item = self.LCronograma.selection()
+            if selected_item:
+                item_text = self.LCronograma.item(selected_item, 'text')
+                values = self.LCronograma.item(selected_item, 'values')
+                lin = self.LCronograma.index(selected_item)
+                tarefa_id = values[1]
+                self.pesquisa_anexos(projeto_id, tarefa_id)
+                
+            else:
+                messagebox.showinfo("Erro", "Selecione a posição para Pesquisar Existência de Anexos!", janela)
+                return
+            
         def selected_excluir():
             if self.entry_projeto.get() != '':
-                projeto_id = self.obter_Projeto_ID(self.entry_projeto.get())
+                projeto_id = self.obter_Projeto_ID(self.entry_projeto.get(), janela)
             else:
                 messagebox.showinfo("Gestor de Negócios",
                                     "Preencher o Projeto!!")
@@ -353,28 +379,22 @@ class Cronograma_Atividades(Widgets, Projetos):
                 self.LCronograma.selection_set(row_id)
                 row_values = self.LCronograma.item(row_id)['values']
 
-                postPopUpMenu = tk.Menu(
-                    self.LCronograma, tearoff=0, font=('Verdana', 11))
+                postPopUpMenu = tk.Menu(self.LCronograma, tearoff=0, font=('Verdana', 11))
 
                 # postPopUpMenu.add_command(label='Incluir Tarefa', accelerator='Ctrl+I', command= selected_incluir)
-                postPopUpMenu.add_command(
-                    label='Incluir Tarefa', accelerator='Insert', command=selected_incluir)
-                postPopUpMenu.add_command(
-                    label='Excluir Tarefa', accelerator='Delete', command=selected_excluir)
+                postPopUpMenu.add_command(label='Incluir Tarefa', accelerator='Insert', command=selected_incluir)
+                postPopUpMenu.add_command(label='Excluir Tarefa', accelerator='Delete', command=selected_excluir)
                 postPopUpMenu.add_separator()
-                postPopUpMenu.add_command(
-                    label='Anexar Documento', accelerator='Alt+U', command=selected_anexar)
+                postPopUpMenu.add_command(label='Anexar Documento', accelerator='Alt+U', command=selected_anexar)
+                postPopUpMenu.add_command(label='Pesquisar Documentos', accelerator='Alt+P', command=selected_pesquisar)
                 postPopUpMenu.post(event.x_root, event.y_root)
 
         # 'Button-3' é o clique direito do mouse
         self.LCronograma.bind("<Button-3>", postPopUpMenu)
-        self.LCronograma.bind('<Insert>', lambda event: selected_incluir(
-        ) if self.LCronograma.selection() else None)
-        # self.LCronograma.bind('<Control-i>', lambda event: selected_incluir() if self.LCronograma.selection() else None)
-        self.LCronograma.bind('<Delete>', lambda event: selected_excluir(
-        ) if self.LCronograma.selection() else None)
-        self.LCronograma.bind('<Control-u>', lambda event: selected_anexar()
-                              if self.LCronograma.selection() else None)
+        self.LCronograma.bind('<Insert>', lambda event: selected_incluir() if self.LCronograma.selection() else None)
+        self.LCronograma.bind('<Delete>', lambda event: selected_excluir() if self.LCronograma.selection() else None)
+        self.LCronograma.bind('<Control-u>', lambda event: selected_anexar() if self.LCronograma.selection() else None)
+        self.LCronograma.bind('<Control-p>', lambda event: selected_pesquisar() if self.LCronograma.selection() else None)
 
     def atualizar_dependencias_exclusao(self, linha_base_predessessora):
         # Reassigning the numbers
@@ -953,6 +973,132 @@ class Cronograma_Atividades(Widgets, Projetos):
         finally:
             pass
 
+    def gravar_cronograma_total(self, janela):
+        try:
+            projeto_ds = self.entry_projeto.get()
+            if self.entry_projeto.get() != '':
+                projeto_id = self.obter_Projeto_ID(self.entry_projeto.get(), self.window_one)
+            else:
+                messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto!!", parent=janela)
+                return
+            if len(self.LCronograma.get_children()) == 0:
+                messagebox.showinfo("Gestor de Negócios", "Projeto sem tarefas para salvar!!", parent=janela)
+                return
+
+            # Cria uma nova janela (tela de carregamento)
+            coordenadas_relx = 0.20
+            coordenadas_rely = 0.30
+            coordenadas_relwidth = 0.50
+            coordenadas_relheight = 0.05
+            self.frm_barra_progresso = customtkinter.CTkFrame(janela, border_color="gray75", border_width=0, fg_color='transparent', corner_radius=10)
+            self.frm_barra_progresso.pack(fill='x')
+            self.frm_barra_progresso.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+            
+            # Cria a Barra de Progresso
+            self.progress_bar = ctk.CTkProgressBar(
+                                                    self.frm_barra_progresso,
+                                                    width=400,
+                                                    height=30,
+                                                    corner_radius=30,
+                                                    fg_color='#003',
+                                                    progress_color='#060',
+                                                )
+            self.progress_bar.pack(fill='x', pady=10, padx=10)
+            # Cria um label para mostrar o texto na barra de progresso
+            self.label_progresso = ctk.CTkLabel(self.frm_barra_progresso, text="Aguarde Gravando...: 0%", anchor='center', text_color='white')
+            self.label_progresso.pack(pady=(0, 10))  # Adiciona espaço abaixo da label
+
+            self.progress_bar.set(1)  # Reseta a barra de progresso para 0
+            self.total_records = len(self.LCronograma.get_children())  # Total records to process
+            self.current_index = 0
+
+            for i in range(len(self.LCronograma.get_children())):
+                self.process_records()
+
+                item = self.LCronograma.get_children()[i]
+                values = self.LCronograma.item(item, 'values')
+                # Assign values from the selected item (simulating UsrCronograma)
+                projeto_ID = projeto_id
+                projeto_DS = projeto_ds
+                projeto_cr = 0
+                tarefa_id = values[1]
+                tarefa_DS = values[2].strip()
+                responsavel_nome = values[3]
+                tarefa_dependencia = values[4]
+                Tempo_Espera = values[5]
+                Tempo_Previsto = values[6]
+                percentual_execucao = values[7]
+                data_inicial_Prevista = datetime.strptime(values[8], "%d/%m/%Y")
+                data_inicial_Realizada = datetime.strptime(values[9], "%d/%m/%Y") if values[9] else None
+                data_Conclusao_Prevista = datetime.strptime(values[10], "%d/%m/%Y")
+                data_Conclusao_Realizada = datetime.strptime(values[11], "%d/%m/%Y") if values[11] else None
+                prazo_fatal_dias = 0
+                dias_diferenca_Conclusao = 0
+                status_projeto = ""
+                observacao = values[12]
+                Anexos = ''
+
+                # Calculate date differences
+                dias_diferenca_inicio = (data_inicial_Realizada - data_inicial_Prevista).days if data_inicial_Realizada else 0
+                prazo_fatal_dias = (datetime.now() - data_Conclusao_Prevista).days
+                dias_diferenca_Conclusao = (data_Conclusao_Prevista - data_Conclusao_Realizada).days if data_Conclusao_Realizada else 0
+
+                sql = """
+                        UPDATE programas_atividades SET
+                            projeto_DS = %s,
+                            projeto_cr = %s,
+                            tarefa_DS = %s,
+                            responsavel_nome = %s,
+                            tarefa_dependencia = %s,
+                            tempo_espera = %s,
+                            tempo_previsto = %s,
+                            percentual_execucao = %s,
+                            Data_inicial_prevista = %s,
+                            Data_inicial_Realizada = %s,
+                            dias_diferenca_inicio = %s,
+                            data_conclusao_prevista = %s,
+                            data_conclusao_realizada = %s,
+                            prazo_fatal_dias = %s,
+                            dias_diferenca = %s,
+                            status = %s,
+                            observacao = %s,
+                            anexos = %s
+                        WHERE projeto_ID = %s AND tarefa_ID = %s
+                        """
+
+                parameters = (
+                                projeto_DS,
+                                projeto_cr,
+                                tarefa_DS.replace("'", " "),
+                                responsavel_nome,
+                                tarefa_dependencia,
+                                Tempo_Espera,
+                                Tempo_Previsto,
+                                float(percentual_execucao.strip('%')) / 100,
+                                data_inicial_Prevista.strftime('%Y-%m-%d'),
+                                data_inicial_Realizada.strftime('%Y-%m-%d') if data_inicial_Realizada else '1899-12-30',
+                                dias_diferenca_inicio,
+                                data_Conclusao_Prevista.strftime('%Y-%m-%d'),
+                                data_Conclusao_Realizada.strftime('%Y-%m-%d') if data_Conclusao_Realizada else '1899-12-30',
+                                prazo_fatal_dias,
+                                dias_diferenca_Conclusao,
+                                status_projeto,
+                                observacao.replace("'", " "),
+                                Anexos,
+                                projeto_ID,
+                                tarefa_id
+                            )
+
+                # Execute the SQL command
+                db.executar_consulta(sql, parameters)
+                # messagebox.showinfo("Sucesso", "Tarefa Alterada com sucesso!")
+
+        except Exception as e:
+            messagebox.showinfo("Gestor de Negócios", f"Erro: {e}", parent=janela)
+            return
+        finally:
+            pass
+
     def excluir_tarefas(self, projeto_id, tarefa_id, linha):
         try:
             linha_base_predessessora = linha
@@ -1113,180 +1259,109 @@ class Cronograma_Atividades(Widgets, Projetos):
 
                 self.LCronograma[idx]['percentual_execucao'] = percentual_execucao
 
-# FALTA AJUSTAR AS OUTRAS QUESTÕES
+    def process_records(self):
+        if self.current_index < self.total_records:
+            self.current_index += 1 
+            progress_value = self.current_index / self.total_records
+            self.progress_bar.set(progress_value)
+            self.label_progresso.configure(text=f"Aguarde Gravando...: {progress_value * 100:.0f}%")
+            self.window_one.after(1000, self.process_records)
+            self.window_one.update_idletasks()  # Atualiza a interface gráfica
+        else:
+            # Finaliza o processamento
+            self.progress_bar.stop()  # Para a barra de progresso
+            self.label_progresso.configure(text="Gravação concluída!")  # Mensagem de conclusão
+            # Opcional: pode destruir o frame após alguns segundos ou manter uma interface de resultado
+            self.window_one.after(2000, self.frm_barra_progresso.destroy)  # Espera 2 segundos antes de destruir o frame
+            # self.progress_bar.stop()  # Para a barra de progresso
+            # self.frm_barra_progresso.destroy()
 
-    # def data_inicial_prev(self, dependency, line):
-    #     if dependency:
-    #         self.predessessora(line)
-
-    # def gravar_alterar_dependencias(self, tarefa_id, tarefa_dependencia, projeto_id, conexao):
-    #     try:
-    #         # Prepare the SQL UPDATE statement
-    #         sql = f"""
-    #         UPDATE programas_atividades
-    #         SET tarefa_dependencia = %s
-    #         WHERE projeto_ID = %s AND tarefa_ID = %s
-    #         """
-
-    #         # Execute SQL command
-    #         with conexao.cursor() as cursor:
-    #             cursor.execute(sql, (tarefa_dependencia, projeto_id, tarefa_id))
-    #             conexao.commit()  # Commit the transaction
-
-    #     except Exception as e:
-    #         print(f"Error occurred while updating dependencies: {str(e)}")
-
-    def abrir_anexo(self, projeto_id, tarefa_id, connection):
+    def tarefa_anexo(self, lin, empresa_id, projeto_id, tarefa_id):
+        # Define o caminho do diretório
+        sPath = os.path.join(os.getcwd(), '')  # Usa o diretório atual do script
+        
+        # Verifica se o diretório existe
+        if os.path.exists(sPath):
+            # Chama a função para gravar o anexo
+            self.gravar_anexo_cronograma(lin, empresa_id, projeto_id, tarefa_id)
+        else:
+            # Mostra uma mensagem se o diretório não existir
+            messagebox.showinfo("Gestor de Negócios", f"Erro - Arquivo Não Encontrado no caminho: {sPath}", parent=self.principal_frame)
+    
+    def gravar_anexo_cronograma(self, lin, empresa_id, projeto_id, tarefa_id):
         try:
-            sql_query = f"""
-            SELECT 
-                Empresa_ID AS Empresa, 
-                Projeto_ID AS Projeto, 
-                Tarefa_ID AS Tarefa, 
-                ID_Anexo AS Anexo, 
-                Doc_Num_Documento AS Doc 
-            FROM 
-                TB_Gedoc_Tarefas 
-            WHERE 
-                Projeto_ID = %s AND Tarefa_ID = %s
-            """
-
-            # Execute the SQL query
-            with connection.cursor() as cursor:
-                cursor.execute(sql_query, (projeto_id, tarefa_id))
-                results = cursor.fetchall()
-
-                if not results:
-                    messagebox.showinfo("Info", "Documentos Não Cadastrado!")
-                    return
-
-                # Initialize the user annexes dialog
-                user_anexos = UserAnexos()
-                user_anexos.annex_list.delete(0, 'end')  # Clear previous items
-
-                # Adding items to the annex list
-                for row in results:
-                    task_description, annex_id, document_number = row[2], row[3], row[4]
-                    user_anexos.annex_list.insert(
-                        'end', f"Tarefa: {task_description}, Anexo ID: {annex_id}, Documento: {document_number}")
-
-                user_anexos.show()  # Simulate showing the annexes
-
-        except Exception as e:
-            messagebox.showerror("Erro", f"Erro! {str(e)}")
-
-    def gravar_anexo_cronograma(projeto_id, tarefa_id, connection):
-        try:
-            # Open a file dialog to select a PDF
+            # Abrir a pasta e selecionar o PDF
             root = tk.Tk()
-            root.withdraw()  # Hide the root window
+            root.withdraw()  # Esconder sua Janela
             file_path = filedialog.askopenfilename(
                 title="Procurar Arquivos .pdf",
-                initialdir=os.getcwd(),  # Set initial directory
+                initialdir=os.getcwd(),  # Setar o Diretório
                 filetypes=[("PDF Files", "*.pdf"), ("All Files", "*.*")]
             )
-
+            
             if not file_path:
-                messagebox.showinfo("Info", "No file selected.")
+                messagebox.showinfo("Gestor de Negócios", "Informação nenhum arquivo selecionado!!!", parent=self.principal_frame)
                 return
 
-            # Get the details of the file
+            # Pegar detalhes do arquivo
             file_name = os.path.basename(file_path)
+            documento_ds = file_name
 
-            # Check if the document is already in the database
-            sql_check = """
-            SELECT ID_Anexo FROM TB_Gedoc_Tarefas 
-            WHERE Projeto_ID = %s AND Tarefa_ID = %s AND Doc_Num_Documento = %s AND Empresa_ID = %s
-            """
-            id_empresa = "Your company ID"  # Replace with actual company ID retrieval logic
-
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    sql_check, (projeto_id, tarefa_id, file_name, id_empresa))
-                existing_record = cursor.fetchone()
-
-                # Open and read the file in binary mode
-                with open(file_path, 'rb') as file:
-                    file_data = file.read()
-
-                if existing_record is None:
-                    # Insert a new record
-                    sql_insert = """
-                    INSERT INTO TB_Gedoc_Tarefas 
-                    (Empresa_ID, Projeto_ID, Tarefa_ID, Doc_Num_Documento, BinarioPDF) 
-                    VALUES (%s, %s, %s, %s, %s)
-                    """
-                    cursor.execute(
-                        sql_insert, (id_empresa, projeto_id, tarefa_id, file_name, file_data))
-                    connection.commit()
-                    messagebox.showinfo(
-                        "Success", "Document saved successfully.")
-
-                else:
-                    # Update the existing record
-                    id_anexo = existing_record[0]
-                    sql_update = """
-                    UPDATE TB_Gedoc_Tarefas 
-                    SET BinarioPDF = %s 
-                    WHERE ID_Anexo = %s
-                    """
-                    cursor.execute(sql_update, (file_data, id_anexo))
-                    connection.commit()
-                    messagebox.showinfo(
-                        "Success", "Document updated successfully.")
+            conditions = []  
+            conditions.append('Empresa_ID = %s')
+            params = [empresa_id]
+            conditions.append('Projeto_ID = %s')
+            params.append(projeto_id)
+            conditions.append('Tarefa_ID = %s')
+            params.append(tarefa_id)
+            conditions.append('Doc_Num_Documento = %s')
+            params.append(documento_ds)
+            
+            # Checar se a tarefa existe
+            sql_check = f"""
+                            SELECT ID_Anexo FROM TB_Gedoc_Tarefas 
+                            WHERE {' AND '.join(conditions)} 
+                        """
+            
+            record = db.executar_consulta(sql_check, params)
+            # Abir e ler o arquivo em modo binário
+            with open(file_path, 'rb') as file:
+                file_data = file.read()
+            
+            if record:
+                existing_record = record
+                id_anexo = existing_record[0]['ID_Anexo']
+                sql_update = """
+                                UPDATE TB_Gedoc_Tarefas 
+                                SET BinarioPDF = %s 
+                                WHERE ID_Anexo = %s
+                            """
+                db.executar_consulta(sql_update, (file_data, id_anexo))
+                messagebox.showinfo("Gestor de Negócios", "Documento Alterado com sucesso!!!", parent=self.principal_frame)
+            else:
+                # Inserir um Novo Registro
+                sql_insert = """
+                                INSERT INTO TB_Gedoc_Tarefas 
+                                (
+                                    Empresa_ID, 
+                                    Projeto_ID, 
+                                    Tarefa_ID, 
+                                    Doc_Num_Documento, 
+                                    BinarioPDF) 
+                                VALUES (%s, %s, %s, %s, %s)
+                            """
+                db.executar_consulta(sql_insert, (empresa_id, projeto_id, tarefa_id, file_name, file_data))
+                messagebox.showinfo("Gestor de Negócios", "Documento salvo com sucesso!!!", parent=self.principal_frame)
 
         except Exception as e:
-            messagebox.showerror("Error", f"An error occurred: {str(e)}")
+            messagebox.showerror("Gestor de Negócios", f"Erro - ocorrência: {str(e)}", parent=self.principal_frame)
         finally:
-            if connection:
-                connection.close()  # Ensure the connection is closed
-
-    def upload_arquivo_cronograma(projeto_id, tarefa_id, doc_num_documento, connection):
-
-        try:
-            # Prepare SQL query
-            sql_query = """
-            SELECT * FROM TB_Gedoc_Tarefas 
-            WHERE Projeto_ID = %s AND Tarefa_ID = %s AND Doc_Num_Documento = %s
-            """
-
-            # Execute the SQL command
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    sql_query, (projeto_id, tarefa_id, doc_num_documento))
-                record = cursor.fetchone()
-
-                if record is None:
-                    messagebox.showinfo("Info", "Documentos Não Cadastrado!")
-                    return
-
-                # Get the binary data for the document
-                # Assuming 'BinarioPDF' is the 5th column in the result set
-                b64_data = record[4]
-
-                if b64_data is not None:
-                    # Decode and save the file
-                    # Save in the current directory
-                    file_path = os.path.join(os.getcwd(), doc_num_documento)
-                    with open(file_path, 'wb') as file:
-                        file.write(b64_data)  # Write the binary data to a file
-
-                    messagebox.showinfo(
-                        "Success", "Document downloaded successfully.")
-
-                    # Optionally, you can open the file or trigger additional UI dialogs
-                    # In a GUI application, you might want to open this file or perform further actions
-                else:
-                    messagebox.showinfo(
-                        "Info", "No data found for the specified document.")
-
-        except Exception as e:
-            messagebox.showerror("Error", f"Error occurred: {str(e)}")
+            pass
 
 Cronograma_Atividades()
 
 # ***********************************************************************************************************************************************************#
-
+#                                          CLASSE PARA INTERAGIR COM O LIST
 # ***********************************************************************************************************************************************************#
 
 class TreeviewEdit(ttk.Treeview):
@@ -1309,8 +1384,7 @@ class TreeviewEdit(ttk.Treeview):
         col_id = self.identify_column(event.x)
         self.column_index = int(col_id[1:]) - 1
         if self.column_index < 2:
-            messagebox.showinfo("Gestor de Negócios",
-                                "Campo Não Permite Alteração!!")
+            messagebox.showinfo("Gestor de Negócios", "Campo Não Permite Alteração!!")
             return
 
         selected_iid = self.focus()  # O numero da linha tbem é o iid
@@ -1816,15 +1890,7 @@ class TreeviewEdit(ttk.Treeview):
                 data_inicial_realizada = self.parse_date(task_data['values'][9])
                 data_conclusao_prevista = self.parse_date(task_data['values'][10])
                 data_conclusao_realizada = self.parse_date(task_data['values'][11])
-                print(
-                    linha,
-                item_id,
-                per_conclusao,
-                data_inicial_prevista,
-                data_inicial_realizada,
-                data_conclusao_prevista,
-                data_conclusao_realizada
-                )    
+                
                 semaforo = self.status_on(item_id, data_inicial_prevista, data_inicial_realizada,
                                         data_conclusao_prevista, data_conclusao_realizada, per_conclusao)
                 self.item(item_id, image=semaforo)
@@ -1994,8 +2060,7 @@ class TreeviewEdit(ttk.Treeview):
             current_values[10] = data_conclusao_prevista
             current_values[11] = data_conclusao_realizada
             self.item(item_id, values=current_values)
-            self.gravar_cronograma_tarefa(item_id)
-
+    
     def gravar_cronograma_tarefa(self, selected_iid):
         try:
             selected_item = self.item(selected_iid)

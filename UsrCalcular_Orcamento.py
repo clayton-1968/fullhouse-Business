@@ -50,8 +50,8 @@ class Processar_Premissas_Orcamento(Widgets):
         self.entry_orcamento = AutocompleteCombobox(fr_orcamento, width=30, font=('Times', 11), completevalues=orcamentos)
         self.entry_orcamento.pack()
         self.entry_orcamento.place(relx=0.01, rely=0.5, relwidth=0.985, relheight=0.4)
-        self.entry_orcamento.bind("<Button-1>", lambda event: self.atualizar_orcamentos(event, self.entry_empresa.get(), self.entry_orcamento))
-        self.entry_orcamento.bind("<KeyRelease>", lambda event: self.atualizar_orcamentos(event, self.entry_empresa.get(), self.entry_orcamento))
+        self.entry_orcamento.bind("<Button-1>", lambda event: self.atualizar_orcamentos(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_orcamento))
+        self.entry_orcamento.bind("<KeyRelease>", lambda event: self.atualizar_orcamentos(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_orcamento))
         self.entry_orcamento.bind('<Down>', lambda event: self.atualizar_orcamentos(event, self.entry_empresa.get(), self.entry_orcamento))
         self.entry_orcamento.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_tipo_lcto_descr))
 
@@ -60,13 +60,13 @@ class Processar_Premissas_Orcamento(Widgets):
             Orc_DS = self.entry_orcamento.get()
 
             if Empresa_DS != '':
-                ID_Empresa = self.obter_Empresa_ID(Empresa_DS)
+                ID_Empresa = self.obter_Empresa_ID(Empresa_DS, janela)
             else:
                 messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!")
                 return
             
             if Orc_DS != '':
-                ID_Orc = self.obter_Orc_ID(Orc_DS)
+                ID_Orc = self.obter_Orc_ID(Orc_DS, janela)
             else:
                 messagebox.showinfo("Gestor de Negócios", "Preencher Orçamento!!")
                 return
@@ -157,19 +157,33 @@ class Processar_Premissas_Orcamento(Widgets):
                     """
             db.executar_consulta(vsSQL, params)
 
-            # Setup Progress Bar
-            total_records = len(premissas)  # Total records to process
-            self.progress_bar = ctk.CTkProgressBar(janela, width=400, height=30, corner_radius=30, fg_color='#003', progress_color='#060')
-            self.progress_bar.pack(pady=400, padx=50)
-            # self.progress_bar.start() # usar para processamentos
-            # self.progress_bar.step() # usar para controle de andamento
-            # self.progress_bar.stop() # para ou concluir o start
-            # Processing each premissa
+            # Cria uma nova janela (tela de carregamento)
+            coordenadas_relx = 0.20
+            coordenadas_rely = 0.30
+            coordenadas_relwidth = 0.50
+            coordenadas_relheight = 0.20
+            self.frm_barra_progresso = customtkinter.CTkFrame(janela, border_color="gray75", border_width=0, fg_color='transparent')
+            self.frm_barra_progresso.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+            lb_barra_progresso = customtkinter.CTkLabel(self.frm_barra_progesso, text="Aguarde Processando...", anchor='w')
+            lb_barra_progresso.place(relx=0.001, rely=0.10, relheight=0.25, relwidth=0.55)
+            
+            # Cria a Barra de Progresso
+            self.progress_bar = ctk.CTkProgressBar(
+                                                    self.frm_barra_progresso,
+                                                    width=400,
+                                                    height=30,
+                                                    corner_radius=30,
+                                                    fg_color='#003',
+                                                    progress_color='#060',
+                                                )
+            self.progress_bar.pack(pady=10, padx=50)
+            self.progress_bar.place(relx=0.009, rely=0.50, relheight=0.25, relwidth=0.98)
+            self.progress_bar.set(0)  # Reseta a barra de progresso para 0
+            self.total_records = len(premissas)  # Total records to process
+            self.current_index = 0
             
             for index, premissa in enumerate(premissas, start=1):
-                progress = index / total_records
-                self.progress_bar.set(progress)
-                # self.progress_bar.start() # iniciar a barra
+                self.process_records()  # Começa a processar os registros        
                 
                 dta_inicio = premissa['DtaInicio']
                 if isinstance(dta_inicio, datetime):
@@ -433,8 +447,7 @@ class Processar_Premissas_Orcamento(Widgets):
                     # Calculate Data_Pgto as the last day of the payment month
                     dta_ref_calculo = self.ult_dia_mes(self.add_months(dta_ref_calculo, 1))  # Move to the next month
                     dta_ref_calculo = datetime.strptime(dta_ref_calculo, '%Y-%m-%d')  
-                    
-            self.progress_bar.stop() # para ou concluir o start    
+                
                 
         # Botão de Calcular
         icon_image = self.base64_to_photoimage('save')
@@ -765,8 +778,18 @@ class Processar_Premissas_Orcamento(Widgets):
                                     Orc_Valor) 
             VALUES {}
         """.format(str_registro)  # Use .format to insert the record string
-        # print(vs_sql)
         db._querying(vs_sql)
-        # db.executar_consulta(vs_sql)    
         
+    def process_records(self):
+        if self.current_index < self.total_records:
+            self.current_index += 1 
+            progress_value = self.current_index / self.total_records
+            self.progress_bar.set(progress_value)
+            self.window_one.after(1000, self.process_records)
+            self.window_one.update_idletasks()  # Atualiza a interface gráfica
+        else:
+            self.progress_bar.stop()  # Para a barra de progresso
+            self.frm_barra_progresso.destroy()
+            
+
 Processar_Premissas_Orcamento()

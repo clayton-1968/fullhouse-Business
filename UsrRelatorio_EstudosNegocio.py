@@ -69,11 +69,16 @@ class Resumo_Estudos(Widgets):
                                                 show='headings', selectmode='browse')
             self.list_g.pack(side='left', fill='both', expand=1)            
             
-            # style = ttkthemes.ThemedStyle(self.fr_list_estudosnegocios)
-            # style.theme_use('clam')
-            # style.configure('Treeview', font=('Verdana', 8), foreground='#2b2b2b', cellpadding=19)
-            # style.configure('Treeview.Heading', font=('Verdana', 10, 'bold'), foreground='#444', background='silver')
-            # style.map('Treeview', background=[('selected', 'darkgreen')], foreground=[('selected', 'orange')])
+            # Definindo cores
+            bg_color = '#FFFFFF'  # Fundo branco
+            text_color = '#000000'  # Texto preto
+            selected_color = '#0078d7'  # Azul para selecionados
+
+            treestyle = ttk.Style()
+            treestyle.theme_use('default')
+            treestyle.configure("Treeview", background=bg_color,foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+            treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
+            
             
             # Configurando as headings e a largura das colunas
             column_widths = {

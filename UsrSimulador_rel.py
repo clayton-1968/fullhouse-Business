@@ -1656,7 +1656,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.unidade_negocio = []
         self.entry_informacoes_unidade_negocio = AutocompleteCombobox(self.fr_informacoes, width=30, justify=tk.LEFT, font=('Times', 8), completevalues=self.nome_curva)
         self.entry_informacoes_unidade_negocio.place(relx=0.895, rely=0.19, relwidth=0.10, relheight=0.25)
-        self.entry_informacoes_unidade_negocio.bind("<Button-1>", lambda event: self.atualizar_unidade_negocios(event, self.entry_informacoes_unidade_negocio))
+        self.entry_informacoes_unidade_negocio.bind("<Button-1>", lambda event: self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_informacoes_unidade_negocio))
         self.entry_informacoes_unidade_negocio.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_informacoes_https))
 
         # Https://
