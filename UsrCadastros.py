@@ -323,6 +323,16 @@ class Pessoas(Icons, Functions):
         self.entry_email.bind("<Return>", lambda event: self.muda_barrinha(event, self.bt_pag_salvar_pessoa))
 
     def frame_cad_linha_4(self, janela):
+        # Definindo cores
+        bg_color = '#FFFFFF'  # Fundo branco
+        text_color = '#000000'  # Texto preto
+        selected_color = '#0078d7'  # Azul para selecionados
+        
+        treestyle = ttk.Style()
+        treestyle.theme_use('default')
+        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+        treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
+
         # Widgets - Listar Itens
         self.LItens_cadastro_pessoas = ttk.Treeview(janela, height=12, column=('Tpo', 'CpF_CnPj', 'Descricao', 'Banco', 'Agencia', 'Agencia_D', 
                                                               'Conta', 'Conta_D', 'Pix', 'Proprietario_sn', 'Endereco', 'Endereco_Nr',
@@ -500,6 +510,15 @@ class Produtos(Icons, Functions):
         bt_salvar_produto.place(relx=0.965, rely=0.01, relwidth=0.03, relheight=0.04)
 
     def frame_produto_linha_2(self, janela):
+        # Definindo cores
+        bg_color = '#FFFFFF'  # Fundo branco
+        text_color = '#000000'  # Texto preto
+        selected_color = '#0078d7'  # Azul para selecionados
+        
+        treestyle = ttk.Style()
+        treestyle.theme_use('default')
+        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+        treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
         # Widgets - Listar Itens
         self.LItens_produtos = ttk.Treeview(janela, height=12, column=('Nr', 'Descricao', 'NCM', 'Tipo_ID', 'Tipo', 'Unidade_Medida_ID', 'Unidade_Medida'), show='headings')
         self.LItens_produtos.heading('Nr', text="Nr.")
@@ -605,6 +624,16 @@ class Versoes(Icons, Functions):
         bt_salvar_versao.place(relx=0.965, rely=0.01, relwidth=0.03, relheight=0.04)
     
     def frame_versao_linha_2(self, janela):
+        # Definindo cores
+        bg_color = '#FFFFFF'  # Fundo branco
+        text_color = '#000000'  # Texto preto
+        selected_color = '#0078d7'  # Azul para selecionados
+        
+        treestyle = ttk.Style()
+        treestyle.theme_use('default')
+        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+        treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
+
         # Widgets - Listar Itens
         self.LItens_versao = ttk.Treeview(janela, height=12, column=('Id', 'Codigo', 'Descricao', 'dta'), show='headings')
         self.LItens_versao.heading('Id', text="ID")
