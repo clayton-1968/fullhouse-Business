@@ -1117,7 +1117,7 @@ class Projetos(Icons, Functions):
             messagebox.showinfo('Gestor Negócios', 'Erro: Preencher o Campo do Nome do Projeto!!!.', parent=self.janela_cadastro_projetos)
             self.entry_nome_projeto.focus()
             return
-
+        
         ID_Projeto = self.entry_idx.get()
         DS_Projeto = self.entry_nome_projeto.get().strip()
         ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get(), janela)
@@ -1127,7 +1127,7 @@ class Projetos(Icons, Functions):
         ID_Tpo_Projeto = self.obter_Tpo_Projeto(self.entry_tpo_projeto.get(), janela) if self.entry_tpo_projeto.get().strip() != '' else ''
         ID_Situacao_Projeto = self.obter_Situacao_Projeto_ID(self.entry_status.get(), janela) if self.entry_status.get().strip() != '' else ''
         Centro_Resultado = str(self.entry_centro.get()) if self.entry_centro.get().strip() != '' else '0'
-        Prioridade_Projeto = int(self.entry_prioridade.get()) if self.entry_prioridade.get().strip() != '' or not str(self.entry_prioridade.get()).isnumeric() else 0
+        Prioridade_Projeto = self.entry_prioridade.get() if self.entry_prioridade.get().strip() != '' and not self.entry_prioridade.get().isnumeric() else 0
         Setor_Projeto = self.entry_setor.get() if self.entry_setor.get().strip() != '' else 'N/A'
         Ativo_Projeto = '' if self.check_var_ativo.get() == 'on' else 'x'
         Observacao = self.entry_obs.get()
@@ -1165,7 +1165,8 @@ class Projetos(Icons, Functions):
                              )
 
                         VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    """            
+                    """  
+            
             values = (
                         ID_Projeto,
                         DS_Projeto, 
@@ -1207,7 +1208,7 @@ class Projetos(Icons, Functions):
                         ID_Cidade,
                         Observacao,
                         ID_Tpo_Projeto,
-                        Prioridade_Projeto,
+                        int(Prioridade_Projeto),
                         Setor_Projeto,
                         ID_Projeto_Status,
                         ID_Situacao_Projeto,

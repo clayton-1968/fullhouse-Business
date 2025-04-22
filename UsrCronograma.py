@@ -189,8 +189,10 @@ class Cronograma_Atividades(Widgets, Projetos):
         
         if not self.list_tarefas:
             # Tarefa em Branco
+            nrregistros = 1
             tarefa_info = []
             tarefa_info = (
+                nrregistros,
                 '01',
                 ' ' *
                 round(2) + "Preencher Descrição Nova Tarefa...................!!!!",
@@ -209,8 +211,10 @@ class Cronograma_Atividades(Widgets, Projetos):
                 parent="", index="end", image=self.icon_image_amarelo, values=tarefa_info)
 
             # Segunda Tarefa em Branco
+            nrregistros += 1
             tarefa_info = []
             tarefa_info = (
+                nrregistros,
                 '01.01',
                 ' ' *
                 round(5) + "Preencher Descrição Nova Tarefa...................!!!!",
