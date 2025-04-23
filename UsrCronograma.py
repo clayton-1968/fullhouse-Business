@@ -1419,7 +1419,8 @@ class TreeviewEdit(ttk.Treeview):
 
         # Atualiza os demais campos e depois salva tudo
         # Carregar os dados para os devidos Calculos
-        self.entry_id = selected_values.get('values')[1]
+        self.entry_id = str(selected_values.get('values')[1])
+        self.entry_id = str(self.entry_id).zfill(2)  # '01' manter como string
         self.entry_descricao = selected_values.get('values')[2]
         self.entry_responsavel = selected_values.get('values')[3]
         self.entry_dependencia = selected_values.get('values')[4]
@@ -1461,7 +1462,7 @@ class TreeviewEdit(ttk.Treeview):
         if self.column_index == 2:
             # Descrição da Tarefa
             nrcarat = len(self.entry_id)
-            new_value = ' ' * round(nrcarat) + new_value
+            new_value = ' ' * round(nrcarat) + new_value.strip()
         elif self.column_index == 4:
             # Dependência
             if self.entry_per_execucao == '100.00%':
@@ -1968,6 +1969,8 @@ class TreeviewEdit(ttk.Treeview):
                         else:
                             data_inicial_prevista = min(self.parse_date(data_inicial_prevista_items), self.parse_date(data_inicial_prevista))
                             dta_provisoria_inicial_prevista = data_inicial_prevista
+                    else:
+                        data_inicial_prevista = ''
                         
                     if data_inicial_realizada_items is not None:
                         if dta_provisoria_inicial_realizada == '':
@@ -1976,6 +1979,8 @@ class TreeviewEdit(ttk.Treeview):
                         else:
                             data_inicial_realizada = min(self.parse_date(data_inicial_realizada_items), self.parse_date(data_inicial_realizada))
                             dta_provisoria_inicial_realizada = data_inicial_realizada 
+                    else:
+                        data_inicial_realizada =  ''
 
                     if data_conclusao_prevista_items is not None:
                         if dta_provisoria_conclusao_prevista == '':
@@ -1984,6 +1989,8 @@ class TreeviewEdit(ttk.Treeview):
                         else:
                             data_conclusao_prevista = max(self.parse_date(data_conclusao_prevista_items), self.parse_date(data_conclusao_prevista))
                             dta_provisoria_conclusao_prevista = data_conclusao_prevista_items
+                    else:
+                        data_conclusao_prevista = ''
 
                     if data_conclusao_realizada_items is not None:
                         if dta_provisoria_conclusao_realizada == '':
@@ -1992,7 +1999,8 @@ class TreeviewEdit(ttk.Treeview):
                         else:
                             data_conclusao_realizada = max(self.parse_date(data_conclusao_realizada_items), self.parse_date(data_conclusao_realizada))
                             dta_provisoria_conclusao_realizada = data_conclusao_realizada
-                            
+                    else:
+                        data_conclusao_realizada = ''
                     
                     # Count completed tasks
                     if per_conclusao == 1.0:

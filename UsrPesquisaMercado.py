@@ -434,7 +434,7 @@ class Pesquisa_Mercado(Widgets):
         Empresa_DS = self.entry_empresa.get()
         UF = self.entry_uf.get()
         self.atualizar_municipio_fx(self.entry_uf.get())
-        IBGE = self.obter_municipio_IBGE(self.entry_municipio.get())
+        IBGE = self.obter_municipio_IBGE(self.entry_municipio.get(), self.janela_pesquisa_mercado)
         Cidade = self.entry_municipio.get()
         Tipo = self.entry_tpo_projeto.get()
         Nome_da_Area = self.entry_nome_cenario.get()
@@ -445,29 +445,29 @@ class Pesquisa_Mercado(Widgets):
         Pesquisa_url =self.entry_url.get()
         # Validação dos campos de input
         if not Empresa_DS: 
-            messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!.', parent=self.janela_pesquisa_mercado)
             return
         else:
-            Empresa_ID = self.obter_Empresa_ID(Empresa_DS)
+            Empresa_ID = self.obter_Empresa_ID(Empresa_DS, self.janela_pesquisa_mercado)
 
         if  not Cidade:
-            messagebox.showinfo('Gestor Negócios', 'Município em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Município em Branco!!!.', parent=self.janela_pesquisa_mercado)
             return
 
         if not UF:
-            messagebox.showinfo('Gestor Negócios', 'UF em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'UF em Branco!!!.', parent=self.janela_pesquisa_mercado)
             return
 
         if not Tipo:
-            messagebox.showinfo('Gestor Negócios', 'Tipo do Projeto em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Tipo do Projeto em Branco!!!.', parent=self.janela_pesquisa_mercado)
             return
 
         if not Nome_da_Area:
-            messagebox.showinfo('Gestor Negócios', 'Nome do Estudo em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Nome do Estudo em Branco!!!.', parent=self.janela_pesquisa_mercado)
             return
         
         if not Pesquisa_Empreendimento:
-            messagebox.showinfo('Gestor Negócios', 'Nome do Empreendimento Pesquisado em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Nome do Empreendimento Pesquisado em Branco!!!.', parent=self.janela_pesquisa_mercado)
             return
         
         # Construindo a consulta SELECT
@@ -571,7 +571,7 @@ class Pesquisa_Mercado(Widgets):
                                 Pesquisa_Empreendimento
                                 )
                 results = db.executar_consulta(update_query, update_params)
-                messagebox.showinfo("Concluído", "Registro Alterado com sucesso!")
+                messagebox.showinfo("Concluído", "Registro Alterado com sucesso!", parent=self.janela_pesquisa_mercado)
             else:  # Se o usuário clicou em "Não"
                 return
         

@@ -206,7 +206,7 @@ class PrimaryWindow(
         spacer.pack(expand=True)
         
         # Criando o label para a versão do aplicativo
-        lb_version = ctk.CTkLabel(self.principal_frame, text="Versão: 1.00.00.003", text_color='white')
+        lb_version = ctk.CTkLabel(self.principal_frame, text="Versão: 1.00.00.006", text_color='white')
         lb_version.pack(side="bottom", pady=(5, 0), padx=10, fill="x")  # Posicionando no rodapé
 
         # Criando o label para o copyright

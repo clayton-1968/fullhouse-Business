@@ -4166,7 +4166,7 @@ class Formatos():
             target.delete(0, "end")
             target.insert(0, i_am)
 
-    def format_custo_projetos(self, event):
+    def format_custo_projetos(self, event, janela):
         if self.entry_projetos_per_obra.get() != '':
             custo_obra = float(self.entry_obras_valor_total.get().replace('.', '').replace(',', '.')[:15])
             per_custo_projeto = float(self.entry_projetos_per_obra.get().replace("%", "").replace(",", ".")[:7]) / 100
@@ -4176,7 +4176,7 @@ class Formatos():
             self.entry_projetos_valor_total.delete(0, "end")
             self.entry_projetos_valor_total.insert(0, custo_projeto)
     
-    def format_custo_mkt(self, event):
+    def format_custo_mkt(self, event, janela):
         if self.entry_mkt_per_vgv.get() != '':
             vgv_bruto = float(self.entry_dre_vgv_bruto.get().replace('.', '').replace(',', '.')[:15])
             per_custo_mkt = float(self.entry_mkt_per_vgv.get().replace("%", "").replace(",", ".")[:7]) / 100
@@ -4186,14 +4186,14 @@ class Formatos():
             self.entry_mkt_valor_total.delete(0, "end")
             self.entry_mkt_valor_total.insert(0, custo_mkt)
 
-    def format_custo_overhead(self, event):
+    def format_custo_overhead(self, event, janela):
         if self.entry_overhead_per_vgv.get() != '':
             vgv_bruto = float(self.entry_dre_vgv_bruto.get().replace('.', '').replace(',', '.')[:15])
             per_custo_overhead = float(self.entry_overhead_per_vgv.get().replace("%", "").replace(",", ".")[:7]) / 100
             custo_overhead = vgv_bruto * -per_custo_overhead
             
             inicio_vendas = float(self.entry_vendas_inicio.get().replace('º mês', '').replace('.', '').replace(',', '.')[:15]) # tirar caracteres
-            prazo_da_curva = self.Consulta_Prazo_Curvas(self.entry_vendas_curva.get()) # fazer função para buscar curvas
+            prazo_da_curva = self.Consulta_Prazo_Curvas(self.entry_vendas_curva.get(), janela) # fazer função para buscar curvas
             prazo_vendas = [prazo['Prazo_Curva'] for prazo in prazo_da_curva]
             nrper = float(self.entry_vendas_financiamento_prazo.get().replace(' x', '').replace('.', '').replace(',', '.')[:15]) # tirar caracteres
             if isinstance(prazo_vendas, list) and len(prazo_vendas) > 0:
@@ -4214,7 +4214,7 @@ class Formatos():
             self.entry_overhead_curva_overhead.delete(0, "end")
             self.entry_overhead_curva_overhead.insert(0, overhead_curva)
 
-    def format_custo_obras(self, event):
+    def format_custo_obras(self, event, janela):
         if self.entry_obras_valor_m2.get() != '':
             custo_m2 = float(self.entry_obras_valor_m2.get().replace('.', '').replace(',', '.')[:15])
             area_empreendimento = float(self.entry_area_aproveitado.get().replace(' m²', '').replace('.', '').replace(',', '.')[:15])
@@ -4224,7 +4224,7 @@ class Formatos():
             self.entry_obras_valor_total.delete(0, "end")
             self.entry_obras_valor_total.insert(0, custo_obra)
     
-    def format_custo_posobras(self, event):
+    def format_custo_posobras(self, event, janela):
         if self.entry_pos_obras_per_obras.get() != '':
             custo_obras = float(self.entry_obras_valor_total.get().replace('.', '').replace(',', '.')[:15])
             per_custo_posobras = float(self.entry_pos_obras_per_obras.get().replace("%", "").replace(",", ".")[:7]) / 100
@@ -4232,7 +4232,7 @@ class Formatos():
                         
             custo_posobras = self.format_valor_fx(custo_posobras)
             
-            self.curva_de_obras = self.Consulta_Prazo_Curvas(self.entry_obras_curva_obras.get()) 
+            self.curva_de_obras = self.Consulta_Prazo_Curvas(self.entry_obras_curva_obras.get(), janela) 
             self.prazo_obras = float(float(self.curva_de_obras[0]['Prazo_Curva'])) 
             self.inicio_obras = float(self.entry_obras_inicio_desembolso.get().replace('º mês', '').replace('.', '').replace(',', '.')[:15]) # tirar caracteres
             posobras_inicio = self.format_mes_fx(self.prazo_obras + self.inicio_obras + 1)
@@ -4247,7 +4247,7 @@ class Formatos():
             self.entry_pos_obras_curva_obras.delete(0, "end")
             self.entry_pos_obras_curva_obras.insert(0, posobras_curva)
 
-    def format_custo_admobras(self, event):
+    def format_custo_admobras(self, event, janela):
         if self.entry_adm_per_obras.get() != '':
             custo_obras = float(self.entry_obras_valor_total.get().replace('.', '').replace(',', '.')[:15])
             per_custo_admobras = float(self.entry_adm_per_obras.get().replace("%", "").replace(",", ".")[:7]) / 100
@@ -4263,7 +4263,7 @@ class Formatos():
             self.entry_adm_curva_obras.delete(0, "end")
             self.entry_adm_curva_obras.insert(0, self.entry_obras_curva_obras.get())
     
-    def format_dre(self, event):
+    def format_dre(self, event, janela):
         area_empreendimento = float(self.entry_area_aproveitado.get().replace(' m²', '').replace('.', '').replace(',', '.')[:15])
         valor_venda_m2 = float(self.entry_vendas_vendas_preco_m2_com_comissao.get().replace('.', '').replace(',', '.')[:15])
         comissao_venda_per = float(self.entry_vendas_comissao_per.get().replace("%", "").replace(",", ".")[:7]) / 100
@@ -4804,7 +4804,6 @@ class Formatos():
             return True
         else:
             return False
-
 class Formularios():
 
     def OnDoubleClick(self, event):
@@ -4845,7 +4844,7 @@ class Formularios():
             # Get associated values as a tuple
             values =  self.LSites.item(selected_item, 'values')
             
-            ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+            ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
             Site = values[2]
         # Abre a URL no navegador padrão
         webbrowser.open(Site)
@@ -5078,8 +5077,7 @@ class Formularios():
             return id_natureza_gerencial
         else:
             messagebox.showinfo('Gestor Negócios', 'Erro - Natureza Gerencial em Branco ou Incorreto!!!', parent = janela)
-        return None
-    
+        return None 
 class Atualizar_Combo():
     
     # Atualização dos Combo
@@ -5253,7 +5251,6 @@ class Atualizar_Combo():
             self.projetos = [item[1] for item in self.projetos]  # Extrai o nome do projeto
 
         target.set_completion_list(sorted(self.projetos, key=str.lower))  # Ordena e configura    
-
 class Icons():
     # Função para os farois
     def base64_to_farois(self, icon_tpo):
