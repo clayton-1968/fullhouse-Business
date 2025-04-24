@@ -48,8 +48,8 @@ class Extrato_Clientes_Fornecedores(Widgets):
         self.entry_unidade_negocio = AutocompleteCombobox(fr_unidade_negocio, width=30, font=('Times', 11), completevalues=unidade_negocios)
         self.entry_unidade_negocio.pack()
         self.entry_unidade_negocio.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_unidade_negocio.bind("<Button-1>", lambda event: self.atualizar_unidade_negocios(event, self.entry_empresa.get(), self.entry_unidade_negocio))
-        self.entry_unidade_negocio.bind('<Down>', lambda event: self.atualizar_unidade_negocios(event, self.entry_empresa.get(), self.entry_unidade_negocio))
+        self.entry_unidade_negocio.bind("<Button-1>", lambda event: self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_unidade_negocio))
+        self.entry_unidade_negocio.bind('<Down>', lambda event: self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_unidade_negocio))
 
         # Período Vencimento
         TDta_Inicio = datetime.strptime("01/01/2000", "%d/%m/%Y")
@@ -166,18 +166,18 @@ class Extrato_Clientes_Fornecedores(Widgets):
     
     def consulta_extrato(self):
         if self.entry_empresa.get() != '':
-            ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get())
+            ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get(), self.window_one)
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!")
             return
         
         if self.entry_pessoa.get() != '':
-            ID_Pessoa = self.obter_Pessoa_ID(self.entry_pessoa.get())
+            ID_Pessoa = self.obter_Pessoa_ID(self.entry_pessoa.get(), self.window_one)
         else:
             ID_Pessoa = self.entry_pessoa.get()
             
         if self.entry_unidade_negocio.get() != '':
-            ID_Unidade = self.obter_Unidade_ID(self.entry_unidade_negocio.get())
+            ID_Unidade = self.obter_Unidade_ID(self.entry_unidade_negocio.get(), self.window_one)
         else:
             ID_Unidade = self.entry_unidade_negocio.get()
 
@@ -395,8 +395,16 @@ class Extrato_Clientes_Fornecedores(Widgets):
                     
                     # Formata a data do documento
                     Dta_Documento = transaction["Dta"]
-                    Dta_obj = datetime.strptime(Dta_Documento, "%Y-%m-%d")
-                    # Dta_Documento = datetime.strptime(Dta_Documento, "%Y/%m/%d")
+                    try:
+                        # Tenta converter considerando o formato completo
+                        Dta_obj = datetime.strptime(Dta_Documento, "%Y-%m-%d")
+                    except ValueError:
+                        # Se falhar, você pode tratar o erro ou pode usar um formato alternativo
+                        if len(Dta_Documento) == 4:
+                            Dta_obj = datetime.strptime(Dta_Documento, "%Y")  # Para ano apenas
+                        else:
+                            messagebox.showinfo("Informação", "Formato de data inválido.", parent=self.window_one)
+                            
                     Dta_Documento = Dta_obj.strftime("%d/%m/%Y")
                     # Dta_Documento = transaction["Dta"]
                     tipo = transaction["Tipo"]

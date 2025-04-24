@@ -244,8 +244,8 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.produtos = []
         self.entry_itens_nota_prod_descr = AutocompleteCombobox(fr_itens_nota_prod, width=30, font=('Times', 11), completevalues=self.produtos)
         self.entry_itens_nota_prod_descr.place(relx=0.02, rely=0.5, relwidth=0.85, relheight=0.4)
-        self.entry_itens_nota_prod_descr.bind("<Button-1>", lambda event: self.atualizar_produto(event, self.combo_empresa.get(), self.entry_itens_nota_prod_descr))
-        self.entry_itens_nota_prod_descr.bind('<Down>', lambda event: self.atualizar_produto(event, self.combo_empresa.get(), self.entry_itens_nota_prod_descr))
+        self.entry_itens_nota_prod_descr.bind("<Button-1>", lambda event: self.atualizar_produto(event, self.obter_Empresa_ID(self.combo_empresa.get(), janela_lanc), self.entry_itens_nota_prod_descr))
+        self.entry_itens_nota_prod_descr.bind('<Down>', lambda event: self.atualizar_produto(event, self.obter_Empresa_ID(self.combo_empresa.get(), janela_lanc), self.entry_itens_nota_prod_descr))
         self.entry_itens_nota_prod_descr.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_itens_nota_centro))
 
         # Botão Cadastrar Produtos
@@ -263,8 +263,8 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.centro_resultado = []
         self.entry_itens_nota_centro = AutocompleteCombobox(fr_itens_nota_centro_result, width=30, font=('Times', 11), completevalues=self.centro_resultado)
         self.entry_itens_nota_centro.place(relx=0.02, rely=0.5, relwidth=0.96, relheight=0.4)
-        self.entry_itens_nota_centro.bind("<Button-1>", lambda event: self.atualizar_centro_resultado(event, self.combo_empresa.get(), self.entry_itens_nota_centro))
-        self.entry_itens_nota_centro.bind('<Down>', lambda event: self.atualizar_centro_resultado(event, self.combo_empresa.get(), self.entry_itens_nota_centro))
+        self.entry_itens_nota_centro.bind("<Button-1>", lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.combo_empresa.get(), janela_lanc), self.entry_itens_nota_centro))
+        self.entry_itens_nota_centro.bind('<Down>', lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.combo_empresa.get(), janela_lanc), self.entry_itens_nota_centro))
         self.entry_itens_nota_centro.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_itens_nota_natureza))
 
         # Natureza Financeira
@@ -277,8 +277,8 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.natureza_financeira = []
         self.entry_itens_nota_natureza = AutocompleteCombobox(fr_itens_nota_natureza, width=30, font=('Times', 11), completevalues=self.natureza_financeira)
         self.entry_itens_nota_natureza.place(relx=0.02, rely=0.5, relwidth=0.96, relheight=0.4)
-        self.entry_itens_nota_natureza.bind("<Button-1>", lambda event: self.atualizar_natureza_financeira(event, self.combo_empresa.get(), self.entry_itens_nota_natureza))
-        self.entry_itens_nota_natureza.bind('<Down>', lambda event: self.atualizar_natureza_financeira(event, self.combo_empresa.get(), self.entry_itens_nota_natureza))
+        self.entry_itens_nota_natureza.bind("<Button-1>", lambda event: self.atualizar_natureza_financeira(event, self.obter_Empresa_ID(self.combo_empresa.get(), janela_lanc), self.entry_itens_nota_natureza))
+        self.entry_itens_nota_natureza.bind('<Down>', lambda event: self.atualizar_natureza_financeira(event, self.obter_Empresa_ID(self.combo_empresa.get(), janela_lanc), self.entry_itens_nota_natureza))
         self.entry_itens_nota_natureza.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_itens_nota_peso))
 
         # Peso

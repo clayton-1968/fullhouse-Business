@@ -1338,31 +1338,31 @@ class Consultas_Financeiro():
 
             # print(f"Total de Parcelas: {self.Vlr_TotalParcelas:.2f}")  # Print or update the total as necessary
         except Exception as e:
-            messagebox.showerror("Erro", f"Ocorreu um erro ao incluir a parcela: {str(e)}")
+            messagebox.showerror("Erro", f"Ocorreu um erro ao incluir a parcela: {str(e)}", parent=self.window_one)
 
     def incluir_itens_click(self):
         if self.combo_empresa.get() != '': 
-            ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+            ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
         else:
-            messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!.', parent=self.window_one)
             return
         
         if self.combo_pessoa.get() != '':
-            ID_Fornecedor = self.obter_Pessoa_ID(self.combo_pessoa.get())
+            ID_Fornecedor = self.obter_Pessoa_ID(self.combo_pessoa.get(), self.window_one)
         else:
-            messagebox.showinfo('Gestor Negócios', 'Cliente/Fornecedor em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Cliente/Fornecedor em Branco!!!.', parent=self.window_one)
             return
         
         if self.combo_unidade_negocio.get() != '':
-            ID_Unidade = self.obter_Unidade_ID(self.combo_unidade_negocio.get())
+            ID_Unidade = self.obter_Unidade_ID(self.combo_unidade_negocio.get(), self.window_one)
         else:
-            messagebox.showinfo('Gestor Negócios', 'Cliente/Fornecedor em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Cliente/Fornecedor em Branco!!!.', parent=self.window_one)
             return
         
         if self.entry_doc_num.get() != '':
             Nr_Documento = self.entry_doc_num.get()
         else:
-            messagebox.showinfo('Gestor Negócios', 'Nr do Documento em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Nr do Documento em Branco!!!.', parent=self.window_one)
             return
 
         documento_valor_total = float(self.entry_doc_valor_total.get().replace('.', '').replace(',', '.')[:15])
@@ -1370,19 +1370,19 @@ class Consultas_Financeiro():
         if self.entry_itens_nota_prod_descr.get() != '':
             item_produto = self.entry_itens_nota_prod_descr.get()
         else:
-            messagebox.showerror("Erro", "Preencher o Produto!")
+            messagebox.showerror("Erro", "Preencher o Produto!", parent=self.window_one)
             return
         
         if  self.entry_itens_nota_centro.get() != '':
             item_centro = self.entry_itens_nota_centro.get()
         else:
-            messagebox.showerror("Erro", "Preencher o Centro Resultado!")
+            messagebox.showerror("Erro", "Preencher o Centro Resultado!", parent=self.window_one)
             return
         
         if self.entry_itens_nota_natureza.get() != '':
             item_natureza = self.entry_itens_nota_natureza.get()
         else:
-            messagebox.showerror("Erro", "Preencher a Natureza Financeira!")
+            messagebox.showerror("Erro", "Preencher a Natureza Financeira!", parent=self.window_one)
             return
         
         ID_Produto = self.obter_Produto_ID(item_produto)
@@ -1392,19 +1392,19 @@ class Consultas_Financeiro():
         if self.entry_itens_nota_peso.get() != '': 
             item_peso = float(self.entry_itens_nota_peso.get().replace('.', '').replace(',', '.')[:15])
         else:
-            messagebox.showerror("Erro", "Peso em branco, Preecher pelo menos com zero!")
+            messagebox.showerror("Erro", "Peso em branco, Preecher pelo menos com zero!", parent=self.window_one)
             return
         
         if self.entry_itens_nota_quant2.get() != '':
             item_quantidade = float(self.entry_itens_nota_quant2.get().replace('.', '').replace(',', '.')[:15])
         else:
-            messagebox.showerror("Erro", "Quantidade em branco, Preecher com valor!")
+            messagebox.showerror("Erro", "Quantidade em branco, Preecher com valor!", parent=self.window_one)
             return
         
         if self.entry_itens_nota_valor_unit != '':
             item_valor_unitario = float(self.entry_itens_nota_valor_unit.get().replace('.', '').replace(',', '.')[:15])
         else:
-            messagebox.showerror("Erro", "Valor Unitário em branco, Preecher com valor!")
+            messagebox.showerror("Erro", "Valor Unitário em branco, Preecher com valor!", parent=self.window_one)
             return
         
         item_valor_total = float(self.entry_itens_nota_valor_total.get().replace('.', '').replace(',', '.')[:15])
@@ -1462,7 +1462,7 @@ class Consultas_Financeiro():
             self.vlr_soma_itens = 0
 
             self.consulta_lcto()
-            messagebox.showinfo("Erro", "Documento já existe, com Itens Cadastrado!")
+            messagebox.showinfo("Erro", "Documento já existe, com Itens Cadastrado!", parent=self.window_one)
             
         else:
             self.vlr_soma_itens += item_valor_total  # Existing total value of items
@@ -1500,7 +1500,7 @@ class Consultas_Financeiro():
             else:
                 # If the total of items exceeds the document value, show an error message
                 self.vlr_soma_itens -= item_valor_total  # Adjust the current total value
-                messagebox.showerror("Erro", "Soma dos Itens não pode ser Maior que o Valor Total do Documento!")
+                messagebox.showerror("Erro", "Soma dos Itens não pode ser Maior que o Valor Total do Documento!", parent=self.window_one)
                 self.entry_itens_nota_prod_descr.focus()  # Set focus to the product ID input       
 
     def incluir_itens(self):
@@ -1510,7 +1510,7 @@ class Consultas_Financeiro():
         item_valor_total = float(self.entry_itens_nota_valor_total.get().replace('.', '').replace(',', '.')[:15])
         
         if item_valor_total == 0:
-            messagebox.showinfo('Gestor Negócios', 'Erro Valor Total do Item não pode ser Zero!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Erro Valor Total do Item não pode ser Zero!!!.', parent=self.window_one)
             return
         
         # Create a new item in the list
@@ -1537,19 +1537,19 @@ class Consultas_Financeiro():
         Modulo_Financeiro = self.entry_tipo_lcto_descr.get()
         
         if self.combo_empresa.get() != '': 
-            ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+            ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
         else:
             messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!.')
             return
         
         if self.combo_pessoa.get() != '':
-            ID_Fornecedor = self.obter_Pessoa_ID(self.combo_pessoa.get())
+            ID_Fornecedor = self.obter_Pessoa_ID(self.combo_pessoa.get(), self.window_one)
         else:
             messagebox.showinfo('Gestor Negócios', 'Cliente/Fornecedor em Branco!!!.')
             return
         
         if self.combo_unidade_negocio.get() != '':
-            ID_Unidade = self.obter_Unidade_ID(self.combo_unidade_negocio.get())
+            ID_Unidade = self.obter_Unidade_ID(self.combo_unidade_negocio.get(), self.window_one)
         else:
             messagebox.showinfo('Gestor Negócios', 'Cliente/Fornecedor em Branco!!!.')
             return
@@ -1562,7 +1562,7 @@ class Consultas_Financeiro():
         
         NotaEstado = self.combo_uf.get()
         Frete_DS = self.combo_frete.get()
-        Frete = self.obter_Frete_ID(self.combo_frete.get()) 
+        Frete = self.obter_Frete_ID(self.combo_frete.get(), self.window_one) 
         Dta_Lcto = datetime.now() #aJUSTAR PARA DATA DO DIA DO REGISTRO
         Dta_Documento = datetime.strptime(self.entry_doc_dt_emissao.get(), "%d/%m/%Y")
         Dta_Documento = Dta_Documento.strftime("%Y-%m-%d")
@@ -1865,27 +1865,27 @@ class Consultas_Financeiro():
 
     def excluir_lcto(self):
         if self.combo_empresa.get() != '': 
-            ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+            ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
         else:
-            messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!.', parent=self.window_one)
             return
         
         if self.combo_pessoa.get() != '':
-            ID_Fornecedor = self.obter_Pessoa_ID(self.combo_pessoa.get())
+            ID_Fornecedor = self.obter_Pessoa_ID(self.combo_pessoa.get(), self.window_one)
         else:
-            messagebox.showinfo('Gestor Negócios', 'Cliente/Fornecedor em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Cliente/Fornecedor em Branco!!!.', parent=self.window_one)
             return
         
         if self.combo_unidade_negocio.get() != '':
-            ID_Unidade = self.obter_Unidade_ID(self.combo_unidade_negocio.get())
+            ID_Unidade = self.obter_Unidade_ID(self.combo_unidade_negocio.get(), self.window_one)
         else:
-            messagebox.showinfo('Gestor Negócios', 'Cliente/Fornecedor em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Cliente/Fornecedor em Branco!!!.', parent=self.window_one)
             return
         
         if self.entry_doc_num.get() != '':
             Nr_Documento = self.entry_doc_num.get()
         else:
-            messagebox.showinfo('Gestor Negócios', 'Nr do Documento em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Nr do Documento em Branco!!!.', parent=self.window_one)
             return
                 
         # Check if there are associated financial records
@@ -1901,7 +1901,7 @@ class Consultas_Financeiro():
         myresult = db.executar_consulta(vsSQL, (str(ID_Empresa), str(ID_Fornecedor), str(ID_Unidade), str(Nr_Documento)))
         
         if myresult:  
-            messagebox.showinfo("Info", "Documento Não Pode ser Excluídos, existem Baixas Financeiras!")
+            messagebox.showinfo("Info", "Documento Não Pode ser Excluídos, existem Baixas Financeiras!", parent=self.window_one)
             return
         
         try:
@@ -1961,7 +1961,7 @@ class Consultas_Financeiro():
         Nr_Item = self.LItens.curselection()
         
         if not Nr_Item:
-            messagebox.showwarning("Seleção Inválida", "Por favor, selecione um item para excluir.")
+            messagebox.showwarning("Seleção Inválida", "Por favor, selecione um item para excluir.", parent=self.window_one)
             return
         
         Nr_Item = self.LItens.get(Nr_Item[0])  # Get the selected item
@@ -1980,7 +1980,7 @@ class Consultas_Financeiro():
         cursor.execute(vsSQL, (ID_Empresa, ID_Fornecedor, ID_Unidade, Nr_Documento, Nr_Item))
 
         if cursor.fetchone() is not None:  
-            messagebox.showinfo("Info", "Item da Nota já gravado, só pode ser excluído toda a nota!")
+            messagebox.showinfo("Info", "Item da Nota já gravado, só pode ser excluído toda a nota!", parent=self.window_one)
             cursor.close()
             return
         
@@ -1992,27 +1992,27 @@ class Consultas_Financeiro():
         Modulo_Financeiro = self.entry_tipo_lcto_descr.get()
 
         if self.combo_empresa.get() != '': 
-            ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+            ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
         else:
-            messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!.', parent=self.window_one)
             return
         
         if self.combo_pessoa.get() != '':
-            ID_Fornecedor = self.obter_Pessoa_ID(self.combo_pessoa.get())
+            ID_Fornecedor = self.obter_Pessoa_ID(self.combo_pessoa.get(), self.window_one)
         else:
-            messagebox.showinfo('Gestor Negócios', 'Cliente/Fornecedor em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Cliente/Fornecedor em Branco!!!.', parent=self.window_one)
             return
         
         if self.combo_unidade_negocio.get() != '':
-            ID_Unidade = self.obter_Unidade_ID(self.combo_unidade_negocio.get())
+            ID_Unidade = self.obter_Unidade_ID(self.combo_unidade_negocio.get(), self.window_one)
         else:
-            messagebox.showinfo('Gestor Negócios', 'Cliente/Fornecedor em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Cliente/Fornecedor em Branco!!!.', parent=self.window_one)
             return
         
         if self.entry_doc_num.get() != '':
             Nr_Documento = self.entry_doc_num.get()
         else:
-            messagebox.showinfo('Gestor Negócios', 'Nr do Documento em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Nr do Documento em Branco!!!.', parent=self.window_one)
             return
         
         # Limpa a lista atual antes de inserir novos resultados
@@ -2044,7 +2044,7 @@ class Consultas_Financeiro():
         results = db.executar_consulta(vsSQL, (str(ID_Empresa), str(ID_Fornecedor), int(ID_Unidade), str(Nr_Documento)))
         
         if not results:
-            messagebox.showinfo('Gestor Negócios', 'Documento Não Existe!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Documento Não Existe!!!.', parent=self.window_one)
             self.limpar_campos_lcto()
             return
 

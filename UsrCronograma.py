@@ -181,7 +181,7 @@ class Cronograma_Atividades(Widgets, Projetos):
 
         self.list_tarefas = []
         self.list_tarefas = db.executar_consulta(sql_query, projeto_id)
-
+        
         self.icon_image_azul = self.base64_to_farois('semafaro_azul')
         self.icon_image_verde = self.base64_to_farois('semafaro_verde')
         self.icon_image_amarelo = self.base64_to_farois('semafaro_amarelo')
@@ -283,10 +283,11 @@ class Cronograma_Atividades(Widgets, Projetos):
                     data_conclusao_prev = data_conclusao_prev.strftime(
                         "%d/%m/%Y")  # Formato desejado: "DD/MM/YYYY"
 
-                if record.get('record.observacao') is None:
+                if record.get('observacao') is None:
+
                     Observacao = ''
                 else:
-                    Observacao = record.get('record.observacao')
+                    Observacao = record.get('observacao')
 
                 tarefa_info = (
                     nrregistros,
