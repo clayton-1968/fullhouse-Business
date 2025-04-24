@@ -66,7 +66,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
 
         lb_dt_venc_inicio = customtkinter.CTkLabel(fr_periodo, text="Data Início")
         lb_dt_venc_inicio.place(relx=0.01, rely=0.30, relheight=0.125, relwidth=0.20)
-        self.entry_dt_venc_inicio = customtkinter.CTkEntry(fr_periodo, fg_color="black", text_color="white", justify=tk.CENTER)
+        self.entry_dt_venc_inicio = customtkinter.CTkEntry(fr_periodo, fg_color="white", text_color="black", justify=tk.CENTER)
         self.entry_dt_venc_inicio.delete(0, 'end')
         self.entry_dt_venc_inicio.insert(0, TDta_Inicio.strftime("%d/%m/%Y"))
         self.entry_dt_venc_inicio.place(relx=0.01, rely=0.46, relwidth=0.485, relheight=0.50)
@@ -75,7 +75,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
 
         lb_dt_venc_fim = customtkinter.CTkLabel(fr_periodo, text="Data Fim")
         lb_dt_venc_fim.place(relx=0.47, rely=0.30, relheight=0.125, relwidth=0.35)
-        self.entry_dt_venc_fim = customtkinter.CTkEntry(fr_periodo, fg_color="black", text_color="white", justify=tk.CENTER)
+        self.entry_dt_venc_fim = customtkinter.CTkEntry(fr_periodo, fg_color="white", text_color="black", justify=tk.CENTER)
         self.entry_dt_venc_fim.delete(0, 'end')
         self.entry_dt_venc_fim.insert(0, TDta_Fim.strftime("%d/%m/%Y"))
         self.entry_dt_venc_fim.place(relx=0.50, rely=0.46, relwidth=0.485, relheight=0.50)
@@ -107,13 +107,9 @@ class Extrato_Clientes_Fornecedores(Widgets):
 
     def frame_list_extrato(self, janela):
         ## Listbox _ Informações Pesquisa
-        bg_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkFrame"]["fg_color"])
-        text_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkLabel"]["text_color"])
-        selected_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkButton"]["fg_color"])
         treestyle = ttk.Style()
         treestyle.theme_use('default')
-        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
-        treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
+        treestyle.configure("Treeview", background="white", foreground="black", fieldbackground="white", borderwidth=0)
         
         self.fr_list = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         self.fr_list.place(relx=0.005, rely=0.085, relwidth=0.99, relheight=0.91)

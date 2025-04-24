@@ -93,7 +93,7 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         lb_doc_num = customtkinter.CTkLabel(fr_doc, text="Nr. Documento")
         lb_doc_num.place(relx=0.01, rely=0.25, relheight=0.25, relwidth=0.12)
-        self.entry_doc_num = customtkinter.CTkEntry(fr_doc, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_doc_num = customtkinter.CTkEntry(fr_doc, fg_color="white", text_color="black", justify=tk.RIGHT)
         self.entry_doc_num.place(relx=0.01, rely=0.5, relwidth=0.12, relheight=0.4)
         self.entry_doc_num.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_doc_dt_emissao))
         
@@ -111,26 +111,26 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         lb_doc_dt_emissao = customtkinter.CTkLabel(fr_doc, text="Data Emissão")
         lb_doc_dt_emissao.place(relx=0.26, rely=0.25, relheight=0.25, relwidth=0.14)
-        self.entry_doc_dt_emissao = customtkinter.CTkEntry(fr_doc, fg_color="black", text_color="white", justify=tk.CENTER)
+        self.entry_doc_dt_emissao = customtkinter.CTkEntry(fr_doc, fg_color="white", text_color="black", justify=tk.CENTER)
         self.entry_doc_dt_emissao.place(relx=0.26, rely=0.5, relwidth=0.14, relheight=0.4)
         self.entry_doc_dt_emissao.bind("<Button-1>", lambda event: self.calendario(event, self.entry_doc_dt_emissao))
         self.entry_doc_dt_emissao.bind("<Return>", lambda event: self.muda_barrinha_dta(event, self.entry_doc_dt_emissao, self.entry_doc_serie))
 
         lb_doc_serie = customtkinter.CTkLabel(fr_doc, text="Série")
         lb_doc_serie.place(relx=0.41, rely=0.25, relheight=0.25, relwidth=0.08)
-        self.entry_doc_serie = customtkinter.CTkEntry(fr_doc, fg_color="black", text_color="white", justify=tk.CENTER)
+        self.entry_doc_serie = customtkinter.CTkEntry(fr_doc, fg_color="white", text_color="black", justify=tk.CENTER)
         self.entry_doc_serie.place(relx=0.41, rely=0.5, relwidth=0.08, relheight=0.4)
         self.entry_doc_serie.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_doc_numcontrato))
 
         lb_doc_numcontrato = customtkinter.CTkLabel(fr_doc, text="Nr. Contrato")
         lb_doc_numcontrato.place(relx=0.5, rely=0.25, relheight=0.25, relwidth=0.14)
-        self.entry_doc_numcontrato = customtkinter.CTkEntry(fr_doc, fg_color="black", text_color="white", justify=tk.CENTER)
+        self.entry_doc_numcontrato = customtkinter.CTkEntry(fr_doc, fg_color="white", text_color="black", justify=tk.CENTER)
         self.entry_doc_numcontrato.place(relx=0.5, rely=0.5, relwidth=0.14, relheight=0.4)
         self.entry_doc_numcontrato.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_doc_valor_total))
 
         lb_doc_valor_total = customtkinter.CTkLabel(fr_doc, text="Valor Total Doc.")
         lb_doc_valor_total.place(relx=0.65, rely=0.25, relheight=0.25, relwidth=0.14)
-        self.entry_doc_valor_total = customtkinter.CTkEntry(fr_doc, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_doc_valor_total = customtkinter.CTkEntry(fr_doc, fg_color="white", text_color="black", justify=tk.RIGHT)
         self.entry_doc_valor_total.place(relx=0.65, rely=0.5, relwidth=0.14, relheight=0.4)
         self.entry_doc_valor_total.bind("<Return>", lambda event: self.format_valor(event, self.entry_doc_valor_total))
         self.entry_doc_valor_total.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_doc_parcelas))
@@ -141,7 +141,7 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         
         lb_doc_parcelas = customtkinter.CTkLabel(fr_doc, text="Nr. Parcelas")
         lb_doc_parcelas.place(relx=0.86, rely=0.25, relheight=0.25, relwidth=0.13)
-        self.entry_doc_parcelas = customtkinter.CTkEntry(fr_doc, fg_color="black", text_color="white", justify=tk.CENTER)
+        self.entry_doc_parcelas = customtkinter.CTkEntry(fr_doc, fg_color="white", text_color="black", justify=tk.CENTER)
         self.entry_doc_parcelas.place(relx=0.86, rely=0.5, relwidth=0.13, relheight=0.4)
         self.entry_doc_parcelas.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_info_pag_nr_parc))
 
@@ -154,7 +154,7 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         lb_info_pag_nr_parc = customtkinter.CTkLabel(fr_info_pag, text="Parcela Nr.")
         lb_info_pag_nr_parc.place(relx=0.02, rely=0.125, relheight=0.125, relwidth=0.27)
-        self.entry_info_pag_nr_parc = customtkinter.CTkEntry(fr_info_pag, fg_color="black", text_color="white", justify=tk.CENTER)
+        self.entry_info_pag_nr_parc = customtkinter.CTkEntry(fr_info_pag, fg_color="white", text_color="black", justify=tk.CENTER)
         self.entry_info_pag_nr_parc.place(relx=0.02, rely=0.25, relwidth=0.27, relheight=0.25)
         self.entry_info_pag_nr_parc.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_info_pag_forma_liq))
 
@@ -170,14 +170,14 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         lb_info_pag_dt_venc = customtkinter.CTkLabel(fr_info_pag, text="Data Vencto")
         lb_info_pag_dt_venc.place(relx=0.02, rely=0.5, relheight=0.125, relwidth=0.35)
-        self.entry_info_pag_dt_venc = customtkinter.CTkEntry(fr_info_pag, fg_color="black", text_color="white", justify=tk.CENTER)
+        self.entry_info_pag_dt_venc = customtkinter.CTkEntry(fr_info_pag, fg_color="white", text_color="black", justify=tk.CENTER)
         self.entry_info_pag_dt_venc.place(relx=0.02, rely=0.625, relwidth=0.35, relheight=0.25)
         self.entry_info_pag_dt_venc.bind("<Button-1>", lambda event: self.calendario(event, self.entry_info_pag_dt_venc))
         self.entry_info_pag_dt_venc.bind("<Return>", lambda event: self.muda_barrinha_dta(event, self.entry_info_pag_dt_venc, self.entry_info_pag_valor_parc))
 
         lb_info_pag_valor_parc = customtkinter.CTkLabel(fr_info_pag, text="Valor Parcela")
         lb_info_pag_valor_parc.place(relx=0.38, rely=0.5, relheight=0.125, relwidth=0.4)
-        self.entry_info_pag_valor_parc = customtkinter.CTkEntry(fr_info_pag, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_info_pag_valor_parc = customtkinter.CTkEntry(fr_info_pag, fg_color="white", text_color="black", justify=tk.RIGHT)
         self.entry_info_pag_valor_parc.place(relx=0.38, rely=0.625, relwidth=0.4, relheight=0.25)
         self.entry_info_pag_valor_parc.bind("<Return>", lambda event: self.format_valor(event, self.entry_info_pag_valor_parc))
         self.entry_info_pag_valor_parc.bind("<Return>", lambda event: self.muda_barrinha(event, bt_incluir_parcelas))
@@ -187,13 +187,10 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         bt_incluir_parcelas.place(relx=0.8, rely=0.65, relwidth=0.10, relheight=0.2)
         
         ## Listbox _ Informações de Pagamento
-        bg_color = janela_lanc._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkFrame"]["fg_color"])
-        text_color = janela_lanc._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkLabel"]["text_color"])
-        selected_color = janela_lanc._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkButton"]["fg_color"])
         treestyle = ttk.Style()
         treestyle.theme_use('default')
-        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
-        treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
+        treestyle.configure("Treeview", background="white", foreground="black", fieldbackground="white", borderwidth=0)
+
 
         # Widgets - Listar Parcelas
         self.LParcelasFinanceiras = ttk.Treeview(janela_lanc, height=12, column=('Nr', 'Dta_Vcto', 'Valor', 'Forma_Pagto'), show='headings')
@@ -216,7 +213,7 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         lb_historico = customtkinter.CTkLabel(fr_historico, text="Histórico")
         lb_historico.place(relx=0.02, rely=0, relwidth=0.4, relheight=0.125)
 
-        self.text_historico = customtkinter.CTkTextbox(fr_historico, fg_color="black", text_color="white", width=300, height=100)
+        self.text_historico = customtkinter.CTkTextbox(fr_historico, fg_color="white", text_color="black", width=300, height=100)
         self.text_historico.place(relx=0.02, rely=0.125, relwidth=0.96, relheight=0.825)
         self.text_historico.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_itens_nota_prod_descr))
 
@@ -288,7 +285,7 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         lb_itens_nota_peso = customtkinter.CTkLabel(fr_itens_nota_peso, text="Peso")
         lb_itens_nota_peso.place(relx=0.05, rely=0, relwidth=0.70, relheight=0.25)
 
-        self.entry_itens_nota_peso = customtkinter.CTkEntry(fr_itens_nota_peso, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_itens_nota_peso = customtkinter.CTkEntry(fr_itens_nota_peso, fg_color="white", text_color="black", justify=tk.RIGHT)
         self.entry_itens_nota_peso.place(relx=0.04, rely=0.5, relwidth=0.92, relheight=0.4)
         self.entry_itens_nota_peso.bind("<Return>", lambda event: self.format_valor(event, self.entry_itens_nota_peso))
         self.entry_itens_nota_peso.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_itens_nota_quant2))
@@ -302,7 +299,7 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         lb_itens_nota_quant2 = customtkinter.CTkLabel(fr_itens_nota_quant, text="Quant.")
         lb_itens_nota_quant2.place(relx=0.03, rely=0.25, relwidth=0.29, relheight=0.25)
-        self.entry_itens_nota_quant2 = customtkinter.CTkEntry(fr_itens_nota_quant, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_itens_nota_quant2 = customtkinter.CTkEntry(fr_itens_nota_quant, fg_color="white", text_color="black", justify=tk.RIGHT)
         self.entry_itens_nota_quant2.place(relx=0.03, rely=0.5, relwidth=0.29, relheight=0.4)
         self.entry_itens_nota_quant2.bind("<Return>", lambda event: self.format_valor(event, self.entry_itens_nota_quant2))
         self.entry_itens_nota_quant2.bind("<Return>", lambda event: self.calcular_total_itens(event, self.entry_itens_nota_valor_total))
@@ -310,7 +307,7 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         lb_itens_nota_valor_unit = customtkinter.CTkLabel(fr_itens_nota_quant, text="Valor Unit.")
         lb_itens_nota_valor_unit.place(relx=0.35, rely=0.25, relwidth=0.29, relheight=0.25)
-        self.entry_itens_nota_valor_unit = customtkinter.CTkEntry(fr_itens_nota_quant, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_itens_nota_valor_unit = customtkinter.CTkEntry(fr_itens_nota_quant, fg_color="white", text_color="black", justify=tk.RIGHT)
         self.entry_itens_nota_valor_unit.place(relx=0.35, rely=0.5, relwidth=0.29, relheight=0.4)
         self.entry_itens_nota_valor_unit.bind("<Return>", lambda event: self.format_valor(event, self.entry_itens_nota_valor_unit))
         self.entry_itens_nota_valor_unit.bind("<Return>", lambda event: self.calcular_total_itens(event, self.entry_itens_nota_valor_total))
@@ -318,7 +315,7 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         lb_itens_nota_valor_total = customtkinter.CTkLabel(fr_itens_nota_quant, text="Valor Total")
         lb_itens_nota_valor_total.place(relx=0.67, rely=0.25, relwidth=0.29, relheight=0.25)
-        self.entry_itens_nota_valor_total = customtkinter.CTkEntry(fr_itens_nota_quant, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_itens_nota_valor_total = customtkinter.CTkEntry(fr_itens_nota_quant, fg_color="white", text_color="black", justify=tk.RIGHT)
         self.entry_itens_nota_valor_total.place(relx=0.67, rely=0.5, relwidth=0.29, relheight=0.4)
 
     def linha5_lanc(self, janela_lanc):
