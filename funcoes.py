@@ -24,7 +24,6 @@ import xml.etree.ElementTree as ET
 import re
 
 db = MySqlDatabase()
-
 class Gravar():
     
     def gravar_sites(self):
@@ -1245,7 +1244,6 @@ class Gravar():
 
         Tela.focus()
         messagebox.showinfo('Gestor Negócios', 'Concluído!!!', parent=self.janela_simulador_rel)
-        
 class Consultas_Financeiro():
     
     def calcular_total_itens(self, event, target):
@@ -2172,7 +2170,6 @@ class Consultas_Financeiro():
                                                 f"{self.format_valor_fx(float(row['Vlr_Total'] * -1))}" if Modulo_Financeiro == "CPA" else f"{self.format_valor_fx(float(row['Vlr_Total']))}"
                                                )
                                             )
-                
 class Consultas():
 
     def consulta_sites(self):
@@ -3514,7 +3511,6 @@ class Consultas():
                 return elem.text  # Retorna o texto do campo encontrado
                 
         return None  # Caso o CEP não seja encontrado ou a requisição falhe
-    
 class Limpeza():
 
     def on_closing_tela_fluxo_projetado(self):
@@ -3999,7 +3995,6 @@ class Limpeza():
             button.config(state="disabled")  # Disable the button
         else:
             button.config(state="normal")  # Enable the button
-            
 class Formatos():
 
     def checar_data(self, data_string, formato='%Y-%m-%d'):
@@ -5031,7 +5026,12 @@ class Formularios():
         return None
 
     def obter_banco(self, Banco_DS, janela):
-        id_banco = self.bancos_dict.get(Banco_DS)  # Obtenha o ID correspondente
+        if Banco_DS:
+            id_banco = self.bancos_dict.get(Banco_DS)  # Obtenha o ID correspondente
+        else:
+             messagebox.showinfo('Gestor Negócios', 'Erro - Banco em Branco ou Incorreto!!!', parent = janela)
+             return
+        
         if id_banco:
             return id_banco
         else:
@@ -5098,6 +5098,14 @@ class Atualizar_Combo():
         self.bancos_dict = {nome: id for id, nome in self.bancos}
         self.bancos = [banco[1] for banco in self.bancos]
         target.set_completion_list(self.bancos)
+
+    def atualizar_agencias(self, event, Empresa_ID, Banco_ID, target):
+        self.agencias = self.get_agencias(Empresa_ID, Banco_ID)
+        target.set_completion_list(self.agencias)
+
+    def atualizar_contascorrente(self, event, Empresa_ID, Banco_ID, target):
+        self.contascorrente = self.get_contascorrente(Empresa_ID, Banco_ID)
+        target.set_completion_list(self.contascorrente)
 
     def atualizar_empresas(self, event, target):
         self.empresas = self.get_empresas()
@@ -5430,8 +5438,49 @@ class Functions():
         bancos = [(banco['ID_Banco'], banco['DS_Banco']) for banco in myresult]
         return bancos
     
+    # Drop Agências Bancárias
+    def get_agencias(self, Empresa_ID, Banco_ID):
+        conditions = []  # Lista para armazenar as condições
+        conditions.append("cc.Empresa_ID = %s ")
+        params = [Empresa_ID]
+        if Banco_ID != '':
+            conditions.append("cc.ID_Banco = %s ")
+            params.append(Banco_ID)
+        
+        strSql = f"""
+                    SELECT 
+                        DISTINCT cc.ID_Agencia AS Agencia
+                        FROM TB_Conta_Corrente cc
+                    WHERE {' AND '.join(conditions)}
+                """
+        
+        myresult = db.executar_consulta(strSql, params)
+        agencias = [(agencia['Agencia']) for agencia in myresult]
+        return agencias
+    
+    # Drop Contas Bancárias
+    def get_contascorrente(self, Empresa_ID, Banco_ID):
+        conditions = []  # Lista para armazenar as condições
+        conditions.append("cc.Empresa_ID = %s ")
+        params = [Empresa_ID]
+        if Banco_ID != '':
+            conditions.append("cc.ID_Banco = %s ")
+            params.append(Banco_ID)
+        
+        strSql = f"""
+                    SELECT 
+                        cc.ID_Conta AS Conta
+                        FROM TB_Conta_Corrente cc
+                    WHERE {' AND '.join(conditions)}
+                """
+        
+        myresult = db.executar_consulta(strSql, params)
+        contas = [(conta['Conta']) for conta in myresult]
+        return contas
+    
     def get_natureza_financeira(self, Empresa_ID):
-        strSql = """SELECT 
+        strSql = """
+                    SELECT 
                         nt.Nat_ID           AS Codigo, 
                         nt.Nat_Descricao    AS Nome, 
                         nt.Nat_Tipo         AS Tpo 
@@ -5439,7 +5488,8 @@ class Functions():
                     WHERE 
                         nt.Nat_Tipo='A'
                         AND nt.Empresa_ID=%s
-                    ORDER BY Nome"""
+                    ORDER BY Nome
+                """
     
         myresult = db.executar_consulta(strSql, Empresa_ID)
         naturezas = [(natureza['Codigo'], natureza['Nome'], natureza['Tpo']) for natureza in myresult]
@@ -5460,7 +5510,8 @@ class Functions():
     
     # Drop Produtos
     def get_produtos(self, Empresa_ID):
-        strSql = """SELECT 
+        strSql = """
+                    SELECT 
                         pp.Produto_ID           AS Codigo, 
                         pp.Produto_Descricao    AS Nome, 
                         pp.Produto_Tipo         AS Tpo
@@ -5483,15 +5534,16 @@ class Functions():
             myresult = db._querying(strSqL)
         else:
             strSqL = """
-                    SELECT 
-                    distinct(per.Empresa_ID) AS Empresa_ID, 
-                    emp.Pri_Cnpj             AS Pri_Cnpj,
-                    emp.Pri_Descricao        AS Pri_Descricao, 
-                    emp.Pri_EndUf            AS Pri_EndUf 
-                    FROM usuarios usr
-                    INNER JOIN TB_Permissoes per ON per.UsR_Login=usr.Usr_Login
-                    INNER JOIN TB_Empresas   emp ON emp.Pri_Cnpj=per.Empresa_ID
-                    WHERE usr.Usr_Login= %s ORDER BY emp.Pri_Descricao"""
+                        SELECT 
+                        distinct(per.Empresa_ID) AS Empresa_ID, 
+                        emp.Pri_Cnpj             AS Pri_Cnpj,
+                        emp.Pri_Descricao        AS Pri_Descricao, 
+                        emp.Pri_EndUf            AS Pri_EndUf 
+                        FROM usuarios usr
+                        INNER JOIN TB_Permissoes per ON per.UsR_Login=usr.Usr_Login
+                        INNER JOIN TB_Empresas   emp ON emp.Pri_Cnpj=per.Empresa_ID
+                        WHERE usr.Usr_Login= %s ORDER BY emp.Pri_Descricao
+                    """
             
             myresult = db.executar_consulta(strSqL, UserName)
 

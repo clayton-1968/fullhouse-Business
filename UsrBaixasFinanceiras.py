@@ -20,29 +20,29 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
         # Criar widgets
         self.criar_widgets_baixas_financeiras()
 
-    def preenche_cnpj(self, event):
-        if self.combo_empresa.get():
-            self.cnpj = self.obter_Empresa_ID(self.combo_empresa.get())
+    # def preenche_cnpj(self, event):
+    #     if self.combo_empresa.get():
+    #         self.cnpj = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
 
-            self.entry_cnpj.delete(0, tk.END)
-            self.entry_cnpj.insert(0, self.cnpj)
+    #         self.entry_cnpj.delete(0, tk.END)
+    #         self.entry_cnpj.insert(0, self.cnpj)
 
     def criar_widgets_baixas_financeiras(self):
         # Empresa
         self.frame_empresa(self.frame_principal, 0, 0.02, 0.30, 0.09)
         self.combo_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_pessoa))
-        self.combo_empresa.bind("<<ComboboxSelected>>", self.preenche_cnpj)
+        # self.combo_empresa.bind("<<ComboboxSelected>>", self.preenche_cnpj)
 
         # CNPJ
-        self.fr_cnpj = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_cnpj.place(relx=0.31, rely=0.02, relwidth=0.10, relheight=0.09)
+        # self.fr_cnpj = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
+        # self.fr_cnpj.place(relx=0.31, rely=0.02, relwidth=0.10, relheight=0.09)
 
-        self.lb_cnpj = customtkinter.CTkLabel(self.fr_cnpj, text="CPF/CNPJ")
-        self.lb_cnpj.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
+        # self.lb_cnpj = customtkinter.CTkLabel(self.fr_cnpj, text="CPF/CNPJ")
+        # self.lb_cnpj.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
-        self.entry_cnpj = customtkinter.CTkEntry(self.fr_cnpj, fg_color="white", text_color="black",
-                                                           justify=tk.RIGHT)
-        self.entry_cnpj.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        # self.entry_cnpj = customtkinter.CTkEntry(self.fr_cnpj, fg_color="white", text_color="black",
+        #                                                    justify=tk.RIGHT)
+        # self.entry_cnpj.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
 
         # Pessoas
         self.frame_pessoa(self.frame_principal, 0.42, 0.02, 0.35, 0.09)
@@ -307,6 +307,16 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
             "Valor", "Nr. Parc.", "Data Doc.", "Situação", "Unidade", "Valor Efetivo"
         ), show='headings')
 
+        # Definindo cores
+        bg_color = '#FFFFFF'  # Fundo branco
+        text_color = '#000000'  # Texto preto
+        selected_color = '#0078d7'  # Azul para selecionados
+
+        treestyle = ttk.Style()
+        treestyle.theme_use('default')
+        treestyle.configure("Treeview", background=bg_color,foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+        treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
+
         col_widths = [40, 60, 60, 80, 50, 60, 30, 40, 30, 60, 60]
         headers = ["Data Pagto", "CpF/CnPj", "Beneficiário", "Nr. Documento", "Valor", "Nr. Parc.", "Data Doc.",
                    "Situação", "Unidade", "Valor Efetivo"]
@@ -370,11 +380,11 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
             """
 
             if self.combo_empresa.get():
-                self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+                self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
                 query += f" AND ii.ID_Empresa = '{self.id_empresa}'"
 
             if self.combo_pessoa.get():
-                self.id_pessoa = self.obter_Pessoa_ID(self.combo_pessoa.get())
+                self.id_pessoa = self.obter_Pessoa_ID(self.combo_pessoa.get(), self.window_one)
                 query += f" AND ii.ID_Pessoa = '{self.id_pessoa}'"
 
             query += f" AND ii.Fin_Dta_Vcto BETWEEN '{self.dt_inicio}' AND '{self.dt_fim}'"
@@ -414,11 +424,11 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
             """
 
             if self.combo_empresa.get():
-                self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+                self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
                 query += f" AND Fat_Empresa = '{self.id_empresa}'"
 
             if self.combo_pessoa.get():
-                self.id_pessoa = self.obter_Pessoa_ID(self.combo_pessoa.get())
+                self.id_pessoa = self.obter_Pessoa_ID(self.combo_pessoa.get(), self.window_one)
                 query += f" AND Fat_Pessoa = '{self.id_pessoa}'"
 
             query += f" AND Fat_Data BETWEEN '{self.dt_inicio}' AND '{self.dt_fim}'"
@@ -427,7 +437,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
             consulta_2 = [(consulta_2) for consulta_2 in myresult]
 
             if not consulta and not consulta_2:
-                messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!")
+                messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!", parent=self.window_one)
                 return
 
             # Inserir dados na tabela
@@ -518,11 +528,11 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
             """
 
             if self.combo_empresa.get():
-                self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+                self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
                 query += f" AND Fat_Empresa = '{self.id_empresa}'"
 
             if self.combo_pessoa.get():
-                self.id_pessoa = self.obter_Pessoa_ID(self.combo_pessoa.get())
+                self.id_pessoa = self.obter_Pessoa_ID(self.combo_pessoa.get(), self.window_one)
                 query += f" AND Fat_Pessoa = '{self.id_pessoa}'"
 
             query += f" AND Fat_DtaBaixa BETWEEN '{self.dt_inicio}' AND '{self.dt_fim}'"
@@ -531,7 +541,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
             consulta_2 = [(consulta_2) for consulta_2 in myresult]
 
             if not consulta and not consulta_2:
-                messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!")
+                messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!", parent=self.window_one)
                 return
 
             # Inserir dados na tabela
@@ -559,21 +569,21 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
             self.nr_conta = ""
         else:
             if not self.entry_banco.get() or not self.entry_agencia.get() or not self.entry_contacorrente.get():
-                messagebox.showerror("Erro", "Banco, Agência e Conta não podem ser vazios!")
+                messagebox.showerror("Erro", "Banco, Agência e Conta não podem ser vazios!", parent=self.window_one)
                 return
 
             self.dt_baixa = datetime.strptime(self.entry_dt_baixa.get(), "%d/%m/%Y").strftime("%Y-%m-%d")
-            self.id_banco = self.obter_banco(self.entry_banco.get())
+            self.id_banco = self.obter_banco(self.entry_banco.get(), self.window_one)
 
 
         if self.entry_dt_doc.get():
             self.dt_doc = datetime.strptime(self.entry_dt_doc.get(), "%d/%m/%Y").strftime("%Y-%m-%d")
 
         if self.combo_empresa.get():
-            self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+            self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
 
         if self.entry_cpf_cnpj:
-            self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+            self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
 
         try:
             if self.combo_baixa.get() == "EFETUAR BAIXA":
@@ -583,7 +593,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
                 consulta = [(consulta) for consulta in myresult]
 
                 if not consulta:
-                    messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!")
+                    messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!", parent=self.window_one)
                     return
                 else:
                     dta_trava_dia = consulta[0]['Dta_Trava'].day
@@ -595,11 +605,11 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
                     if self.data_trava > self.dt_baixa:
                         messagebox.showinfo("Aviso", "Data de Baixa não pode ser anterior a data de trava do "
-                                                     f"sistema - {self.data_trava}")
+                                                     f"sistema - {self.data_trava}", parent=self.window_one)
                         return
 
                 if self.dt_baixa and self.dt_doc > self.dt_baixa:
-                    messagebox.showinfo("Aviso", "Data de Baixa não pode ser menor que a data do documento!")
+                    messagebox.showinfo("Aviso", "Data de Baixa não pode ser menor que a data do documento!", parent=self.window_one)
                     return
 
                 if self.combo_situacao.get() == "L":
@@ -628,9 +638,9 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
                 myresult = db._querying(query)
                 if myresult:
-                    messagebox.showinfo("Aviso", "Registro salvo com sucesso!")
+                    messagebox.showinfo("Aviso", "Registro salvo com sucesso!", parent=self.window_one)
                 else:
-                    messagebox.showerror("Erro", "Erro ao salvar registro!")
+                    messagebox.showerror("Erro", "Erro ao salvar registro!", parent=self.window_one)
                     return
 
             elif self.combo_baixa.get() == "CANCELAR BAIXA":
@@ -640,7 +650,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
                 consulta = [(consulta) for consulta in myresult]
 
                 if not consulta:
-                    messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!")
+                    messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!", parent=self.window_one)
                     return
                 else:
                     dta_trava_dia = consulta[0]['Dta_Trava'].day
@@ -652,7 +662,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
                     if self.data_trava > self.dt_baixa:
                         messagebox.showinfo("Aviso", "Data de Baixa não pode ser anterior a data de trava do "
-                                                     f"sistema - {self.data_trava}")
+                                                     f"sistema - {self.data_trava}", parent=self.window_one)
                         return
 
                 if self.combo_situacao.get() == "L":
@@ -680,17 +690,16 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
                 myresult = db._querying(query)
                 if myresult:
-                    messagebox.showinfo("Aviso", "Registro salvo com sucesso!")
+                    messagebox.showinfo("Aviso", "Registro salvo com sucesso!", parent=self.window_one)
                 else:
-                    messagebox.showerror("Erro", "Erro ao salvar registro!")
+                    messagebox.showerror("Erro", "Erro ao salvar registro!", parent=self.window_one)
                     return
 
             self.consulta_titulos()
 
         except Exception as e:
-            print(str(e))
+            messagebox.showerror("Erro", str(e), parent=self.window_one)
             return
-
 
     def lbaixas_click(self, event):
         self.selected_item = self.tree.selection()
