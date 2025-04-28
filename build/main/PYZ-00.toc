@@ -241,6 +241,10 @@
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\Usr.py',
    'PYMODULE'),
+  ('UsrAnexos',
+   'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
+   'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrAnexos.py',
+   'PYMODULE'),
   ('UsrAprovacaoLctos',
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrAprovacaoLctos.py',
@@ -304,6 +308,10 @@
   ('UsrSites',
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrSites.py',
+   'PYMODULE'),
+  ('UsrTelaPrincipal',
+   'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
+   'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrTelaPrincipal.py',
    'PYMODULE'),
   ('__future__',
    'C:\\Users\\Clayton\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\__future__.py',

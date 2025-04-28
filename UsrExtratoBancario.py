@@ -18,7 +18,7 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
     def create_widgets(self):
         # CNPJ (Empresa)
         self.frame_empresa(self.frame_principal, 0, 0.02, 0.30, 0.09)
-        self.combo_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_pessoa))
+        self.combo_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_banco))
 
         # Banco
         self.fr_banco = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
@@ -41,14 +41,18 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.lb_agencia = customtkinter.CTkLabel(self.fr_agencia, text="Agência")
         self.lb_agencia.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
-        self.entry_agencia = customtkinter.CTkEntry(self.fr_agencia, fg_color="white", text_color="black", justify=tk.RIGHT)
+        self.agencias = []
+        self.entry_agencia = AutocompleteCombobox(self.fr_agencia, width=30, justify=tk.RIGHT, font=('Times', 8),
+                                                completevalues=self.agencias)
         self.entry_agencia.place(relx=0.01, rely=0.5, relwidth=0.65, relheight=0.4)
-        self.entry_agencia.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_agencia_dv))
-
-        self.entry_agencia_dv = customtkinter.CTkEntry(self.fr_agencia, fg_color="white", text_color="black",
-                                                       justify=tk.RIGHT)
-        self.entry_agencia_dv.place(relx=0.62, rely=0.5, relwidth=0.35, relheight=0.4)
-        self.entry_agencia_dv.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_contacorrente))
+        self.entry_agencia.bind("<Button-1>", lambda event: self.atualizar_agencias(
+                                                                    event,
+                                                                    self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one), 
+                                                                    self.obter_banco(self.entry_banco.get(), self.window_one), 
+                                                                    self.entry_agencia, 
+                                                                    ))
+        
+        self.entry_agencia.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_contacorrente))
 
         # Conta
         self.fr_contacorrente = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
@@ -57,15 +61,16 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.lb_contacorrente = customtkinter.CTkLabel(self.fr_contacorrente, text="Conta")
         self.lb_contacorrente.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
-        self.entry_contacorrente = customtkinter.CTkEntry(self.fr_contacorrente, fg_color="white", text_color="black",
-                                                          justify=tk.RIGHT)
+        self.contascorrente = []
+        self.entry_contacorrente = AutocompleteCombobox(self.fr_contacorrente, width=30, justify=tk.RIGHT, font=('Times', 8),
+                                                completevalues=self.contascorrente)
         self.entry_contacorrente.place(relx=0.01, rely=0.5, relwidth=0.65, relheight=0.4)
-        self.entry_contacorrente.bind("<Return>", lambda event: self.muda_barrinha(event, None))
-
-        self.entry_contacorrente_dv = customtkinter.CTkEntry(self.fr_contacorrente, fg_color="white", text_color="black",
-                                                       justify=tk.RIGHT)
-        self.entry_contacorrente_dv.place(relx=0.62, rely=0.5, relwidth=0.35, relheight=0.4)
-        self.entry_contacorrente_dv.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_contacorrente))
+        self.entry_contacorrente.bind("<Button-1>", lambda event: self.atualizar_contascorrente(
+                                                                    event,
+                                                                    self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one), 
+                                                                    self.obter_banco(self.entry_banco.get(), self.window_one), 
+                                                                    self.entry_contacorrente))
+        self.entry_contacorrente.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_dt_inicio))
 
         # Período
         self.fr_periodo = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
@@ -104,20 +109,31 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Resultado
         self.fr_extrato_result = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_extrato_result.place(relx=0, rely=0.125, relwidth=1, relheight=1)
+        self.fr_extrato_result.place(relx=0.001, rely=0.125, relwidth=0.995, relheight=.87)
 
         self.extrato_result = ttk.Treeview(self.fr_extrato_result, columns=("DATA", "DOCUMENTO", "HISTÓRICO", "MOVTO", "SALDO"),
                                      show="headings")
+        # Definindo cores
+        bg_color = '#FFFFFF'  # Fundo branco
+        text_color = '#000000'  # Texto preto
+        selected_color = '#0078d7'  # Azul para selecionados
+
+        treestyle = ttk.Style()
+        treestyle.theme_use('default')
+        treestyle.configure("Treeview", background=bg_color,foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+        treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
+
         self.extrato_result.heading("DATA", text="DATA")
         self.extrato_result.heading("DOCUMENTO", text="DOCUMENTO")
         self.extrato_result.heading("HISTÓRICO", text="HISTÓRICO")
         self.extrato_result.heading("MOVTO", text="MOVTO")
         self.extrato_result.heading("SALDO", text="SALDO")
-        self.extrato_result.column("DATA", width=80, anchor="center")
-        self.extrato_result.column("DOCUMENTO", width=200, anchor="center")
-        self.extrato_result.column("HISTÓRICO", width=495, anchor="center")
-        self.extrato_result.column("MOVTO", width=110, anchor="e")
-        self.extrato_result.column("SALDO", width=110, anchor="e")
+
+        self.extrato_result.column("DATA", width=20, anchor="center")
+        self.extrato_result.column("DOCUMENTO", width=50, anchor="center")
+        self.extrato_result.column("HISTÓRICO", width=800, anchor="w")
+        self.extrato_result.column("MOVTO", width=100, anchor="e")
+        self.extrato_result.column("SALDO", width=100, anchor="e")
         self.extrato_result.grid(row=0, column=0, sticky="nsew")
 
         # Scrollbar
@@ -131,23 +147,23 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
     def consultar_extrato(self):
         self.extrato_result.delete(*self.extrato_result.get_children())
 
-        # if not self.combo_empresa.get():
-        #     messagebox.showerror("Erro", "Empresa não pode ser branco!")
-        #     return
-        #
-        # if not self.entry_banco.get():
-        #     messagebox.showerror("Erro", "Banco não pode ser branco!")
-        #     return
+        if not self.combo_empresa.get():
+            messagebox.showerror("Erro", "Empresa não pode ser branco!", parent=self.window_one)
+            return
+        
+        if not self.entry_banco.get():
+            messagebox.showerror("Erro", "Banco não pode ser branco!", parent=self.window_one)
+            return
 
         if not self.entry_dt_inicio.get() or not self.entry_dt_fim.get():
-            messagebox.showerror("Erro", "Datas não podem ser branco!")
+            messagebox.showerror("Erro", "Datas não podem ser branco!",  parent=self.window_one)
             return
 
         try:
             self.dt_inicio = datetime.strptime(self.entry_dt_inicio.get(), "%d/%m/%Y").strftime("%Y-%m-%d")
             self.dt_fim = datetime.strptime(self.entry_dt_fim.get(), "%d/%m/%Y").strftime("%Y-%m-%d")
         except ValueError:
-            messagebox.showerror("Erro", "Formato de data inválido! Use DD/MM/YYYY")
+            messagebox.showerror("Erro", "Formato de data inválido! Use DD/MM/YYYY", parent=self.window_one)
             return
 
         try:
@@ -158,11 +174,11 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
             """
 
             if self.combo_empresa.get():
-                self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get())
+                self.id_empresa = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
                 query += f' AND ff.ID_Empresa = "{self.id_empresa}"'
 
             if self.entry_banco.get():
-                self.id_banco = self.obter_banco(self.entry_banco.get())
+                self.id_banco = self.obter_banco(self.entry_banco.get(), self.window_one)
                 query += f" AND ff.ID_Bco_Liquidacao = {self.id_banco}"
 
             if self.entry_agencia.get():
@@ -238,7 +254,7 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
                 ))
 
         except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao acessar o banco de dados: {str(e)}")
+            messagebox.showerror("Erro", f"Erro ao acessar o banco de dados: {str(e)}", parent=self.window_one)
 
 
 ExtratoBancario()

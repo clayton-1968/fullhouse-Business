@@ -8,37 +8,37 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
     def aprovacao_lctos(self, principal_frame):
         self.images_base64()
 
-        self.window_one.title('Baixas financeiras')
+        self.window_one.title('Aprovação de Lançamentos Financeiros')
         self.clearFrame_principal()
 
         self.frame_principal = principal_frame
 
         self.create_widgets_aprovacao_lctos()
 
-    def preenche_cnpj(self, event):
-        if self.combo_empresa.get():
-            self.cnpj = self.obter_Empresa_ID(self.combo_empresa.get())
+    # def preenche_cnpj(self, event):
+    #     if self.combo_empresa.get():
+    #         self.cnpj = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
 
-            self.entry_cnpj.delete(0, tk.END)
-            self.entry_cnpj.insert(0, self.cnpj)
+    #         self.entry_cnpj.delete(0, tk.END)
+    #         self.entry_cnpj.insert(0, self.cnpj)
 
     def create_widgets_aprovacao_lctos(self):
         # Empresa
         self.frame_empresa(self.frame_principal, 0, 0.02, 0.30, 0.09)
         self.combo_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_pessoa))
-        self.combo_empresa.bind("<<ComboboxSelected>>", self.preenche_cnpj)
+        # self.combo_empresa.bind("<<ComboboxSelected>>", self.preenche_cnpj)
 
 
         # CNPJ
-        self.fr_cnpj = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_cnpj.place(relx=0.31, rely=0.02, relwidth=0.10, relheight=0.09)
+        # self.fr_cnpj = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
+        # self.fr_cnpj.place(relx=0.31, rely=0.02, relwidth=0.10, relheight=0.09)
 
-        self.lb_cnpj = customtkinter.CTkLabel(self.fr_cnpj, text="CPF/CNPJ")
-        self.lb_cnpj.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
+        # self.lb_cnpj = customtkinter.CTkLabel(self.fr_cnpj, text="CPF/CNPJ")
+        # self.lb_cnpj.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
-        self.entry_cnpj = customtkinter.CTkEntry(self.fr_cnpj, fg_color="white", text_color="black",
-                                                           justify=tk.RIGHT)
-        self.entry_cnpj.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        # self.entry_cnpj = customtkinter.CTkEntry(self.fr_cnpj, fg_color="white", text_color="black",
+        #                                                    justify=tk.RIGHT)
+        # self.entry_cnpj.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
 
         # Unidade de Negócio
         self.fr_unidade_negocio = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
@@ -53,9 +53,9 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.entry_unidade_negocio.pack()
         self.entry_unidade_negocio.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
         self.entry_unidade_negocio.bind("<Button-1>", lambda event:
-            self.atualizar_unidade_negocios(event, self.combo_empresa.get(), self.entry_unidade_negocio))
+            self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one), self.entry_unidade_negocio))
         self.entry_unidade_negocio.bind('<Down>', lambda event:
-            self.atualizar_unidade_negocios(event, self.combo_empresa.get(), self.entry_unidade_negocio))
+            self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one), self.entry_unidade_negocio))
 
         # Centro de Resultado
         self.fr_centro = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
@@ -68,10 +68,10 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.entry_centro = AutocompleteCombobox(self.fr_centro, width=30, font=('Times', 11), completevalues=centro)
         self.entry_centro.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
         self.entry_centro.bind("<Button-1>",
-                               lambda event: self.atualizar_centro_resultado(event, self.combo_empresa.get(),
+                               lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one),
                                                                              self.entry_centro))
         self.entry_centro.bind('<Down>',
-                               lambda event: self.atualizar_centro_resultado(event, self.combo_empresa.get(),
+                               lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one),
                                                                              self.entry_centro))
         self.entry_centro.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_natureza))
 
@@ -85,10 +85,10 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.entry_natureza = AutocompleteCombobox(self.fr_natureza, width=30, font=('Times', 11), completevalues=natureza)
         self.entry_natureza.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
         self.entry_natureza.bind("<Button-1>", lambda event: self.atualizar_natureza_financeira(event,
-                                                                                                self.combo_empresa.get(),
+                                                                                                self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one),
                                                                                                 self.entry_natureza))
         self.entry_natureza.bind('<Down>', lambda event: self.atualizar_natureza_financeira(event,
-                                                                                            self.combo_empresa.get(),
+                                                                                            self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one),
                                                                                             self.entry_natureza))
         self.entry_natureza.bind("<Return>", lambda event: self.muda_barrinha(event, None))
 
@@ -125,21 +125,38 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Resultado
         self.fr_tree = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_tree.place(relx=0, rely=0.22, relwidth=1, relheight=1)
+        self.fr_tree.place(relx=0.005, rely=0.22, relwidth=0.99, relheight=0.875)
 
         self.tree = ttk.Treeview(self.fr_tree, columns=(
-        "Unid_ID", "Centro_ID", "Natureza_ID", "Pessoa_ID", "Pessoas_Descricao", "Nr_Documento", "Valor", "Status"),
-                                 show='headings')
+                                                        "Unid_ID", 
+                                                        "Centro_ID", 
+                                                        "Natureza_ID", 
+                                                        "Pessoa_ID", 
+                                                        "Pessoas_Descricao", 
+                                                        "Nr_Documento", 
+                                                        "Valor", 
+                                                        "Status"),
+                                                        show='headings')
         # "CpfCnpj", "Descricao", "Unid_ID", "Unidade_Negocio", "Centro_ID", "Centro_Resultado", "Natureza_ID",
         # "Natureza_Financeira", "Valor", "Nr_Documento", "Status", "Anexo"), show='headings')
+        
+        # Definindo cores
+        bg_color = '#FFFFFF'  # Fundo branco
+        text_color = '#000000'  # Texto preto
+        selected_color = '#0078d7'  # Azul para selecionados
 
-        col_widths = [80, 200, 30, 80, 40, 100, 50, 100]
-        headers = ["Unid_ID", "Centro_ID", "Natureza_ID", "Pessoa_ID", "Pessoas_Descricao", "Nr_Documento", "Valor", "Status"]
+        treestyle = ttk.Style()
+        treestyle.theme_use('default')
+        treestyle.configure("Treeview", background=bg_color,foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+        treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
+
+        col_widths = [10, 10, 10, 10, 800, 10, 100, 5]
+        headers = ["Unidade", "Centro", "Natureza", "CNPJ/CPF", "Descricao", "Nr. Documento", "Valor", "Status"]
 
         for col, header, width in zip(self.tree['columns'], headers, col_widths):
             self.tree.heading(col, text=header)
             self.tree.column(col, width=width)
-
+        
         self.tree.pack(expand=True, fill=tk.BOTH)
         self.tree.bind("<Double-1>", self.aprovar_documento)
 
@@ -163,9 +180,9 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
                 self.tree.item(self.selected_item, values=self.item['values'])
 
-                messagebox.showinfo("Aviso", "Documento aprovado!")
+                messagebox.showinfo("Aviso", "Documento aprovado!", parent=self.window_one)
             except:
-                messagebox.showerror("Erro", "Ocorreu um erro ao tentar aprovar um documento!")
+                messagebox.showerror("Erro", "Ocorreu um erro ao tentar aprovar um documento!", parent=self.window_one)
                 return
 
 
@@ -175,11 +192,11 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         # SELECT ID_Unidade, Unidade_Descricao, ID_CR, Cen_Descricao, ID_Natureza, Nat_Descricao, ID_Pessoa, Pessoas_Descricao,
         #        Doc_Num_Documento, Vlr_Total, Doc_DS_Observacao, Doc_AprovacaoJose, Anexo
         query = """
-        SELECT DISTINCT ID_Unidade, ID_CR, ID_Natureza, ID_Pessoa, Pessoas_Descricao,
-          Doc_Num_Documento, Vlr_Total, Doc_AprovacaoJose
-        FROM TB_Itens
-        LEFT JOIN TB_Pessoas ON TB_Itens.ID_Pessoa = TB_Pessoas.Pessoas_CPF_CNPJ
-        WHERE 1=1
+                    SELECT DISTINCT ID_Unidade, ID_CR, ID_Natureza, ID_Pessoa, Pessoas_Descricao,
+                    Doc_Num_Documento, Vlr_Total, Doc_AprovacaoJose
+                    FROM TB_Itens
+                    LEFT JOIN TB_Pessoas ON TB_Itens.ID_Pessoa = TB_Pessoas.Pessoas_CPF_CNPJ
+                    WHERE 1=1
         """
 
         if self.combo_empresa.get():
@@ -187,27 +204,29 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
             query += f' AND ID_Empresa = "{self.id_empresa}"'
 
         if self.entry_unidade_negocio.get():
-            self.id_unidade = self.obter_Unidade_ID(self.entry_unidade_negocio.get())
+            self.id_unidade = self.obter_Unidade_ID(self.entry_unidade_negocio.get(), self.window_one)
             query += f' AND ID_Unidade = "{self.id_unidade}"'
 
         if self.entry_centro.get():
-            self.id_cr = self.obter_Centro_ID(self.entry_centro.get())
+            self.id_cr = self.obter_Centro_ID(self.entry_centro.get(), self.window_one)
             query += f' AND ID_CR = "{self.id_cr}"'
 
         if self.entry_natureza.get():
-            self.id_natureza = self.obter_Natureza_ID(self.entry_natureza.get())
+            self.id_natureza = self.obter_Natureza_ID(self.entry_natureza.get(), self.window_one)
             query += f' AND ID_Natureza = "{self.id_natureza}"'
 
         if self.aprovados_var.get():
             query += ' AND Doc_AprovacaoJose = "S" AND Doc_AprovacaoZe = "S"'
+        else:
+            query += ' AND Doc_AprovacaoJose = "N" AND Doc_AprovacaoZe = "N"'
 
         # O CAMPO DATA NÃO ESTÁ SENDO FILTRADO PORQUE NÃO TEMOS O CAMPO NA TABELA
-
+        
         myresult = db._querying(query)
         consulta = [(consulta) for consulta in myresult]
 
         if not consulta:
-            messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!")
+            messagebox.showinfo("Aviso", "Não Existem Dados Para Esta Consulta!", parent=self.window_one)
             return
 
         # Inserir dados na tabela

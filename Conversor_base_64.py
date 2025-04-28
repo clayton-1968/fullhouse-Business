@@ -13,7 +13,7 @@ def png_to_base64(file_path):
 
 # Caminho para o arquivo PNG
 base_dir = os.path.dirname(os.path.abspath(__file__))
-icon_path = os.path.join(base_dir, 'icon', 'amarelo.png')
+icon_path = os.path.join(base_dir, 'icon', 'sair.png')
 file_path = icon_path  # Substitua pelo caminho do seu arquivo PNG
 base64_string = png_to_base64(file_path)
 

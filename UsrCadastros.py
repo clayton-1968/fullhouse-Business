@@ -323,6 +323,16 @@ class Pessoas(Icons, Functions):
         self.entry_email.bind("<Return>", lambda event: self.muda_barrinha(event, self.bt_pag_salvar_pessoa))
 
     def frame_cad_linha_4(self, janela):
+        # Definindo cores
+        bg_color = '#FFFFFF'  # Fundo branco
+        text_color = '#000000'  # Texto preto
+        selected_color = '#0078d7'  # Azul para selecionados
+        
+        treestyle = ttk.Style()
+        treestyle.theme_use('default')
+        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+        treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
+
         # Widgets - Listar Itens
         self.LItens_cadastro_pessoas = ttk.Treeview(janela, height=12, column=('Tpo', 'CpF_CnPj', 'Descricao', 'Banco', 'Agencia', 'Agencia_D', 
                                                               'Conta', 'Conta_D', 'Pix', 'Proprietario_sn', 'Endereco', 'Endereco_Nr',
@@ -500,6 +510,15 @@ class Produtos(Icons, Functions):
         bt_salvar_produto.place(relx=0.965, rely=0.01, relwidth=0.03, relheight=0.04)
 
     def frame_produto_linha_2(self, janela):
+        # Definindo cores
+        bg_color = '#FFFFFF'  # Fundo branco
+        text_color = '#000000'  # Texto preto
+        selected_color = '#0078d7'  # Azul para selecionados
+        
+        treestyle = ttk.Style()
+        treestyle.theme_use('default')
+        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+        treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
         # Widgets - Listar Itens
         self.LItens_produtos = ttk.Treeview(janela, height=12, column=('Nr', 'Descricao', 'NCM', 'Tipo_ID', 'Tipo', 'Unidade_Medida_ID', 'Unidade_Medida'), show='headings')
         self.LItens_produtos.heading('Nr', text="Nr.")
@@ -605,6 +624,16 @@ class Versoes(Icons, Functions):
         bt_salvar_versao.place(relx=0.965, rely=0.01, relwidth=0.03, relheight=0.04)
     
     def frame_versao_linha_2(self, janela):
+        # Definindo cores
+        bg_color = '#FFFFFF'  # Fundo branco
+        text_color = '#000000'  # Texto preto
+        selected_color = '#0078d7'  # Azul para selecionados
+        
+        treestyle = ttk.Style()
+        treestyle.theme_use('default')
+        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+        treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
+
         # Widgets - Listar Itens
         self.LItens_versao = ttk.Treeview(janela, height=12, column=('Id', 'Codigo', 'Descricao', 'dta'), show='headings')
         self.LItens_versao.heading('Id', text="ID")
@@ -909,7 +938,9 @@ class Projetos(Icons, Functions):
         lb_idx = customtkinter.CTkLabel(fr_idx, text="IdX")
         lb_idx.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
         
-        self.entry_idx = customtkinter.CTkEntry(fr_idx, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_idx = customtkinter.CTkEntry(fr_idx, fg_color="black", text_color="white", justify=tk.CENTER)
+        self.entry_idx.configure(state='disabled')
+        # self.entry_idx.configure(state='normal')
         self.entry_idx.place(relx=0.05, rely=0.5, relwidth=0.90, relheight=0.4)
         
         # Nome do Projeto
@@ -983,8 +1014,8 @@ class Projetos(Icons, Functions):
         lb_ativo.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
         self.check_var_ativo = customtkinter.StringVar(value="on")
-        self.checkbox_ativo = customtkinter.CTkCheckBox(fr_ativo, text='Sim', variable=self.check_var_ativo, onvalue="on", offvalue="off")
-        self.checkbox_ativo.place(relx=0.1, rely=0.30, relheight=0.5, relwidth=0.50)
+        self.checkbox_ativo = customtkinter.CTkCheckBox(fr_ativo, text='Ativo', variable=self.check_var_ativo, onvalue="on", offvalue="off")
+        self.checkbox_ativo.place(relx=0.1, rely=0.30, relheight=0.5, relwidth=0.78)
             
         # Observação
         coordenadas_relx=0.005
@@ -998,8 +1029,7 @@ class Projetos(Icons, Functions):
         
         self.entry_obs = customtkinter.CTkEntry(fr_obs, fg_color="black", text_color="white", justify=tk.LEFT)
         self.entry_obs.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_obs.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_cep))
-    
+            
     def frame_projetos_linha_2(self, janela):
         # Widgets - Listar Itens
         self.LItens_projetos = ttk.Treeview(janela, height=12, column=(
@@ -1050,22 +1080,54 @@ class Projetos(Icons, Functions):
         # Definição de variáveis
         if not self.entry_empresa.get().strip():
             messagebox.showinfo('Gestor Negócios', 'Erro: Preencher o Campo da Empresa!!!.', parent=self.janela_cadastro_projetos)
+            self.entry_empresa.focus()
+            return
+        
+        if not self.entry_uf.get() .strip():
+            messagebox.showinfo('Gestor Negócios', 'Erro: Preencher o Campo da UF!!!.', parent=self.janela_cadastro_projetos)
+            self.entry_uf.focus()
+            return
+        
+        if not self.entry_municipio.get().strip():
+            messagebox.showinfo('Gestor Negócios', 'Erro: Preencher o Campo do Município!!!.', parent=self.janela_cadastro_projetos)
+            self.entry_municipio.focus()
+            return
+        
+        if not self.entry_tpo_programa.get().strip():
+            messagebox.showinfo('Gestor Negócios', 'Erro: Preencher o Tipo do Programa de Atividades!!!.', parent=self.janela_cadastro_projetos)
+            self.entry_tpo_programa.focus()
+            return
+        
+        if not self.entry_tpo_projeto.get().strip():
+            messagebox.showinfo('Gestor Negócios', 'Erro: Preencher o Tipo do Projeto!!!.', parent=self.janela_cadastro_projetos)
+            self.entry_tpo_projeto.focus()
+            return
+        
+        if not self.entry_status.get().strip():
+            messagebox.showinfo('Gestor Negócios', 'Erro: Informar o Status do Programa!!!.', parent=self.janela_cadastro_projetos)
+            self.entry_status.focus()
+            return
+        
+        if not self.entry_status.get().strip():
+            messagebox.showinfo('Gestor Negócios', 'Erro: Informar Situação do Programa!!!.', parent=self.janela_cadastro_projetos)
+            self.entry_status.focus()
             return
         
         if not self.entry_nome_projeto.get().strip():
             messagebox.showinfo('Gestor Negócios', 'Erro: Preencher o Campo do Nome do Projeto!!!.', parent=self.janela_cadastro_projetos)
+            self.entry_nome_projeto.focus()
             return
-
-        ID_Projeto =self.entry_idx.get()
+        
+        ID_Projeto = self.entry_idx.get()
         DS_Projeto = self.entry_nome_projeto.get().strip()
         ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get(), janela)
-        ID_Cidade = self.obter_municipio_IBGE(self.entry_municipio.get(), janela) 
         UF = self.entry_uf.get() 
-        ID_Projeto_Status = self.obter_tpo_programa_ID(self.entry_tpo_programa.get(), janela)
-        ID_Tpo_Projeto = self.obter_Tpo_Projeto(self.entry_tpo_projeto.get(), janela) 
-        ID_Situacao_Projeto = self.obter_Situacao_Projeto_ID(self.entry_status.get(), janela)
+        ID_Cidade = self.obter_municipio_IBGE(self.entry_municipio.get(), janela) if self.entry_municipio.get().strip() != '' else ''
+        ID_Projeto_Status = self.obter_tpo_programa_ID(self.entry_tpo_programa.get(), janela) if self.entry_tpo_programa.get().strip() != '' else ''
+        ID_Tpo_Projeto = self.obter_Tpo_Projeto(self.entry_tpo_projeto.get(), janela) if self.entry_tpo_projeto.get().strip() != '' else ''
+        ID_Situacao_Projeto = self.obter_Situacao_Projeto_ID(self.entry_status.get(), janela) if self.entry_status.get().strip() != '' else ''
         Centro_Resultado = str(self.entry_centro.get()) if self.entry_centro.get().strip() != '' else '0'
-        Prioridade_Projeto = self.entry_prioridade.get() if self.entry_prioridade.get().strip() != '' or not str(self.entry_prioridade.get()).isnumeric() else 0
+        Prioridade_Projeto = self.entry_prioridade.get() if self.entry_prioridade.get().strip() != '' and not self.entry_prioridade.get().isnumeric() else 0
         Setor_Projeto = self.entry_setor.get() if self.entry_setor.get().strip() != '' else 'N/A'
         Ativo_Projeto = '' if self.check_var_ativo.get() == 'on' else 'x'
         Observacao = self.entry_obs.get()
@@ -1074,7 +1136,7 @@ class Projetos(Icons, Functions):
         if ID_Projeto == '':
             strSql = "SELECT Max(pc.projeto_id) AS Nr FROM projetos_cronograma pc"
             myresult = db._querying(strSql)
-            ID_Projeto = myresult['Nr']
+            ID_Projeto = int(myresult[0]['Nr']) + 1
             
         # Consulta para verificar se o produto já existe
         vs_sql = """SELECT * FROM projetos_cronograma 
@@ -1103,7 +1165,8 @@ class Projetos(Icons, Functions):
                              )
 
                         VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    """            
+                    """  
+            
             values = (
                         ID_Projeto,
                         DS_Projeto, 
@@ -1145,7 +1208,7 @@ class Projetos(Icons, Functions):
                         ID_Cidade,
                         Observacao,
                         ID_Tpo_Projeto,
-                        Prioridade_Projeto,
+                        int(Prioridade_Projeto),
                         Setor_Projeto,
                         ID_Projeto_Status,
                         ID_Situacao_Projeto,
@@ -1154,7 +1217,9 @@ class Projetos(Icons, Functions):
                         ID_Projeto
                      )
             myresult = db.executar_consulta(vs_sql,  (values))
+            self.entry_idx.configure(state='normal')
             self.entry_idx.delete(0, tk.END)
+            self.entry_idx.configure(state='disabled')
             self.entry_nome_projeto.delete(0, tk.END)
             self.entry_municipio.delete(0, tk.END)
             self.entry_uf.delete(0, tk.END)
@@ -1169,13 +1234,14 @@ class Projetos(Icons, Functions):
     def consulta_projetos(self, janela):
         if not self.entry_empresa.get().strip():
             messagebox.showinfo('Gestor Negócios', 'Erro: Preencher o Campo da Empresa!!!.', parent=self.janela_cadastro_projetos)
+            self.entry_empresa.focus()
             return
         
         ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get(), janela)
         ID_Cidade = self.obter_municipio_IBGE(self.entry_municipio.get(), janela) if self.entry_municipio.get().strip() != '' else None
         UF = self.entry_uf.get() if self.entry_uf.get().strip() != '' else None
         ID_Projeto_Status = self.obter_tpo_programa_ID(self.entry_tpo_programa.get(), janela) if self.entry_tpo_programa.get().strip() != '' else None
-        ID_Tpo_Projeto = self.obter_Projeto_ID(self.entry_tpo_projeto.get(), janela) if self.entry_tpo_projeto.get().strip() != '' else None
+        ID_Tpo_Projeto = self.obter_Tpo_Projeto(self.entry_tpo_projeto.get(), janela) if self.entry_tpo_projeto.get().strip() != '' else None
         ID_Situacao_Projeto = self.obter_Situacao_Projeto_ID(self.entry_status.get(), janela) if self.entry_status.get().strip() != '' else None
         Setor_Projeto = self.entry_setor.get() if self.entry_setor.get().strip() != '' else None
         Prioridade_Projeto = self.entry_prioridade.get() if self.entry_prioridade.get().strip() != '' else None
@@ -1333,6 +1399,7 @@ class Projetos(Icons, Functions):
             Observacao = values[10]
             Ativo_Projeto = values[11]
             
+            self.entry_idx.configure(state='normal')
             self.entry_idx.delete(0, tk.END)
             self.entry_nome_projeto.delete(0, tk.END)
             self.entry_municipio.delete(0, tk.END)
@@ -1345,6 +1412,7 @@ class Projetos(Icons, Functions):
             self.entry_obs.delete(0, tk.END)
 
             self.entry_idx.insert(0, ID_Projeto)           
+            self.entry_idx.configure(state='disabled')
             self.entry_nome_projeto.insert(0, DS_Projeto)  
             self.entry_municipio.insert(0, Cidade)     
             self.entry_uf.insert(0, UF)            

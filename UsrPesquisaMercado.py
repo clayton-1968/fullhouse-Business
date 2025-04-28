@@ -24,15 +24,6 @@ class Pesquisa_Mercado(Widgets):
         self.frame_list_pesquisa(self.janela_pesquisa_mercado)
         self.frame_carregar_dados_pesquisa(Empresa_ID, Empresa_DS, UF, Cidade, Tipo, Nome_da_Area)
         
-        # style = ttkthemes.ThemedStyle(self.janela_pesquisa_mercado)
-        # style.theme_use('clam')
-        # style.configure('Treeview', font=('Verdana', 8), foreground='#2b2b2b', cellpadding=19)
-        # style.configure('Treeview.Heading', font=('Verdana', 10, 'bold'), foreground='#444', background='silver')
-        # style.map('Treeview', background=[('selected', 'darkgreen')], foreground=[('selected', 'orange')])
-
-        # self.scrollbar = ttk.Scrollbar(self.janela_pesquisa_mercado, orient='vertical')
-        # self.scrollbar.pack(side='right', fill='y')
-
         self.janela_pesquisa_mercado.focus_force()
         self.janela_pesquisa_mercado.grab_set()    
         
@@ -201,9 +192,10 @@ class Pesquisa_Mercado(Widgets):
 
     def frame_list_pesquisa(self, janela):
         ## Listbox _ Informações Pesquisa
-        bg_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkFrame"]["fg_color"])
-        text_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkLabel"]["text_color"])
-        selected_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkButton"]["fg_color"])
+        # Definindo cores
+        bg_color = '#FFFFFF'  # Fundo branco
+        text_color = '#000000'  # Texto preto
+        selected_color = '#0078d7'  # Azul para selecionados
 
         treestyle = ttk.Style()
         treestyle.theme_use('default')
@@ -442,7 +434,7 @@ class Pesquisa_Mercado(Widgets):
         Empresa_DS = self.entry_empresa.get()
         UF = self.entry_uf.get()
         self.atualizar_municipio_fx(self.entry_uf.get())
-        IBGE = self.obter_municipio_IBGE(self.entry_municipio.get())
+        IBGE = self.obter_municipio_IBGE(self.entry_municipio.get(), self.janela_pesquisa_mercado)
         Cidade = self.entry_municipio.get()
         Tipo = self.entry_tpo_projeto.get()
         Nome_da_Area = self.entry_nome_cenario.get()
@@ -453,29 +445,29 @@ class Pesquisa_Mercado(Widgets):
         Pesquisa_url =self.entry_url.get()
         # Validação dos campos de input
         if not Empresa_DS: 
-            messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!.', parent=self.janela_pesquisa_mercado)
             return
         else:
-            Empresa_ID = self.obter_Empresa_ID(Empresa_DS)
+            Empresa_ID = self.obter_Empresa_ID(Empresa_DS, self.janela_pesquisa_mercado)
 
         if  not Cidade:
-            messagebox.showinfo('Gestor Negócios', 'Município em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Município em Branco!!!.', parent=self.janela_pesquisa_mercado)
             return
 
         if not UF:
-            messagebox.showinfo('Gestor Negócios', 'UF em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'UF em Branco!!!.', parent=self.janela_pesquisa_mercado)
             return
 
         if not Tipo:
-            messagebox.showinfo('Gestor Negócios', 'Tipo do Projeto em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Tipo do Projeto em Branco!!!.', parent=self.janela_pesquisa_mercado)
             return
 
         if not Nome_da_Area:
-            messagebox.showinfo('Gestor Negócios', 'Nome do Estudo em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Nome do Estudo em Branco!!!.', parent=self.janela_pesquisa_mercado)
             return
         
         if not Pesquisa_Empreendimento:
-            messagebox.showinfo('Gestor Negócios', 'Nome do Empreendimento Pesquisado em Branco!!!.')
+            messagebox.showinfo('Gestor Negócios', 'Nome do Empreendimento Pesquisado em Branco!!!.', parent=self.janela_pesquisa_mercado)
             return
         
         # Construindo a consulta SELECT
@@ -579,7 +571,7 @@ class Pesquisa_Mercado(Widgets):
                                 Pesquisa_Empreendimento
                                 )
                 results = db.executar_consulta(update_query, update_params)
-                messagebox.showinfo("Concluído", "Registro Alterado com sucesso!")
+                messagebox.showinfo("Concluído", "Registro Alterado com sucesso!", parent=self.janela_pesquisa_mercado)
             else:  # Se o usuário clicou em "Não"
                 return
         

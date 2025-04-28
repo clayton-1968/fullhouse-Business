@@ -718,7 +718,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_area_aproveitamento.place( relx=0.01, rely=0.25, relwidth=0.97, relheight=0.1)
 
         self.entry_area_aproveitamento.bind("<Return>", lambda event: self.format_area_aproveitada(event))
-        self.entry_area_aproveitamento.bind("<Return>", lambda event: self.format_dre(event))
+        self.entry_area_aproveitamento.bind("<Return>", lambda event: self.format_dre(event, janela))
         
         # Área Aproveitada
         self.lb_area_aproveitado = customtkinter.CTkLabel(self.fr_area_m2, text="m² Aproveitado", text_color="black", font=('Arial', 10), anchor=tk.W)
@@ -767,7 +767,7 @@ class Simulador_Estudos_Rel(Widgets):
             relx=0.01, rely=0.10, relwidth=0.97, relheight=0.08)
 
         self.entry_participacao_urbanizador.bind("<Return>", lambda event: self.format_per_terreneiro(event))
-        self.entry_participacao_urbanizador.bind("<Return>", lambda event: self.format_dre(event))
+        self.entry_participacao_urbanizador.bind("<Return>", lambda event: self.format_dre(event, janela))
 
         # % Terreneiro
         self.lb_participacao_parceiro = customtkinter.CTkLabel(
@@ -787,7 +787,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_participacao_permuta.place(relx=0.01, rely=0.36, relwidth=0.97, relheight=0.08)
         self.entry_participacao_permuta.bind("<Return>", lambda event: self.format_per(event, self.entry_participacao_permuta, self.entry_comissao_intermediacao))
         self.entry_participacao_permuta.bind("<Return>", lambda event: self.format_per_total_participacao(event))
-        self.entry_participacao_permuta.bind("<Return>", lambda event: self.format_dre(event))
+        self.entry_participacao_permuta.bind("<Return>", lambda event: self.format_dre(event, janela))
         self.entry_participacao_permuta.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_comissao_intermediacao))
 
         # % Comissão
@@ -800,7 +800,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_comissao_intermediacao.place(
             relx=0.01, rely=0.49, relwidth=0.97, relheight=0.08)
         self.entry_comissao_intermediacao.bind("<Return>", lambda event: self.format_per(event, self.entry_comissao_intermediacao, self.entry_admmkt_parceiro))
-        self.entry_comissao_intermediacao.bind("<Return>", lambda event: self.format_dre(event))
+        self.entry_comissao_intermediacao.bind("<Return>", lambda event: self.format_dre(event, janela))
         self.entry_comissao_intermediacao.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_admmkt_parceiro))
 
         # % Adm./MkT
@@ -809,7 +809,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_admmkt_parceiro = customtkinter.CTkEntry(self.fr_participacao, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_admmkt_parceiro.place(relx=0.01, rely=0.62, relwidth=0.97, relheight=0.08)
         self.entry_admmkt_parceiro.bind("<Return>", lambda event: self.format_per_total_participacao(event))
-        self.entry_admmkt_parceiro.bind("<Return>", lambda event: self.format_dre(event))
+        self.entry_admmkt_parceiro.bind("<Return>", lambda event: self.format_dre(event, janela))
         self.entry_admmkt_parceiro.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_investimento_valor))
 
         # % Total Urbanizadora
@@ -844,7 +844,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_investimento_valor.place(
             relx=0.005, rely=0.15, relwidth=0.97, relheight=0.15)
         self.entry_investimento_valor.bind("<Return>", lambda event: self.format_valor(event, self.entry_investimento_valor))
-        self.entry_investimento_valor.bind("<Return>", lambda event: self.format_dre(event))
+        self.entry_investimento_valor.bind("<Return>", lambda event: self.format_dre(event, janela))
         self.entry_investimento_valor.bind("<Return>", lambda event: self.muda_barrinha(
             event, self.entry_investimento_inicio_desembolso))
 
@@ -862,7 +862,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_investimento_curva_investimento.place(relx=0.005, rely=0.60, relwidth=0.97, relheight=0.15)
         self.entry_investimento_curva_investimento.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela),  self.entry_investimento_curva_investimento))
         self.entry_investimento_curva_investimento.bind('<Down>', lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_investimento_curva_investimento))
-        self.entry_investimento_curva_investimento.bind("<Return>", lambda event: self.muda_barrinha(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_investimento_aporte))
+        self.entry_investimento_curva_investimento.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_investimento_aporte))
 
         self.lb_investimento_aporte = customtkinter.CTkLabel(self.fr_investimento, text="Aporte?", text_color="black", font=('Arial', 10), anchor=tk.W)
         self.lb_investimento_aporte.place(relx=0.01, rely=0.76, relheight=0.05, relwidth=0.97)
@@ -910,7 +910,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_adto_parceiro_curva_adto.place(relx=0.005, rely=0.88, relwidth=0.97, relheight=0.114)
         self.entry_adto_parceiro_curva_adto.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_adto_parceiro_curva_adto))
         self.entry_adto_parceiro_curva_adto.bind('<Down>', lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_adto_parceiro_curva_adto))
-        self.entry_adto_parceiro_curva_adto.bind("<Return>", lambda event: self.muda_barrinha(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_vendas_preco_m2))
+        self.entry_adto_parceiro_curva_adto.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_vendas_preco_m2))
 
         # Preço de Venda m2
         self.fr_vendas = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1, fg_color="#006400")
@@ -932,7 +932,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_vendas_preco_m2.bind("<Return>", lambda event: self.format_preco_comissao(event))
         self.entry_vendas_preco_m2.bind("<Return>", lambda event: self.format_pmt(event))
         
-        self.entry_vendas_preco_m2.bind("<Return>", lambda event: self.format_dre(event))
+        self.entry_vendas_preco_m2.bind("<Return>", lambda event: self.format_dre(event, janela))
         self.entry_vendas_preco_m2.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_vendas_comissao_per))
 
         self.lb_vendas_comissao_per = customtkinter.CTkLabel(self.fr_precos_comissoes, text="% Comissão", text_color="black", font=('Arial', 10), anchor=tk.W)
@@ -942,7 +942,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_vendas_comissao_per.bind("<Return>", lambda event: self.format_per(event, self.entry_vendas_comissao_per, self.entry_vendas_financiamento_prazo))
         self.entry_vendas_comissao_per.bind("<Return>", lambda event: self.format_preco_comissao(event))
         self.entry_vendas_comissao_per.bind("<Return>", lambda event: self.format_pmt(event))
-        self.entry_vendas_comissao_per.bind("<Return>", lambda event: self.format_dre(event))
+        self.entry_vendas_comissao_per.bind("<Return>", lambda event: self.format_dre(event, janela))
         
         self.lb_vendas_vendas_preco_m2_com_comissao = customtkinter.CTkLabel(self.fr_precos_comissoes, text="$ m² c/com.", text_color="black", font=('Arial', 10), anchor=tk.W)
         self.lb_vendas_vendas_preco_m2_com_comissao.place(relx=0.01, rely=0.54, relheight=0.05, relwidth=0.97)
@@ -1062,7 +1062,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_vendas_curva.place(relx=0.505, rely=0.6720, relwidth=0.49, relheight=0.114)
         self.entry_vendas_curva.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_vendas_curva))
         self.entry_vendas_curva.bind('<Down>', lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_vendas_curva))
-        self.entry_vendas_curva.bind("<Return>", lambda event: self.muda_barrinha(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_projetos_per_obra))
+        self.entry_vendas_curva.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_projetos_per_obra))
 
 
         self.lb_vendas_parcela_price = customtkinter.CTkLabel(
@@ -1107,8 +1107,8 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_projetos_per_obra = customtkinter.CTkEntry(self.fr_projetos, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_projetos_per_obra.place(relx=0.005, rely=0.16, relwidth=0.97, relheight=0.15)
         self.entry_projetos_per_obra.bind("<Return>", lambda event: self.format_per(event, self.entry_projetos_per_obra, self.entry_projetos_inicio_desembolso))
-        self.entry_projetos_per_obra.bind("<Return>", lambda event: self.format_custo_projetos(event))
-        self.entry_projetos_per_obra.bind("<Return>", lambda event: self.format_dre(event))
+        self.entry_projetos_per_obra.bind("<Return>", lambda event: self.format_custo_projetos(event, janela))
+        self.entry_projetos_per_obra.bind("<Return>", lambda event: self.format_dre(event, janela))
         
         self.lb_projetos_valor_total = customtkinter.CTkLabel(self.fr_projetos, text="$ Total", text_color="black", font=('Arial', 10), anchor=tk.W)
         self.lb_projetos_valor_total.place(relx=0.01, rely=0.32, relheight=0.05, relwidth=0.70)
@@ -1131,7 +1131,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_projetos_curva_projeto.place(relx=0.005, rely=0.82, relwidth=0.97, relheight=0.15)
         self.entry_projetos_curva_projeto.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_projetos_curva_projeto))
         self.entry_projetos_curva_projeto.bind('<Down>', lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_projetos_curva_projeto))
-        self.entry_projetos_curva_projeto.bind("<Return>", lambda event: self.muda_barrinha(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_mkt_per_vgv))
+        self.entry_projetos_curva_projeto.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_mkt_per_vgv))
 
         # Marketing
         self.fr_mkt = customtkinter.CTkFrame(
@@ -1146,8 +1146,8 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_mkt_per_vgv = customtkinter.CTkEntry(self.fr_mkt, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_mkt_per_vgv.place(relx=0.005, rely=0.16, relwidth=0.97, relheight=0.15)
         self.entry_mkt_per_vgv.bind("<Return>", lambda event: self.format_per(event, self.entry_mkt_per_vgv, self.entry_mkt_inicio_desembolso))
-        self.entry_mkt_per_vgv.bind("<Return>", lambda event: self.format_custo_mkt(event))
-        self.entry_mkt_per_vgv.bind("<Return>", lambda event: self.format_dre(event))
+        self.entry_mkt_per_vgv.bind("<Return>", lambda event: self.format_custo_mkt(event, janela))
+        self.entry_mkt_per_vgv.bind("<Return>", lambda event: self.format_dre(event, janela))
         
         self.lb_mkt_valor_total = customtkinter.CTkLabel(self.fr_mkt, text="$ Total", text_color="black", font=('Arial', 10), anchor=tk.W)
         self.lb_mkt_valor_total.place(relx=0.01, rely=0.32, relheight=0.05, relwidth=0.70)
@@ -1170,7 +1170,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_mkt_curva_mkt.place(relx=0.005, rely=0.82, relwidth=0.97, relheight=0.15)
         self.entry_mkt_curva_mkt.bind("<Button-1>", lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_mkt_curva_mkt))
         self.entry_mkt_curva_mkt.bind('<Down>', lambda event: self.atualizar_curvas(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_mkt_curva_mkt))
-        self.entry_mkt_curva_mkt.bind("<Return>", lambda event: self.muda_barrinha(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_overhead_per_vgv))
+        self.entry_mkt_curva_mkt.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_overhead_per_vgv))
 
         # OverHead
         self.fr_overhead = customtkinter.CTkFrame(self.fr_custos, border_color="gray75", border_width=1, fg_color="#8B0000")
@@ -1183,8 +1183,8 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_overhead_per_vgv = customtkinter.CTkEntry(self.fr_overhead, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_overhead_per_vgv.place(relx=0.005, rely=0.16, relwidth=0.97, relheight=0.15)
         self.entry_overhead_per_vgv.bind("<Return>", lambda event: self.format_per(event, self.entry_overhead_per_vgv, self.entry_overhead_inicio_desembolso))
-        self.entry_overhead_per_vgv.bind("<Return>", lambda event: self.format_custo_overhead(event))
-        self.entry_overhead_per_vgv.bind("<Return>", lambda event: self.format_dre(event))
+        self.entry_overhead_per_vgv.bind("<Return>", lambda event: self.format_custo_overhead(event, janela))
+        self.entry_overhead_per_vgv.bind("<Return>", lambda event: self.format_dre(event, janela))
         
         self.lb_overhead_valor_total = customtkinter.CTkLabel(self.fr_overhead, text="$ Total", text_color="black", font=('Arial', 10), anchor=tk.W)
         self.lb_overhead_valor_total.place(relx=0.01, rely=0.32, relheight=0.05, relwidth=0.70)
@@ -1223,11 +1223,11 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_obras_valor_m2 = customtkinter.CTkEntry(self.fr_obras, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_obras_valor_m2.place(relx=0.005, rely=0.16, relwidth=0.97, relheight=0.15)
         self.entry_obras_valor_m2.bind("<Return>", lambda event: self.format_valor(event, self.entry_obras_valor_m2))
-        self.entry_obras_valor_m2.bind("<Return>", lambda event: self.format_custo_obras(event))
-        self.entry_obras_valor_m2.bind("<Return>", lambda event: self.format_custo_projetos(event))
-        self.entry_obras_valor_m2.bind("<Return>", lambda event: self.format_custo_posobras(event))
-        self.entry_obras_valor_m2.bind("<Return>", lambda event: self.format_custo_admobras(event))
-        self.entry_obras_valor_m2.bind("<Return>", lambda event: self.format_dre(event))
+        self.entry_obras_valor_m2.bind("<Return>", lambda event: self.format_custo_obras(event, janela))
+        self.entry_obras_valor_m2.bind("<Return>", lambda event: self.format_custo_projetos(event, janela))
+        self.entry_obras_valor_m2.bind("<Return>", lambda event: self.format_custo_posobras(event, janela))
+        self.entry_obras_valor_m2.bind("<Return>", lambda event: self.format_custo_admobras(event, janela))
+        self.entry_obras_valor_m2.bind("<Return>", lambda event: self.format_dre(event, janela))
         self.entry_obras_valor_m2.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_obras_inicio_desembolso))
 
         self.lb_obras_valor_total = customtkinter.CTkLabel(self.fr_obras, text="$ Total", text_color="black", font=('Arial', 10), anchor=tk.W)
@@ -1242,7 +1242,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_obras_inicio_desembolso = customtkinter.CTkEntry(self.fr_obras, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_obras_inicio_desembolso.place(relx=0.005, rely=0.60, relwidth=0.97, relheight=0.15)
         self.entry_obras_inicio_desembolso.bind("<Return>", lambda event: self.format_mes(event, self.entry_obras_inicio_desembolso))
-        self.entry_obras_inicio_desembolso.bind("<Return>", lambda event: self.format_custo_admobras(event))
+        self.entry_obras_inicio_desembolso.bind("<Return>", lambda event: self.format_custo_admobras(event, janela))
         self.entry_obras_inicio_desembolso.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_obras_curva_obras))
 
         self.lb_obras_curva_obras = customtkinter.CTkLabel(self.fr_obras, text="Curva Obras", text_color="black", font=('Arial', 10), anchor=tk.W)
@@ -1270,8 +1270,8 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_pos_obras_per_obras = customtkinter.CTkEntry(self.fr_pos_obras, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_pos_obras_per_obras.place(relx=0.005, rely=0.16, relwidth=0.97, relheight=0.15)
         self.entry_pos_obras_per_obras.bind("<Return>", lambda event: self.format_per(event, self.entry_pos_obras_per_obras, self.entry_adm_per_obras))
-        self.entry_pos_obras_per_obras.bind("<Return>", lambda event: self.format_custo_posobras(event))
-        self.entry_pos_obras_per_obras.bind("<Return>", lambda event: self.format_dre(event))
+        self.entry_pos_obras_per_obras.bind("<Return>", lambda event: self.format_custo_posobras(event, janela))
+        self.entry_pos_obras_per_obras.bind("<Return>", lambda event: self.format_dre(event, janela))
         
         self.lb_pos_obras_valor_total = customtkinter.CTkLabel(self.fr_pos_obras, text="$ Total", text_color="black", font=('Arial', 10), anchor=tk.W)
         self.lb_pos_obras_valor_total.place(relx=0.01, rely=0.32, relheight=0.05, relwidth=0.97)
@@ -1311,8 +1311,8 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_adm_per_obras = customtkinter.CTkEntry(self.fr_adm_obras, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_adm_per_obras.place(relx=0.005, rely=0.16, relwidth=0.97, relheight=0.15)
         self.entry_adm_per_obras.bind("<Return>", lambda event: self.format_per(event, self.entry_adm_per_obras, self.entry_financiamento_valor_captacao))
-        self.entry_adm_per_obras.bind("<Return>", lambda event: self.format_custo_admobras(event))
-        self.entry_adm_per_obras.bind("<Return>", lambda event: self.format_dre(event))
+        self.entry_adm_per_obras.bind("<Return>", lambda event: self.format_custo_admobras(event, janela))
+        self.entry_adm_per_obras.bind("<Return>", lambda event: self.format_dre(event, janela))
         
         self.lb_adm_valor_total = customtkinter.CTkLabel(self.fr_adm_obras, text="$ Total", text_color="black", font=('Arial', 10), anchor=tk.W)
         self.lb_adm_valor_total.place(relx=0.01, rely=0.32, relheight=0.05, relwidth=0.97)
@@ -1353,7 +1353,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_financiamento_valor_captacao = customtkinter.CTkEntry(self.fr_financiamento, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_financiamento_valor_captacao.place(relx=0.01, rely=0.07, relwidth=0.97, relheight=0.055)
         self.entry_financiamento_valor_captacao.bind("<Return>", lambda event: self.format_valor(event, self.entry_financiamento_valor_captacao))
-        self.entry_financiamento_valor_captacao.bind("<Return>", lambda event: self.format_dre(event))
+        self.entry_financiamento_valor_captacao.bind("<Return>", lambda event: self.format_dre(event, janela))
         self.entry_financiamento_valor_captacao.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_financiamento_sistema_amortizacao))
 
         # Sistema Amortização
@@ -1656,7 +1656,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.unidade_negocio = []
         self.entry_informacoes_unidade_negocio = AutocompleteCombobox(self.fr_informacoes, width=30, justify=tk.LEFT, font=('Times', 8), completevalues=self.nome_curva)
         self.entry_informacoes_unidade_negocio.place(relx=0.895, rely=0.19, relwidth=0.10, relheight=0.25)
-        self.entry_informacoes_unidade_negocio.bind("<Button-1>", lambda event: self.atualizar_unidade_negocios(event, self.entry_informacoes_unidade_negocio))
+        self.entry_informacoes_unidade_negocio.bind("<Button-1>", lambda event: self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_informacoes_unidade_negocio))
         self.entry_informacoes_unidade_negocio.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_informacoes_https))
 
         # Https://
@@ -1690,7 +1690,7 @@ class Simulador_Estudos_Rel(Widgets):
         
         # Icon de Consulta Endereço Cadastrado
         def selected_maps():
-            ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get()) 
+            ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get(), janela) 
             UF = self.entry_uf.get()
             Cidade = self.entry_municipio.get()
             Tipo_Estudo = self.entry_tpo_projeto.get()

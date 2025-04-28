@@ -70,9 +70,11 @@ class Sites_rel(Widgets):
     def linha2_lista(self, janela):
         
         ## Listbox _ Informações Site
-        bg_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkFrame"]["fg_color"])
-        text_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkLabel"]["text_color"])
-        selected_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkButton"]["fg_color"])
+         # Listbox _ Cronograma de Atividades
+        # Definindo cores
+        bg_color = '#FFFFFF'  # Fundo branco
+        text_color = '#000000'  # Texto preto
+        selected_color = '#0078d7'  # Azul para selecionados
         
         treestyle = ttk.Style()
         treestyle.theme_use('default')
