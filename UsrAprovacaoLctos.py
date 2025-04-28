@@ -164,26 +164,51 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
     def aprovar_documento(self, event):
         self.selected_item = self.tree.selection()
         if self.selected_item:
-            try:
-                self.item = self.tree.item(self.selected_item)
+            # try:
+                self.item = self.tree.item(self.selected_item, 'values')
+                self.item_alterar = self.tree.item(self.selected_item)
+                self.doc_id = self.item[5]
+                ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
+                ID_Fornecedor = self.item[3]
+                ID_Unidade = self.item[0]
+                ID_CR = self.item[1]
+                ID_Nat = self.item[2]
+                Nr_Documento = str(self.item[5])
+                Aprovacao_Pagto = 'S'
+                
+                query_itens = f"""
+                                UPDATE TB_Itens SET
+                                    Doc_AprovacaoZe='"{Aprovacao_Pagto}"',
+                                    Doc_AprovacaoJose='"{Aprovacao_Pagto}"'
+                                WHERE 
+                                    ID_Empresa="{ID_Empresa}"
+                                    AND ID_Pessoa="{ID_Fornecedor}"
+                                    AND ID_Unidade="{ID_Unidade}"
+                                    AND ID_CR ="{ID_CR}"
+                                    AND ID_Natureza="{ID_Nat}"
+                                    AND Doc_Num_Documento="{Nr_Documento}"
+                        """
+                db._querying(query_itens)   
+                    
+                query_doc = f"""
+                                UPDATE TB_CB_Doc SET
+                                    Doc_Aprovacao="{Aprovacao_Pagto}"
+                                WHERE 
+                                    ID_Empresa="{ID_Empresa}"
+                                    AND ID_Pessoa="{ID_Fornecedor}"
+                                    AND ID_Unidade="{ID_Unidade}"
+                                    AND Doc_Num_Documento="{Nr_Documento}"
+                            """
+                db._querying(query_doc )    
+                
+                self.item_alterar['values'][7] = 'S'
 
-                self.doc_id = self.item['values'][5]
-
-                query = f"""
-                    UPDATE TB_Itens SET Doc_AprovacaoJose = 'S', Doc_AprovacaoZe = 'S' 
-                    WHERE Doc_Num_Documento = "{self.doc_id}"
-                """
-
-                myresult = db._querying(query)
-
-                self.item['values'][7] = 'S'
-
-                self.tree.item(self.selected_item, values=self.item['values'])
+                self.tree.item(self.selected_item, values=self.item_alterar['values'])
 
                 messagebox.showinfo("Aviso", "Documento aprovado!", parent=self.window_one)
-            except:
-                messagebox.showerror("Erro", "Ocorreu um erro ao tentar aprovar um documento!", parent=self.window_one)
-                return
+            # except:
+            #     messagebox.showerror("Erro", "Ocorreu um erro ao tentar aprovar um documento!", parent=self.window_one)
+            #     return
 
 
     def consulta_aprovacoes(self):
@@ -192,8 +217,14 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         # SELECT ID_Unidade, Unidade_Descricao, ID_CR, Cen_Descricao, ID_Natureza, Nat_Descricao, ID_Pessoa, Pessoas_Descricao,
         #        Doc_Num_Documento, Vlr_Total, Doc_DS_Observacao, Doc_AprovacaoJose, Anexo
         query = """
-                    SELECT DISTINCT ID_Unidade, ID_CR, ID_Natureza, ID_Pessoa, Pessoas_Descricao,
-                    Doc_Num_Documento, Vlr_Total, Doc_AprovacaoJose
+                    SELECT 
+                        DISTINCT ID_Unidade, 
+                        ID_CR, ID_Natureza, 
+                        ID_Pessoa, 
+                        Pessoas_Descricao,
+                        Doc_Num_Documento, 
+                        FORMAT(Vlr_Total, 2, 'de_DE') AS Vlr_Total, 
+                        Doc_AprovacaoJose
                     FROM TB_Itens
                     LEFT JOIN TB_Pessoas ON TB_Itens.ID_Pessoa = TB_Pessoas.Pessoas_CPF_CNPJ
                     WHERE 1=1
