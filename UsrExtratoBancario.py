@@ -44,7 +44,7 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.agencias = []
         self.entry_agencia = AutocompleteCombobox(self.fr_agencia, width=30, justify=tk.RIGHT, font=('Times', 8),
                                                 completevalues=self.agencias)
-        self.entry_agencia.place(relx=0.01, rely=0.5, relwidth=0.65, relheight=0.4)
+        self.entry_agencia.place(relx=0.01, rely=0.5, relwidth=0.99, relheight=0.4)
         self.entry_agencia.bind("<Button-1>", lambda event: self.atualizar_agencias(
                                                                     event,
                                                                     self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one), 
@@ -64,7 +64,7 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.contascorrente = []
         self.entry_contacorrente = AutocompleteCombobox(self.fr_contacorrente, width=30, justify=tk.RIGHT, font=('Times', 8),
                                                 completevalues=self.contascorrente)
-        self.entry_contacorrente.place(relx=0.01, rely=0.5, relwidth=0.65, relheight=0.4)
+        self.entry_contacorrente.place(relx=0.01, rely=0.5, relwidth=0.99, relheight=0.4)
         self.entry_contacorrente.bind("<Button-1>", lambda event: self.atualizar_contascorrente(
                                                                     event,
                                                                     self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one), 
