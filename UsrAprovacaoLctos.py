@@ -199,7 +199,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
                                     AND ID_Unidade="{ID_Unidade}"
                                     AND Doc_Num_Documento="{Nr_Documento}"
                             """
-                db._querying(query_doc )    
+                db._querying(query_doc)    
                 
                 self.item_alterar['values'][7] = 'S'
 
