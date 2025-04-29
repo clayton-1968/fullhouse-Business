@@ -24,7 +24,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
     def create_widgets_aprovacao_lctos(self):
         # Empresa
-        self.frame_empresa(self.frame_principal, 0.005, 0.02, 0.30, 0.09)
+        self.frame_empresa(self.frame_principal, 0, 0, 0.30, 0.09)
         self.combo_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_pessoa))
         # self.combo_empresa.bind("<<ComboboxSelected>>", self.preenche_cnpj)
 
@@ -42,7 +42,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Unidade de Negócio
         self.fr_unidade_negocio = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_unidade_negocio.place(relx=0.31, rely=0.02, relwidth=0.28, relheight=0.09)
+        self.fr_unidade_negocio.place(relx=0.305, rely=0, relwidth=0.17, relheight=0.09)
 
         self.lb_unidade_negocio = customtkinter.CTkLabel(self.fr_unidade_negocio, text="Unidade Negócios")
         self.lb_unidade_negocio.place(relx=0.225, rely=0, relheight=0.25, relwidth=0.55)
@@ -59,7 +59,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Centro de Resultado
         self.fr_centro = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_centro.place(relx=0.005, rely=0.12, relwidth=0.4925, relheight=0.09)
+        self.fr_centro.place(relx=0, rely=0.1, relwidth=0.4925, relheight=0.09)
 
         self.lb_centro = customtkinter.CTkLabel(self.fr_centro, text="Centro de Resultado", anchor='w')
         self.lb_centro.place(relx=0.35, rely=0.01, relheight=0.25, relwidth=0.55)
@@ -77,7 +77,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Natureza
         self.fr_natureza = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_natureza.place(relx=0.5, rely=0.12, relwidth=0.4925, relheight=0.09)
+        self.fr_natureza.place(relx=0.5, rely=0.1, relwidth=0.4725, relheight=0.09)
         self.lb_natureza = customtkinter.CTkLabel(self.fr_natureza, text="Natureza Financeira", anchor='w')
         self.lb_natureza.place(relx=0.35, rely=0.01, relheight=0.25, relwidth=0.55)
 
@@ -94,7 +94,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Data
         self.fr_data = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_data.place(relx=0.60, rely=0.02, relwidth=0.14, relheight=0.09)
+        self.fr_data.place(relx=0.48, rely=0, relwidth=0.14, relheight=0.09)
         self.lb_data = customtkinter.CTkLabel(self.fr_data, text="Data")
         self.lb_data.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
@@ -107,7 +107,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Frame botão consulta e aprovados
         self.fr_botao_box = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_botao_box.place(relx=0.75, rely=0.02, relwidth=0.24, relheight=0.09)
+        self.fr_botao_box.place(relx=0.625, rely=0, relwidth=0.24, relheight=0.09)
 
         # Box aprovados
         self.aprovados_var = tk.BooleanVar()
@@ -125,7 +125,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Resultado
         self.fr_tree = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_tree.place(relx=0.005, rely=0.22, relwidth=0.99, relheight=0.775)
+        self.fr_tree.place(relx=0.005, rely=0.20, relwidth=0.99, relheight=0.875)
 
         self.tree = ttk.Treeview(self.fr_tree, columns=(
                                                         "Unid_ID", 
@@ -139,7 +139,22 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
                                                         show='headings')
         # "CpfCnpj", "Descricao", "Unid_ID", "Unidade_Negocio", "Centro_ID", "Centro_Resultado", "Natureza_ID",
         # "Natureza_Financeira", "Valor", "Nr_Documento", "Status", "Anexo"), show='headings')
-        
+
+        # Atualiza o layout
+        self.tree.update_idletasks()
+
+        # Adequa as colunas ao conteudo
+        for col in self.tree["columns"]:
+            largura_max = tk.font.Font().measure(col)
+
+            for item in self.tree.get_children():
+                valor = self.tree.set(item, col)
+                largura = tk.font.Font().measure(valor)
+                if largura > largura_max:
+                    largura_max = largura
+
+            self.tree.column(col, width=largura_max + 20)
+
         # Definindo cores
         bg_color = '#FFFFFF'  # Fundo branco
         text_color = '#000000'  # Texto preto
@@ -147,7 +162,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         treestyle = ttk.Style()
         treestyle.theme_use('default')
-        treestyle.configure("Treeview", background=bg_color,foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
         treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
 
         col_widths = [10, 10, 10, 10, 800, 10, 100, 5]
@@ -155,60 +170,44 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         for col, header, width in zip(self.tree['columns'], headers, col_widths):
             self.tree.heading(col, text=header)
-            self.tree.column(col, width=width)
+            self.tree.column(col, width=width, anchor='e')
         
         self.tree.pack(expand=True, fill=tk.BOTH)
         self.tree.bind("<Double-1>", self.aprovar_documento)
+
+        # Scroll
+        scrollbar = ttk.Scrollbar(self.fr_tree, orient="vertical", command=self.tree.yview)
+        self.tree.configure(yscrollcommand=scrollbar.set)
+
+        self.tree.grid(row=0, column=0, sticky="nsew")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        self.fr_tree.rowconfigure(0, weight=1)
+        self.fr_tree.columnconfigure(0, weight=1)
 
 
     def aprovar_documento(self, event):
         self.selected_item = self.tree.selection()
         if self.selected_item:
-            # try:
-                self.item = self.tree.item(self.selected_item, 'values')
-                self.item_alterar = self.tree.item(self.selected_item)
-                self.doc_id = self.item[5]
-                ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
-                ID_Fornecedor = self.item[3]
-                ID_Unidade = self.item[0]
-                ID_CR = self.item[1]
-                ID_Nat = self.item[2]
-                Nr_Documento = str(self.item[5])
-                Aprovacao_Pagto = 'S'
-                
-                query_itens = f"""
-                                UPDATE TB_Itens SET
-                                    Doc_AprovacaoZe='"{Aprovacao_Pagto}"',
-                                    Doc_AprovacaoJose='"{Aprovacao_Pagto}"'
-                                WHERE 
-                                    ID_Empresa="{ID_Empresa}"
-                                    AND ID_Pessoa="{ID_Fornecedor}"
-                                    AND ID_Unidade="{ID_Unidade}"
-                                    AND ID_CR ="{ID_CR}"
-                                    AND ID_Natureza="{ID_Nat}"
-                                    AND Doc_Num_Documento="{Nr_Documento}"
-                        """
-                db._querying(query_itens)   
-                    
-                query_doc = f"""
-                                UPDATE TB_CB_Doc SET
-                                    Doc_Aprovacao="{Aprovacao_Pagto}"
-                                WHERE 
-                                    ID_Empresa="{ID_Empresa}"
-                                    AND ID_Pessoa="{ID_Fornecedor}"
-                                    AND ID_Unidade="{ID_Unidade}"
-                                    AND Doc_Num_Documento="{Nr_Documento}"
-                            """
-                db._querying(query_doc)    
-                
-                self.item_alterar['values'][7] = 'S'
+            try:
+                self.item = self.tree.item(self.selected_item)
 
-                self.tree.item(self.selected_item, values=self.item_alterar['values'])
+                self.doc_id = self.item['values'][5]
+
+                query = f"""
+                    UPDATE TB_Itens SET Doc_AprovacaoJose = 'S', Doc_AprovacaoZe = 'S' 
+                    WHERE Doc_Num_Documento = "{self.doc_id}"
+                """
+
+                myresult = db._querying(query)
+
+                self.item['values'][7] = 'S'
+
+                self.tree.item(self.selected_item, values=self.item['values'])
 
                 messagebox.showinfo("Aviso", "Documento aprovado!", parent=self.window_one)
-            # except:
-            #     messagebox.showerror("Erro", "Ocorreu um erro ao tentar aprovar um documento!", parent=self.window_one)
-            #     return
+            except:
+                messagebox.showerror("Erro", "Ocorreu um erro ao tentar aprovar um documento!", parent=self.window_one)
+                return
 
 
     def consulta_aprovacoes(self):
@@ -217,14 +216,8 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         # SELECT ID_Unidade, Unidade_Descricao, ID_CR, Cen_Descricao, ID_Natureza, Nat_Descricao, ID_Pessoa, Pessoas_Descricao,
         #        Doc_Num_Documento, Vlr_Total, Doc_DS_Observacao, Doc_AprovacaoJose, Anexo
         query = """
-                    SELECT 
-                        DISTINCT ID_Unidade, 
-                        ID_CR, ID_Natureza, 
-                        ID_Pessoa, 
-                        Pessoas_Descricao,
-                        Doc_Num_Documento, 
-                        FORMAT(Vlr_Total, 2, 'de_DE') AS Vlr_Total, 
-                        Doc_AprovacaoJose
+                    SELECT DISTINCT ID_Unidade, ID_CR, ID_Natureza, ID_Pessoa, Pessoas_Descricao,
+                    Doc_Num_Documento, Vlr_Total, Doc_AprovacaoJose
                     FROM TB_Itens
                     LEFT JOIN TB_Pessoas ON TB_Itens.ID_Pessoa = TB_Pessoas.Pessoas_CPF_CNPJ
                     WHERE 1=1
@@ -270,7 +263,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
                 str(item['ID_Pessoa']),
                 str(item['Pessoas_Descricao']),
                 str(item['Doc_Num_Documento']),
-                str(item['Vlr_Total']),
+                f"{float(str(item['Vlr_Total'])):,.2f}".replace(",", "v").replace(".", ",").replace("v", "."),
                 str(item['Doc_AprovacaoJose']),
             )
             self.tree.insert('', 'end', values=formatted_item)
