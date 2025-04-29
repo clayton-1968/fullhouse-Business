@@ -1,346 +1,436 @@
-from imports                          import *
-
-from Usr                              import Login
-from LancFinanceiro                   import Lanc_fin
-from UsrRelatorio_EstudosNegocio      import Resumo_Estudos
-from Lx.UsrSimulador                  import Simulador_Estudos
-from UsrSimulador_rel                 import Simulador_Estudos_Rel
-from UsrSimulador_Maps                import Simulador_Maps
-from UsrSites                         import Sites_rel
-from UsrPesquisaMercado               import Pesquisa_Mercado
-from UsrRelatorio_Fluxo_Projetado     import Fluxo_Projetado
-from UsrExtratosClientes_Fornecedores import Extrato_Clientes_Fornecedores
-from UsrPremissas                     import Premissas_Orcamento
-from UsrRelatorio_Premissas           import Resumo_Premissas
-from UsrCalcular_Orcamento            import Processar_Premissas_Orcamento
-from UsrRelatorio_Orcamento           import Relatorio_Orcamento
-from UsrCadastros                     import Versoes
-from UsrAprovacaoLctos                import AprovacaoLctos
-from UsrExtratoBancario               import ExtratoBancario
-from UsrBaixasFinanceiras             import BaixasFinanceiras
-from UsrCronograma                    import Cronograma_Atividades
+from imports import *
+from widgets import Widgets
+from datetime import datetime
 
 
-class PrimaryWindow(
-                    Login,
-                    Lanc_fin,
-                    Resumo_Estudos,
-                    Simulador_Estudos,
-                    Simulador_Estudos_Rel,
-                    Simulador_Maps,
-                    Sites_rel,
-                    Pesquisa_Mercado,
-                    Fluxo_Projetado,
-                    Extrato_Clientes_Fornecedores,
-                    Premissas_Orcamento,
-                    Resumo_Premissas,
-                    Processar_Premissas_Orcamento,
-                    Relatorio_Orcamento,
-                    Versoes,
-                    AprovacaoLctos,
-                    ExtratoBancario,
-                    BaixasFinanceiras,
-                    Cronograma_Atividades
-                    ):
+################# criando janela ###############
+class Extrato_Clientes_Fornecedores(Widgets):
+    def extrato_clientes_fornecedores(self):
+        self.window_one.title('Relatório Contas a Pagar/Receber')
+        self.clearFrame_principal()
+        self.frame_cabecalho_extrato_clientes_fornecedores(self.principal_frame)
+        self.frame_list_extrato(self.principal_frame)
 
-    def __init__(self):
-        customtkinter.set_appearance_mode("Dark")
-        customtkinter.set_default_color_theme("dark-blue")
+    ################# dividindo a janela ###############
+    def frame_cabecalho_extrato_clientes_fornecedores(self, janela):
+        # Empresa
+        coordenadas_relx = 0.005
+        coordenadas_rely = 0.01
+        coordenadas_relwidth = 0.25
+        coordenadas_relheight = 0.07
+        fr_empresa = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_empresa.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
+                         relheight=coordenadas_relheight)
+        lb_empresa = customtkinter.CTkLabel(fr_empresa, text="Empresa")
+        lb_empresa.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
 
-        self.login_screen()
+        empresas = []
 
-        # self.janela_simulador_rel = None  # Initialize the attribute
-        # self.janela_cadastro_pessoas = None
-        # self.janela_cadastro_produtos = None
-        
-    def menu_conectar(self, modulo):
-        Permitido = self.usuario_autentic(os.environ.get('Usr_login'), modulo)
-        if Permitido == True:
-            if modulo == 'Simulador':
-                self.simulador_estudos()
-            elif modulo == 'Indicadores':
-                self.resumo_estudos()
-            elif modulo == 'Lcto_Documentos':
-                self.lancamentos()
-            elif modulo == 'Sites':
-                self.sites()
-            elif modulo == 'Cadastro_Pesquisas':
-                self.pesquisa_mercado()
-            elif modulo == 'Extrato_Financeiro':
-                self.extrato_clientes_fornecedores()
-            elif modulo == 'Planejamento_Cadastro_Premissas':
-                self.premissas_orcamentos()
-            elif modulo == 'Planejamento_Relatorio_Premissas':
-                self.resumo_premissas()
-            elif modulo == 'Planejamento_Processar_Premissas':
-                self.processar_premissas_orcamento()
-            elif modulo == 'Planejamento_Relatorio_Orcamento':
-                self.relatorio_orcamento()
-            elif modulo == 'Manutencao':
-                messagebox.showinfo("Gestor de Negócios", "Em Manutenção!!")
-                # self.processar_premissas_orcamento()
-            elif modulo == 'Versoes':
-                self.cad_versoes()
-            elif modulo == 'Aprovacao_Lctos':
-                self.aprovacao_lctos(self.principal_frame)
-            elif modulo == 'Extrato_Bancario':
-                self.extrato_bancario(self.principal_frame)
-            elif modulo == 'Baixas_Financeiras':
-                self.baixas_financeiras(self.principal_frame)
-            elif modulo == 'Cronograma_Barra_Projetos':
-                self.cronograma_atividades()
+        self.entry_empresa = AutocompleteCombobox(fr_empresa, width=30, font=('Times', 11), completevalues=empresas)
+        self.entry_empresa.pack()
+        self.entry_empresa.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_empresa.bind("<Button-1>", lambda event: self.atualizar_empresas(event, self.entry_empresa))
+        self.entry_empresa.bind("<KeyRelease>", lambda event: self.atualizar_empresas(event, self.entry_empresa))
+        self.entry_empresa.bind('<Down>', lambda event: self.atualizar_empresas(event, self.entry_empresa))
+        self.entry_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_uf))
 
-    def login_screen(self):
-        # Configura a janela principal
-        self.window_one = customtkinter.CTk()  # Usando customtkinter
-        self.window_one.title("Login - Gestor de Negócios")
-        self.window_one.geometry("700x500+250+150")
-        self.window_one.configure(background='#456E96')
-        self.window_one.resizable(False, False)
+        # Unidade de Negócio
+        coordenadas_relx = 0.26
+        coordenadas_rely = 0.01
+        coordenadas_relwidth = 0.17
+        coordenadas_relheight = 0.07
+        fr_unidade_negocio = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_unidade_negocio.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
+                                 relheight=coordenadas_relheight)
+        lb_unidade_negocio = customtkinter.CTkLabel(fr_unidade_negocio, text="Unidade Negócios")
+        lb_unidade_negocio.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
 
-        # Flag para controle do estado da aplicação
-        self.app_closing = False
-        
-        # Vincular o evento de fechamento da janela
-        self.window_one.protocol("WM_DELETE_WINDOW", self.on_closing)
+        unidade_negocios = []
 
-        self.frame_login()
-        self.window_one.mainloop()
+        self.entry_unidade_negocio = AutocompleteCombobox(fr_unidade_negocio, width=30, font=('Times', 11),
+                                                          completevalues=unidade_negocios)
+        self.entry_unidade_negocio.pack()
+        self.entry_unidade_negocio.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_unidade_negocio.bind("<Button-1>",
+                                        lambda event: self.atualizar_unidade_negocios(event, self.entry_empresa.get(),
+                                                                                      self.entry_unidade_negocio))
+        self.entry_unidade_negocio.bind('<Down>',
+                                        lambda event: self.atualizar_unidade_negocios(event, self.entry_empresa.get(),
+                                                                                      self.entry_unidade_negocio))
 
-    def frame_login(self):
-        self.login_frame = customtkinter.CTkFrame(self.window_one)  # Frame de login
-        self.login_frame.pack(pady=20, padx=20, fill="both", expand=True)
+        # Período Vencimento
+        TDta_Inicio = datetime.strptime("01/01/2000", "%d/%m/%Y")
+        TDta_Fim = datetime.now()
 
-        # Adicionando elementos de login
-        customtkinter.CTkLabel(self.login_frame, text="Gestor de Negócios", font=("Roboto", 30, "bold")).pack(pady=10)
-        customtkinter.CTkLabel(self.login_frame, text="Login", font=("Roboto", 24)).pack(pady=10)
+        coordenadas_relx = 0.435
+        coordenadas_rely = 0.01
+        coordenadas_relwidth = 0.17
+        coordenadas_relheight = 0.07
+        fr_periodo = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_periodo.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
+                         relheight=coordenadas_relheight)
+        lb_periodo = customtkinter.CTkLabel(fr_periodo, text="Período Vencimento")
+        lb_periodo.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
 
-        # Entradas para usuário e senha
-        self.insert_user = customtkinter.CTkEntry(self.login_frame, placeholder_text="Informe o e-mail", width=210, border_color="#2cb67d")
-        self.insert_user.pack(pady=10)
-        self.insert_user.bind("<Return>", lambda event: self.muda_barrinha(event, self.insert_senha))
+        lb_dt_venc_inicio = customtkinter.CTkLabel(fr_periodo, text="Data Início")
+        lb_dt_venc_inicio.place(relx=0.01, rely=0.30, relheight=0.125, relwidth=0.20)
+        self.entry_dt_venc_inicio = customtkinter.CTkEntry(fr_periodo, fg_color="white", text_color="black",
+                                                           justify=tk.CENTER)
+        self.entry_dt_venc_inicio.delete(0, 'end')
+        self.entry_dt_venc_inicio.insert(0, TDta_Inicio.strftime("%d/%m/%Y"))
+        self.entry_dt_venc_inicio.place(relx=0.01, rely=0.46, relwidth=0.485, relheight=0.50)
+        self.entry_dt_venc_inicio.bind("<Button-1>", lambda event: self.calendario(event, self.entry_dt_venc_inicio))
+        self.entry_dt_venc_inicio.bind("<Return>",
+                                       lambda event: self.muda_barrinha_dta(event, self.entry_dt_venc_inicio,
+                                                                            self.entry_dt_venc_fim))
 
-        self.insert_senha = customtkinter.CTkEntry(self.login_frame, placeholder_text="Insira sua senha", show="*", width=210, border_color="#2cb67d")
-        self.insert_senha.pack(pady=10)
-        # self.insert_senha.bind("<Return>", lambda event: self.muda_barrinha(event, self.btn_login))
+        lb_dt_venc_fim = customtkinter.CTkLabel(fr_periodo, text="Data Fim")
+        lb_dt_venc_fim.place(relx=0.47, rely=0.30, relheight=0.125, relwidth=0.35)
+        self.entry_dt_venc_fim = customtkinter.CTkEntry(fr_periodo, fg_color="white", text_color="black",
+                                                        justify=tk.CENTER)
+        self.entry_dt_venc_fim.delete(0, 'end')
+        self.entry_dt_venc_fim.insert(0, TDta_Fim.strftime("%d/%m/%Y"))
+        self.entry_dt_venc_fim.place(relx=0.50, rely=0.46, relwidth=0.485, relheight=0.50)
+        self.entry_dt_venc_fim.bind("<Button-1>", lambda event: self.calendario(event, self.entry_dt_venc_inicio))
+        self.entry_dt_venc_fim.bind("<Return>", lambda event: self.muda_barrinha_dta(event, self.entry_dt_venc_fim,
+                                                                                     self.entry_info_pag_valor_parc))
 
-        # Cbk lembrar senha
-        self.lembrar_senha = ctk.BooleanVar(value=False)
-        self.cbk_lembrar_senha = customtkinter.CTkCheckBox(self.login_frame, text=" Lembrar Senha", variable=self.lembrar_senha)
-        self.cbk_lembrar_senha.pack(pady=10)
+        # Pessoa
+        coordenadas_relx = 0.61
+        coordenadas_rely = 0.01
+        coordenadas_relwidth = 0.34
+        coordenadas_relheight = 0.07
+        fr_pessoa = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_pessoa.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
+                        relheight=coordenadas_relheight)
+        lb_pessoa = customtkinter.CTkLabel(fr_pessoa, text="Cliente/Fornecedor/Prestador Serviços")
+        lb_pessoa.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
 
-        username, password = self.load_credentials()
+        pessoas = []
 
-        if len(username) > 0 and len(password) > 0:
-            self.insert_user.insert(0, username)
-            self.insert_senha.insert(0, password)
-            self.cbk_lembrar_senha.select()
+        self.entry_pessoa = AutocompleteCombobox(fr_pessoa, width=30, font=('Times', 11), completevalues=pessoas)
+        self.entry_pessoa.pack()
+        self.entry_pessoa.place(relx=0.01, rely=0.5, relwidth=0.985, relheight=0.4)
+        self.entry_pessoa.bind("<Button-1>",
+                               lambda event: self.atualizar_pessoa(event, self.entry_empresa.get(), self.entry_pessoa))
+        self.entry_pessoa.bind('<Down>',
+                               lambda event: self.atualizar_pessoa(event, self.entry_empresa.get(), self.entry_pessoa))
 
-        # Botão de login
-        self.btn_login = customtkinter.CTkButton(self.login_frame, text='Login',
-                                                 command=lambda: self.loginauth(
-                                                     username=self.insert_user.get(),
-                                                     password=self.insert_senha.get(),
-                                                     remember=self.lembrar_senha.get()))
-        self.btn_login.pack(pady=10)
+        # Botão de Consultar
+        icon_image = self.base64_to_photoimage('lupa')
+        self.btn_consultar_extrato = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent',
+                                                             command=self.consulta_extrato)
+        self.btn_consultar_extrato.place(relx=0.955, rely=0.012, relwidth=0.04, relheight=0.05)
 
-        # Link para cadastro
-        customtkinter.CTkLabel(self.login_frame, text="Ainda não é cadastrado? ").pack(pady=10)
-        customtkinter.CTkButton(self.login_frame, text='Cadastre-se', command=self.tela_cadastro).pack(pady=10)
+    def frame_list_extrato(self, janela):
+        ## Listbox _ Informações Pesquisa
+        treestyle = ttk.Style()
+        treestyle.theme_use('default')
+        treestyle.configure("Treeview", background="white", foreground="black", fieldbackground="white", borderwidth=0)
 
-    def tela_cadastro(self):
-        self.clear_frame()
-        self.cadastro_frame = customtkinter.CTkFrame(
-            self.window_one)  # Frame de cadastro
-        self.cadastro_frame.pack(pady=30, padx=30, fill="both", expand=True)
+        self.fr_list = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        self.fr_list.place(relx=0.005, rely=0.085, relwidth=0.99, relheight=0.91)
 
-        # Adicionando elementos à tela de cadastro
-        customtkinter.CTkLabel(self.cadastro_frame, text="Cadastro", font=(
-            "Roboto", 30, "bold")).pack(pady=10)
-        customtkinter.CTkLabel(
-            self.cadastro_frame, text="Insira seu e-mail para cadastro").pack(pady=10)
+        self.scrollbar = ttk.Scrollbar(self.fr_list, orient='vertical')
+        self.scrollbar.pack(side='right', fill='y')
 
-        self.cadastro_user = customtkinter.CTkEntry(
-            self.cadastro_frame, placeholder_text="Insira um e-mail válido para cadastro")
-        self.cadastro_user.pack(pady=10)
+        # Widgets - Listar Parcelas
+        self.LExtrato = ttk.Treeview(self.fr_list, height=7, column=(
+            'ID',
+            'Descricao',
+            'Dta_Vencto_Liquidacao',
+            'Tipo',
+            'Banco',
+            'Referencia',
+            'Debitos',
+            'Creditos',
+            'Saldo'
+        ), show='headings')
 
-        self.cadastro_senha = customtkinter.CTkEntry(
-            self.cadastro_frame, placeholder_text="Insira uma senha que irá lembrar", show="*")
-        self.cadastro_senha.pack(pady=10)
+        self.LExtrato.heading('#0', text='#', anchor='center')
+        self.LExtrato.heading('#1', text='ID', anchor='center')
+        self.LExtrato.heading('#2', text='Descrição', anchor='center')
+        self.LExtrato.heading('#3', text='Data (Vcto/Liq.)', anchor='center')
+        self.LExtrato.heading('#4', text='Tipo', anchor='center')
+        self.LExtrato.heading('#5', text='Banco', anchor='center')
+        self.LExtrato.heading('#6', text='Referência', anchor='center')
+        self.LExtrato.heading('#7', text='Débitos', anchor='center')
+        self.LExtrato.heading('#8', text='Créditos', anchor='center')
+        self.LExtrato.heading('#9', text='Saldo', anchor='center')
 
-        customtkinter.CTkButton(
-            self.cadastro_frame, text='Submeter', command=self.submeter_cadastro).pack(pady=10)
+        Col = 30
 
-    def tela(self):
-        self.clear_frame()
-        customtkinter.set_appearance_mode("Dark")
-        customtkinter.set_default_color_theme("dark-blue")
+        self.LExtrato.column('#0', width=2, anchor='w')
+        self.LExtrato.column('ID', width=15, anchor='e')
+        self.LExtrato.column('Descricao', width=800, anchor='w')
+        self.LExtrato.column('Dta_Vencto_Liquidacao', width=5, anchor='c')
+        self.LExtrato.column('Tipo', width=Col, anchor='c')
+        self.LExtrato.column('Banco', width=Col, anchor='c')
+        self.LExtrato.column('Referencia', width=Col, anchor='c')
+        self.LExtrato.column('Debitos', width=Col, anchor='e')
+        self.LExtrato.column('Creditos', width=Col, anchor='e')
+        self.LExtrato.column('Saldo', width=Col, anchor='e')
 
-        self.window_one.title("Gestor de Negócios")
-        width = self.window_one.winfo_screenwidth()
-        height = self.window_one.winfo_screenheight()
-        self.window_one.geometry(f"{width}x{height}+0+0") 
-        self.window_one.resizable(TRUE, TRUE)
-        self.window_one.minsize(width=970, height=700)
-        
-        # Flag para controle do estado da aplicação
-        self.app_closing = False
-        
-        # Vincular o evento de fechamento da janela
-        self.window_one.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.LExtrato.pack(expand=True, fill='both')
+        self.LExtrato.place(relx=0.005, rely=0.01, relwidth=0.985, relheight=0.985)
 
-        self.principal_frame = customtkinter.CTkFrame(self.window_one, fg_color='black')  # Frame Principal
-        self.principal_frame.pack(pady=10, padx=10, fill="both", expand=True)
-        customtkinter.CTkLabel(self.principal_frame, text="", font=("Roboto", 30, "bold")).pack(pady=10)
+    def consulta_extrato(self):
+        if self.entry_empresa.get() != '':
+            ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get())
+        else:
+            messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!")
+            return
 
-        self.menus()
+        if self.entry_pessoa.get() != '':
+            ID_Pessoa = self.obter_Pessoa_ID(self.entry_pessoa.get())
+        else:
+            ID_Pessoa = self.entry_pessoa.get()
 
-        def site_rfz():
-            webbrowser.open("https://www.fullhouse.com.br")
+        if self.entry_unidade_negocio.get() != '':
+            ID_Unidade = self.obter_Unidade_ID(self.entry_unidade_negocio.get())
+        else:
+            ID_Unidade = self.entry_unidade_negocio.get()
 
-    def menus(self):
-        menubar = Menu(self.window_one)
-        self.window_one.config(menu=menubar)
-        filemenu = Menu(menubar, tearoff=0)
-        filemenu2 = Menu(menubar, tearoff=0)
-        filemenu3 = Menu(menubar, tearoff=0)
-        filemenu4 = Menu(menubar, tearoff=0)
-        filemenu5 = Menu(menubar, tearoff=0)
-        filemenu6 = Menu(menubar, tearoff=0)
-        filemenu7 = Menu(menubar, tearoff=0)
-        filemenu8 = Menu(menubar, tearoff=0)
-        filemenu9 = Menu(menubar, tearoff=0)
+        Dta_Vcto_Inicio = self.entry_dt_venc_inicio.get()
+        Dta_Vcto_Fim = self.entry_dt_venc_fim.get()
+        Dta_Vcto_Inicio_str = datetime.strptime(Dta_Vcto_Inicio, "%d/%m/%Y")
+        last_year = Dta_Vcto_Inicio_str - timedelta(days=365)
+        Dta_Lcto = last_year.strftime('%Y-%m-%d')
+        Dta_Anterior = last_year.strftime('%Y%m%d')
 
-        def quit():
-            self.on_closing()
+        Dta_Vcto_Inicio = datetime.strptime(Dta_Vcto_Inicio, "%d/%m/%Y").strftime('%Y-%m-%d')
+        Dta_Vcto_Fim = datetime.strptime(Dta_Vcto_Fim, "%d/%m/%Y").strftime('%Y-%m-%d')
 
-        def helpme():
-            msg = "Ajuda"
-            msg += ""
-            messagebox.showinfo("Gestor de Negócios ", msg)
+        # Limpa a lista atual antes de inserir novos resultados
+        self.LExtrato.delete(*self.LExtrato.get_children())
 
-        def sobre():
-            msg = "Gestor de Negócios -        XXXX@fullhouse.tec.com           \n "
-            msg += "FullHouse - https://www.facebook.com/fullhouse/ - Brazil"
-            messagebox.showinfo("Gestor de Negócios ", msg)
+        # Lista para armazenar as condições
+        params = []
+        conditions_1 = []
+        conditions_2 = []
+        conditions_3 = []
+        conditions_4 = []
 
-        def manual():
-            webbrowser.open(
-                "https://docs.google.com/document/d/1AyvAEJngBzOGpq5lXcxnNRDQrJxjVW30qvurceokePU/edit?usp=sharing")
+        conditions_1.append("dd.ID_Empresa = %s ")
+        params = [ID_Empresa]
+        if ID_Pessoa != '':
+            conditions_1.append("dd.ID_Pessoa = %s ")
+            params.append(ID_Pessoa)
+        if ID_Unidade != '':
+            conditions_1.append("dd.ID_Unidade = %s ")
+            params.append(ID_Unidade)
+        conditions_1.append("dd.Doc_Dta_Documento BETWEEN %s AND %s")
+        params.append(Dta_Vcto_Inicio)
+        params.append(Dta_Vcto_Fim)
 
-        def modo_claro():
-            customtkinter.set_appearance_mode("light")
-            customtkinter.set_default_color_theme("dark-blue")
+        conditions_2.append("ff.ID_Empresa = %s ")
+        params.append(ID_Empresa)
+        if ID_Pessoa != '':
+            conditions_2.append("ff.ID_Pessoa = %s ")
+            params.append(ID_Pessoa)
+        if ID_Unidade != '':
+            conditions_2.append("ff.ID_Unidade = %s ")
+            params.append(ID_Unidade)
+        conditions_2.append("ff.Fin_Dta_Liquidacao BETWEEN %s AND %s")
+        params.append(Dta_Vcto_Inicio)
+        params.append(Dta_Vcto_Fim)
+        conditions_2.append("ff.Fin_VlR_Liquidacao<>0")
 
-        def modo_escuro():
-            customtkinter.set_appearance_mode("Dark")
-            customtkinter.set_default_color_theme("dark-blue")
+        conditions_3.append("dd.ID_Empresa = %s ")
+        params.append(ID_Empresa)
+        if ID_Pessoa != '':
+            conditions_3.append("dd.ID_Pessoa = %s ")
+            params.append(ID_Pessoa)
+        if ID_Unidade != '':
+            conditions_3.append("dd.ID_Unidade = %s ")
+            params.append(ID_Unidade)
+        conditions_3.append("dd.Doc_Dta_Documento<=%s")
+        params.append(Dta_Anterior)
 
-        menubar.add_cascade(label="Cadastros", menu=filemenu)
-        menubar.add_cascade(label="Dashboard", menu=filemenu2)
-        menubar.add_cascade(label="Simulador", menu=filemenu3)
-        menubar.add_cascade(label="Financeiro", menu=filemenu4)
-        menubar.add_cascade(label="Planejamento", menu=filemenu5)
-        menubar.add_cascade(label="Imobiliário", menu=filemenu6)
-        menubar.add_cascade(label="Administrador", menu=filemenu7)
-        menubar.add_cascade(label="Ajuda", menu=filemenu8)
-        menubar.add_cascade(label="Sair", command=quit)
+        conditions_4.append("ff.ID_Empresa = %s ")
+        params.append(ID_Empresa)
+        if ID_Pessoa != '':
+            conditions_4.append("ff.ID_Pessoa = %s ")
+            params.append(ID_Pessoa)
+        if ID_Unidade != '':
+            conditions_4.append("ff.ID_Unidade = %s ")
+            params.append(ID_Unidade)
+        conditions_4.append("ff.Fin_Dta_Liquidacao<=%s")
+        params.append(Dta_Anterior)
+        conditions_4.append("ff.Fin_VlR_Liquidacao<>0")
 
-        filemenu.add_command(label="Pessoas")  # , command=self.cadaut)
-        filemenu.add_command(label="Unidades de Negócio")
-        filemenu.add_command(label="Centro Resultados")
-        filemenu.add_command(label="Naturezas Financeira")
-        filemenu.add_command(label="Plano de Contas")
-        filemenu.add_command(label="Bancos")  # , command=self.cadprod)
-        filemenu.add_command(label="Contas Bancárias")
-        filemenu.add_command(label="Produtos e Serviços")
-        filemenu.add_command(label="Unidades Medidas")
-        filemenu.add_command(label="Trocar Senha")  # , command=self.cadtec)
+        strSql = f"""
+                    SELECT  
+                    Empresa_Codigo, 
+                    Empresa_Descricao, 
+                    Pessoa_Codigo, 
+                    Pessoa_Descricao, 
+                    Unidade_ID, 
+                    Unidade_Descricao, 
+                    Nr_Documento, 
+                    Dta, 
+                    SUM(Vlr) AS Vlr, 
+                    Bco, 
+                    Tipo
+                    FROM (
+                    SELECT
+                    dd.ID_Empresa                       AS Empresa_Codigo,
+                    pp.Pri_Descricao                    AS Empresa_Descricao,
+                    dd.ID_Pessoa                        AS Pessoa_Codigo,
+                    pp1.Pessoas_Descricao               AS Pessoa_Descricao,
+                    dd.ID_Unidade                       AS Unidade_ID,
+                    un.Unidade_Descricao                AS Unidade_Descricao,
+                    'Documento Fiscal'                  AS Tipo,
+                    dd.Doc_Num_Documento                AS Nr_Documento,
+                    1                                   AS Parcela,
+                    dd.Doc_Dta_Documento                AS Dta,
+                    dd.Doc_VlR  *-1                     AS Vlr,
+                    ''                                  As Bco
+                    FROM TB_CB_Doc dd
+                    INNER JOIN TB_Empresas        pp  ON pp.Pri_Cnpj=dd.ID_Empresa
+                    INNER JOIN TB_Pessoas         pp1 ON pp1.Pessoas_CPF_CNPJ=dd.ID_Pessoa AND pp1.Empresa_ID=dd.ID_Empresa
+                    INNER JOIN TB_UnidadesNegocio un  ON un.Unidade_ID=dd.ID_Unidade AND un.Empresa_ID=dd.ID_Empresa
+                    WHERE {' AND '.join(conditions_1)}
 
-        filemenu2.add_command(label="Informe Gestão")
-        filemenu2.add_command(label="Previsão Financeira")
+                    Union ALL
 
-        filemenu3.add_command(label="Estudos", command=lambda: self.menu_conectar('Indicadores'))
-        filemenu3.add_command(label="Tpo Empreendimento")
-        filemenu3.add_command(label="Cadastro Estudos")
-        filemenu3.add_command(label="Curvas de Negócio")
-        filemenu3.add_command(label="Etapas Curvas")
-        filemenu3.add_command(label="Status Negócio")  # , command=modo_claro)
+                    SELECT
+                    ff.ID_Empresa                       AS Empresa_Codigo,
+                    pp.Pri_Descricao                    AS Empresa_Descricao,
+                    ff.ID_Pessoa                        AS Pessoa_Codigo,
+                    pp1.Pessoas_Descricao               AS Pessoa_Descricao,
+                    ff.ID_Unidade                       AS Unidade_ID,
+                    un.Unidade_Descricao                AS Unidade_Descricao,
+                    'Liquidacao'                        AS Tipo,
+                    ff.Fin_Num_documento                AS Nr_Documento,
+                    ff.Fin_Parcela                      AS Parcela,
+                    COALESCE(ff.Fin_Dta_Liquidacao,0)   AS Dta,
+                    COALESCE(ff.Fin_VlR_Liquidacao,0)   AS Vlr,
+                    COALESCE(ff.ID_Bco_Liquidacao, 0)   As Bco
+                    FROM TB_Financeiro ff
+                    INNER JOIN TB_Empresas        pp  ON pp.Pri_Cnpj=ff.ID_Empresa
+                    INNER JOIN TB_Pessoas         pp1 ON pp1.Pessoas_CPF_CNPJ=ff.ID_Pessoa AND pp1.Empresa_ID=ff.ID_Empresa
+                    INNER JOIN TB_UnidadesNegocio un  ON un.Unidade_ID=ff.ID_Unidade AND un.Empresa_ID=ff.ID_Empresa
+                    WHERE {' AND '.join(conditions_2)}
 
-        filemenu4.add_command(label="Lcto (CPA/CRE)", command=lambda: self.menu_conectar('Lcto_Documentos'))
-        filemenu4.add_command(label="Aprovação Lçtos", command=lambda: self.menu_conectar('Aprovacao_Lctos'))
-        filemenu4.add_command(label="Borderô Bancário")
-        filemenu4.add_command(label="Baixas Financeiras", command=lambda: self.menu_conectar('Baixas_Financeiras'))
-        filemenu4.add_command(label="Relatório Cli/Fornec.", command=lambda: self.menu_conectar('Extrato_Financeiro'))
-        filemenu4.add_command(label="Extrato Bancário", command=lambda: self.menu_conectar('Extrato_Bancario'))
+                    Union ALL
 
-        filemenu5.add_command(label="Cronograma", command=lambda: self.menu_conectar('Cronograma_Barra_Projetos'))
-        filemenu5.add_command(label="Reuniões")  # , command=modo_escuro)
-        filemenu5.add_command(label="Cad. Projetos")  # , command=modo_escuro)
-        filemenu5.add_command(label="Envios de SMS")
-        filemenu5.add_command(label="Envios de Whatsapp")
-        # Criação de submenu Planejamento
-        sub_menu_planejamento = Menu(filemenu5, tearoff=0)  # tearoff=0 para eliminar a linha separadora
-        sub_menu_parametros = Menu(sub_menu_planejamento, tearoff=0)  # tearoff=0 para eliminar a linha separadora
-        sub_menu_parametros.add_command(label="Orçamentos")
-        sub_menu_parametros.add_command(label="Preços")
-        sub_menu_parametros.add_command(label="Naturezas Financeiras")
-        sub_menu_parametros.add_command(label="Centros de Resultado")
-        sub_menu_parametros.add_command(label="Parâmetros")
-        sub_menu_parametros.add_command(label="Indicadores")
-        sub_menu_parametros.add_command(label="Índices")
-        sub_menu_planejamento.add_cascade(label="Parâmetros", menu=sub_menu_parametros)  # Adiciona o submenu
+                    SELECT
+                    dd.ID_Empresa                       AS Empresa_Codigo,
+                    pp.Pri_Descricao                    AS Empresa_Descricao,
+                    dd.ID_Pessoa                        AS Pessoa_Codigo,
+                    pp1.Pessoas_Descricao               AS Pessoa_Descricao,
+                    dd.ID_Unidade                       AS Unidade_ID,
+                    un.Unidade_Descricao                AS Unidade_Descricao,
+                    'SaldoInicial'                      AS Tipo,
+                    '-'                                 AS Nr_Documento,
+                    '00'                                AS Parcela,
+                    {Dta_Lcto}                          AS Dta,
+                    SUM(dd.Doc_VlR*-1)                  AS Vlr,
+                    ''                                  As Bco
+                    FROM TB_CB_Doc dd
+                    INNER JOIN TB_Empresas        pp  ON pp.Pri_Cnpj=dd.ID_Empresa
+                    INNER JOIN TB_Pessoas         pp1 ON pp1.Pessoas_CPF_CNPJ=dd.ID_Pessoa AND pp1.Empresa_ID=dd.ID_Empresa
+                    INNER JOIN TB_UnidadesNegocio un  ON un.Unidade_ID=dd.ID_Unidade AND un.Empresa_ID=dd.ID_Empresa
+                    WHERE {' AND '.join(conditions_3)}
+                    GROUP BY dd.ID_Empresa, pp.Pri_Descricao, dd.ID_Pessoa, pp1.Pessoas_Descricao, dd.ID_Unidade, un.Unidade_Descricao
 
-        sub_menu_folha = Menu(sub_menu_planejamento, tearoff=0)  # tearoff=0 para eliminar a linha separadora
-        sub_menu_folha.add_command(label="Pessoal")
-        sub_menu_folha.add_command(label="Funcionários")
-        sub_menu_folha.add_command(label="Função")
-        sub_menu_folha.add_command(label="Aumentos Previstos")
-        sub_menu_folha.add_command(label="Folha Orçamento")
-        sub_menu_folha.add_command(label="Folha Real")
-        sub_menu_planejamento.add_cascade(label="Folha de Pagto", menu=sub_menu_folha)
+                    Union ALL
 
-        sub_menu_premissas = Menu(sub_menu_planejamento, tearoff=0)  # tearoff=0 para eliminar a linha separadora
-        sub_menu_premissas.add_command(label="Premissas", command=lambda: self.menu_conectar('Planejamento_Relatorio_Premissas'))
-        sub_menu_premissas.add_command(label="Carry Over")
-        sub_menu_planejamento.add_cascade(label="Premissas", menu=sub_menu_premissas)
+                    SELECT
+                    ff.ID_Empresa                           AS Empresa_Codigo,
+                    pp.Pri_Descricao                        AS Empresa_Descricao,
+                    ff.ID_Pessoa                            AS Pessoa_Codigo,
+                    pp1.Pessoas_Descricao                   AS Pessoa_Descricao,
+                    ff.ID_Unidade                           AS Unidade_ID,
+                    un.Unidade_Descricao                    AS Unidade_Descricao,
+                    'SaldoInicial'                          AS Tipo,
+                    '-'                                     AS Nr_Documento,
+                    '00'                                    AS Parcela,
+                    {Dta_Lcto}                              AS Dta,
+                    SUM(COALESCE(ff.Fin_VlR_Liquidacao,0))  AS Vlr,
+                    '0'                                     AS Bco
+                    FROM TB_Financeiro ff
+                    INNER JOIN TB_Empresas        pp  ON pp.Pri_Cnpj=ff.ID_Empresa
+                    INNER JOIN TB_Pessoas         pp1 ON pp1.Pessoas_CPF_CNPJ=ff.ID_Pessoa AND pp1.Empresa_ID=ff.ID_Empresa
+                    INNER JOIN TB_UnidadesNegocio un  ON un.Unidade_ID=ff.ID_Unidade AND un.Empresa_ID=ff.ID_Empresa
+                    WHERE {' AND '.join(conditions_4)}
+                    GROUP BY ff.ID_Empresa, pp.Pri_Descricao, ff.ID_Pessoa, pp1.Pessoas_Descricao , ff.ID_Unidade, un.Unidade_Descricao
+                    ) AS COMPLETO
+                    GROUP BY Empresa_Codigo, Empresa_Descricao, Pessoa_Codigo, Pessoa_Descricao, Unidade_ID, Unidade_Descricao, Nr_Documento, Bco , Parcela, Dta, Tipo
+                    ORDER BY Unidade_ID, Pessoa_Codigo, Dta, vlr DESC
+                """
 
-        sub_menu_relatorios = Menu(sub_menu_planejamento, tearoff=0)  # tearoff=0 para eliminar a linha separadora
-        sub_menu_relatorios.add_command(label="xxxxxxxxx", command=lambda: self.menu_conectar('Manutencao'))
-        sub_menu_relatorios.add_command(label="Orçamento", command=lambda: self.menu_conectar('Planejamento_Relatorio_Orcamento'))
-        sub_menu_planejamento.add_cascade(label="Relatórios", menu=sub_menu_relatorios)
-        
-        sub_menu_calcular = Menu(sub_menu_planejamento, tearoff=0)  # tearoff=0 para eliminar a linha separadora
-        sub_menu_calcular.add_command(label="Outorga")
-        sub_menu_calcular.add_command(label="Impostos")
-        sub_menu_calcular.add_command(label="Aportes")
-        sub_menu_calcular.add_command(label="Premissas", command=lambda: self.menu_conectar('Planejamento_Processar_Premissas'))
-        sub_menu_calcular.add_command(label="Folha")
-        sub_menu_calcular.add_command(label="Investimentos")
-        sub_menu_planejamento.add_cascade(label="Calcular", menu=sub_menu_calcular)
-        filemenu5.add_cascade(label="Planejamento", menu=sub_menu_planejamento)  # Adiciona o submenu
+        results = db.executar_consulta(strSql, params)
 
-        filemenu6.add_command(label="Cadastro Quadras")
-        filemenu6.add_command(label="Cadastro Unidades")
-        filemenu6.add_command(label="Tabela Preços")  # , command=modo_escuro)
-        filemenu6.add_command(label="Contrato Venda")  # , command=modo_escuro)
-        filemenu6.add_command(label="Contrato Cessão")
-        filemenu6.add_command(label="Contrato Novação")
-        filemenu6.add_command(label="Atualização Monetária")
-        filemenu6.add_command(label="Extrato Clientes")
-        filemenu6.add_command(label="Atendimento Cliente")
-        filemenu6.add_command(label="Resumo clientes")
+        # Carregar Lista
+        icon_image = self.base64_to_photoimage('lupa')
 
-        filemenu7.add_command(label="Usuários Sistema")
-        filemenu7.add_command(label="Permissões")  # , command=modo_escuro)
-        filemenu7.add_command(label="Modulos")  # , command=modo_escuro)
-        filemenu7.add_command(label="Clientes do Sistema")
-        filemenu7.add_command(label="Sistema Amortização")
-        filemenu7.add_command(label="Atualizações - Versão Sistema", command=lambda: self.menu_conectar('Versoes'))
+        # Configura as tags para o Treeview
+        self.LExtrato.tag_configure('vermelho', foreground='red')  # Define a tag 'vermelho' para texto vermelho
+        self.LExtrato.tag_configure('preto', foreground='black')  # Define a tag 'preto' para texto preto
+        tags = []
 
-        filemenu8.add_command(label="Manual de uso do sistema", command=manual)
-        filemenu8.add_command(label="Sites Cadastrados", command=lambda: self.menu_conectar('Sites'))
-        filemenu8.add_command(label="Sobre", command=sobre)
+        total = 0
+        saldo = 0
 
-if __name__ == "__main__":
-    app = PrimaryWindow()
+        # Agrupando dados por Unidade
+        unidade_map = {}
+        for entry in results:
+            ID_Unidade = entry["Unidade_ID"]
+            if ID_Unidade not in unidade_map:
+                unidade_map[ID_Unidade] = {"DS_Unidade": entry["Unidade_Descricao"], "pessoas": {}}
+
+            ID_Pessoa = entry["Pessoa_Codigo"]
+            if ID_Pessoa not in unidade_map[ID_Unidade]["pessoas"]:
+                unidade_map[ID_Unidade]["pessoas"][ID_Pessoa] = {"DS_Pessoa": entry["Pessoa_Descricao"],
+                                                                 "transactions": []}
+
+            unidade_map[ID_Unidade]["pessoas"][ID_Pessoa]["transactions"].append(entry)
+
+        # Agrupando dados por Unidade
+        for ID_Unidade, unit_data in unidade_map.items():
+            # Adiciona a entrada da Unidade
+            unit_item = self.LExtrato.insert("", "end", text=ID_Unidade,
+                                             values=(ID_Unidade, unit_data["DS_Unidade"], '', '', '', '', '', '', ''))
+
+            for ID_Pessoa, person_data in unit_data["pessoas"].items():
+                # Adiciona a entrada da Pessoa
+                # print(person_data["DS_Pessoa"])
+                person_item = self.LExtrato.insert("", "end", text=ID_Pessoa, values=(
+                    ID_Pessoa, person_data["DS_Pessoa"], '', '', '', '', '', '', ''))
+
+                saldo = 0  # Reinicia o saldo para cada pessoa
+
+                for transaction in person_data["transactions"]:
+                    # Formata a data do documento
+                    Dta_Documento = transaction["Dta"]
+                    Dta_obj = datetime.strptime(Dta_Documento, "%Y-%m-%d")
+                    # Dta_Documento = datetime.strptime(Dta_Documento, "%Y/%m/%d")
+                    Dta_Documento = Dta_obj.strftime("%d/%m/%Y")
+                    # Dta_Documento = transaction["Dta"]
+                    tipo = transaction["Tipo"]
+                    banco = transaction["Bco"]
+                    nr_documento = transaction["Nr_Documento"]
+                    vlr = transaction["Vlr"]
+
+                    # Verifica se o valor é negativo para formatar os débitos e créditos
+                    debit = f"{abs(vlr):,.2f}" if vlr < 0 else "0.00"
+                    credit = "0.00" if vlr < 0 else f"{vlr:,.2f}"
+
+                    # Atualiza o saldo
+                    saldo += vlr
+                    total += vlr
+
+                    # Adiciona a linha de transação na lista
+                    # print(person_item, Dta_Documento, tipo, banco, nr_documento, debit, credit, f"{saldo:,.2f}")
+                    self.LExtrato.insert("", "end", text="", values=(
+                        '', '', Dta_Documento, tipo, banco, nr_documento, debit, credit, f"{saldo:,.2f}"))
+
+        self.LExtrato.tag_configure('odd', background='#eee')
+        self.LExtrato.tag_configure('even', background='#ddd')
+        self.LExtrato.configure(yscrollcommand=self.scrollbar.set)
+        self.scrollbar.configure(command=self.LExtrato.yview)
+
+
+Extrato_Clientes_Fornecedores()
