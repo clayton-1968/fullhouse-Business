@@ -24,7 +24,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
     def create_widgets_aprovacao_lctos(self):
         # Empresa
-        self.frame_empresa(self.frame_principal, 0, 0.02, 0.30, 0.09)
+        self.frame_empresa(self.frame_principal, 0, 0, 0.30, 0.09)
         self.combo_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_pessoa))
         # self.combo_empresa.bind("<<ComboboxSelected>>", self.preenche_cnpj)
 
@@ -42,7 +42,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Unidade de Negócio
         self.fr_unidade_negocio = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_unidade_negocio.place(relx=0.42, rely=0.02, relwidth=0.17, relheight=0.09)
+        self.fr_unidade_negocio.place(relx=0.305, rely=0, relwidth=0.17, relheight=0.09)
 
         self.lb_unidade_negocio = customtkinter.CTkLabel(self.fr_unidade_negocio, text="Unidade Negócios")
         self.lb_unidade_negocio.place(relx=0.225, rely=0, relheight=0.25, relwidth=0.55)
@@ -59,7 +59,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Centro de Resultado
         self.fr_centro = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_centro.place(relx=0, rely=0.12, relwidth=0.4925, relheight=0.09)
+        self.fr_centro.place(relx=0, rely=0.1, relwidth=0.4925, relheight=0.09)
 
         self.lb_centro = customtkinter.CTkLabel(self.fr_centro, text="Centro de Resultado", anchor='w')
         self.lb_centro.place(relx=0.35, rely=0.01, relheight=0.25, relwidth=0.55)
@@ -77,7 +77,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Natureza
         self.fr_natureza = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_natureza.place(relx=0.5, rely=0.12, relwidth=0.4725, relheight=0.09)
+        self.fr_natureza.place(relx=0.5, rely=0.1, relwidth=0.4725, relheight=0.09)
         self.lb_natureza = customtkinter.CTkLabel(self.fr_natureza, text="Natureza Financeira", anchor='w')
         self.lb_natureza.place(relx=0.35, rely=0.01, relheight=0.25, relwidth=0.55)
 
@@ -94,7 +94,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Data
         self.fr_data = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_data.place(relx=0.60, rely=0.02, relwidth=0.14, relheight=0.09)
+        self.fr_data.place(relx=0.48, rely=0, relwidth=0.14, relheight=0.09)
         self.lb_data = customtkinter.CTkLabel(self.fr_data, text="Data")
         self.lb_data.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
@@ -107,7 +107,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Frame botão consulta e aprovados
         self.fr_botao_box = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_botao_box.place(relx=0.75, rely=0.02, relwidth=0.24, relheight=0.09)
+        self.fr_botao_box.place(relx=0.625, rely=0, relwidth=0.24, relheight=0.09)
 
         # Box aprovados
         self.aprovados_var = tk.BooleanVar()
@@ -125,7 +125,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Resultado
         self.fr_tree = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_tree.place(relx=0.005, rely=0.22, relwidth=0.99, relheight=0.875)
+        self.fr_tree.place(relx=0.005, rely=0.20, relwidth=0.99, relheight=0.875)
 
         self.tree = ttk.Treeview(self.fr_tree, columns=(
                                                         "Unid_ID", 
