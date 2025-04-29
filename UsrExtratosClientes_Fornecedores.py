@@ -10,8 +10,8 @@ class Extrato_Clientes_Fornecedores(Widgets):
         self.clearFrame_principal()
         self.frame_cabecalho_extrato_clientes_fornecedores(self.principal_frame)
         self.frame_list_extrato(self.principal_frame)
-       
-################# dividindo a janela ###############
+
+    ################# dividindo a janela ###############
     def frame_cabecalho_extrato_clientes_fornecedores(self, janela):
         # Empresa
         coordenadas_relx = 0.005
@@ -19,7 +19,8 @@ class Extrato_Clientes_Fornecedores(Widgets):
         coordenadas_relwidth = 0.25
         coordenadas_relheight = 0.07
         fr_empresa = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_empresa.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        fr_empresa.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
+                         relheight=coordenadas_relheight)
         lb_empresa = customtkinter.CTkLabel(fr_empresa, text="Empresa")
         lb_empresa.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
 
@@ -39,48 +40,60 @@ class Extrato_Clientes_Fornecedores(Widgets):
         coordenadas_relwidth = 0.17
         coordenadas_relheight = 0.07
         fr_unidade_negocio = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_unidade_negocio.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        fr_unidade_negocio.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
+                                 relheight=coordenadas_relheight)
         lb_unidade_negocio = customtkinter.CTkLabel(fr_unidade_negocio, text="Unidade Negócios")
         lb_unidade_negocio.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
 
         unidade_negocios = []
 
-        self.entry_unidade_negocio = AutocompleteCombobox(fr_unidade_negocio, width=30, font=('Times', 11), completevalues=unidade_negocios)
+        self.entry_unidade_negocio = AutocompleteCombobox(fr_unidade_negocio, width=30, font=('Times', 11),
+                                                          completevalues=unidade_negocios)
         self.entry_unidade_negocio.pack()
         self.entry_unidade_negocio.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_unidade_negocio.bind("<Button-1>", lambda event: self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_unidade_negocio))
-        self.entry_unidade_negocio.bind('<Down>', lambda event: self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_unidade_negocio))
+        self.entry_unidade_negocio.bind("<Button-1>",
+                                        lambda event: self.atualizar_unidade_negocios(event, self.entry_empresa.get(),
+                                                                                      self.entry_unidade_negocio))
+        self.entry_unidade_negocio.bind('<Down>',
+                                        lambda event: self.atualizar_unidade_negocios(event, self.entry_empresa.get(),
+                                                                                      self.entry_unidade_negocio))
 
         # Período Vencimento
         TDta_Inicio = datetime.strptime("01/01/2000", "%d/%m/%Y")
         TDta_Fim = datetime.now()
-        
+
         coordenadas_relx = 0.435
         coordenadas_rely = 0.01
         coordenadas_relwidth = 0.17
         coordenadas_relheight = 0.07
         fr_periodo = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_periodo.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        fr_periodo.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
+                         relheight=coordenadas_relheight)
         lb_periodo = customtkinter.CTkLabel(fr_periodo, text="Período Vencimento")
         lb_periodo.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
 
         lb_dt_venc_inicio = customtkinter.CTkLabel(fr_periodo, text="Data Início")
         lb_dt_venc_inicio.place(relx=0.01, rely=0.30, relheight=0.125, relwidth=0.20)
-        self.entry_dt_venc_inicio = customtkinter.CTkEntry(fr_periodo, fg_color="black", text_color="white", justify=tk.CENTER)
+        self.entry_dt_venc_inicio = customtkinter.CTkEntry(fr_periodo, fg_color="white", text_color="black",
+                                                           justify=tk.CENTER)
         self.entry_dt_venc_inicio.delete(0, 'end')
         self.entry_dt_venc_inicio.insert(0, TDta_Inicio.strftime("%d/%m/%Y"))
         self.entry_dt_venc_inicio.place(relx=0.01, rely=0.46, relwidth=0.485, relheight=0.50)
         self.entry_dt_venc_inicio.bind("<Button-1>", lambda event: self.calendario(event, self.entry_dt_venc_inicio))
-        self.entry_dt_venc_inicio.bind("<Return>", lambda event: self.muda_barrinha_dta(event, self.entry_dt_venc_inicio, self.entry_dt_venc_fim))
+        self.entry_dt_venc_inicio.bind("<Return>",
+                                       lambda event: self.muda_barrinha_dta(event, self.entry_dt_venc_inicio,
+                                                                            self.entry_dt_venc_fim))
 
         lb_dt_venc_fim = customtkinter.CTkLabel(fr_periodo, text="Data Fim")
         lb_dt_venc_fim.place(relx=0.47, rely=0.30, relheight=0.125, relwidth=0.35)
-        self.entry_dt_venc_fim = customtkinter.CTkEntry(fr_periodo, fg_color="black", text_color="white", justify=tk.CENTER)
+        self.entry_dt_venc_fim = customtkinter.CTkEntry(fr_periodo, fg_color="white", text_color="black",
+                                                        justify=tk.CENTER)
         self.entry_dt_venc_fim.delete(0, 'end')
         self.entry_dt_venc_fim.insert(0, TDta_Fim.strftime("%d/%m/%Y"))
         self.entry_dt_venc_fim.place(relx=0.50, rely=0.46, relwidth=0.485, relheight=0.50)
         self.entry_dt_venc_fim.bind("<Button-1>", lambda event: self.calendario(event, self.entry_dt_venc_inicio))
-        self.entry_dt_venc_fim.bind("<Return>", lambda event: self.muda_barrinha_dta(event, self.entry_dt_venc_fim, self.entry_info_pag_valor_parc))
+        self.entry_dt_venc_fim.bind("<Return>", lambda event: self.muda_barrinha_dta(event, self.entry_dt_venc_fim,
+                                                                                     self.entry_info_pag_valor_parc))
 
         # Pessoa
         coordenadas_relx = 0.61
@@ -88,35 +101,33 @@ class Extrato_Clientes_Fornecedores(Widgets):
         coordenadas_relwidth = 0.34
         coordenadas_relheight = 0.07
         fr_pessoa = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_pessoa.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        fr_pessoa.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
+                        relheight=coordenadas_relheight)
         lb_pessoa = customtkinter.CTkLabel(fr_pessoa, text="Cliente/Fornecedor/Prestador Serviços")
         lb_pessoa.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
 
         pessoas = []
-        
+
         self.entry_pessoa = AutocompleteCombobox(fr_pessoa, width=30, font=('Times', 11), completevalues=pessoas)
         self.entry_pessoa.pack()
         self.entry_pessoa.place(relx=0.01, rely=0.5, relwidth=0.985, relheight=0.4)
-        self.entry_pessoa.bind("<Button-1>", lambda event:  self.atualizar_pessoa(event, self.entry_empresa.get(), self.entry_pessoa))
-        self.entry_pessoa.bind('<Down>', lambda event:  self.atualizar_pessoa(event, self.entry_empresa.get(), self.entry_pessoa))
-        
+        self.entry_pessoa.bind("<Button-1>",
+                               lambda event: self.atualizar_pessoa(event, self.entry_empresa.get(), self.entry_pessoa))
+        self.entry_pessoa.bind('<Down>',
+                               lambda event: self.atualizar_pessoa(event, self.entry_empresa.get(), self.entry_pessoa))
+
         # Botão de Consultar
         icon_image = self.base64_to_photoimage('lupa')
-        self.btn_consultar_extrato = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=self.consulta_extrato)
+        self.btn_consultar_extrato = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent',
+                                                             command=self.consulta_extrato)
         self.btn_consultar_extrato.place(relx=0.955, rely=0.012, relwidth=0.04, relheight=0.05)
 
     def frame_list_extrato(self, janela):
         ## Listbox _ Informações Pesquisa
-        # Definindo cores
-        bg_color = '#FFFFFF'  # Fundo branco
-        text_color = '#000000'  # Texto preto
-        selected_color = '#0078d7'  # Azul para selecionados
-
         treestyle = ttk.Style()
         treestyle.theme_use('default')
-        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
-        treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
-        
+        treestyle.configure("Treeview", background="white", foreground="black", fieldbackground="white", borderwidth=0)
+
         self.fr_list = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         self.fr_list.place(relx=0.005, rely=0.085, relwidth=0.99, relheight=0.91)
 
@@ -125,17 +136,17 @@ class Extrato_Clientes_Fornecedores(Widgets):
 
         # Widgets - Listar Parcelas
         self.LExtrato = ttk.Treeview(self.fr_list, height=7, column=(
-                                                            'ID', 
-                                                            'Descricao', 
-                                                            'Dta_Vencto_Liquidacao', 
-                                                            'Tipo', 
-                                                            'Banco', 
-                                                            'Referencia',
-                                                            'Debitos',
-                                                            'Creditos',
-                                                            'Saldo'
-                                                            ), show='headings')
-        
+            'ID',
+            'Descricao',
+            'Dta_Vencto_Liquidacao',
+            'Tipo',
+            'Banco',
+            'Referencia',
+            'Debitos',
+            'Creditos',
+            'Saldo'
+        ), show='headings')
+
         self.LExtrato.heading('#0', text='#', anchor='center')
         self.LExtrato.heading('#1', text='ID', anchor='center')
         self.LExtrato.heading('#2', text='Descrição', anchor='center')
@@ -146,7 +157,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
         self.LExtrato.heading('#7', text='Débitos', anchor='center')
         self.LExtrato.heading('#8', text='Créditos', anchor='center')
         self.LExtrato.heading('#9', text='Saldo', anchor='center')
-        
+
         Col = 30
 
         self.LExtrato.column('#0', width=2, anchor='w')
@@ -159,25 +170,24 @@ class Extrato_Clientes_Fornecedores(Widgets):
         self.LExtrato.column('Debitos', width=Col, anchor='e')
         self.LExtrato.column('Creditos', width=Col, anchor='e')
         self.LExtrato.column('Saldo', width=Col, anchor='e')
-        
-        
+
         self.LExtrato.pack(expand=True, fill='both')
         self.LExtrato.place(relx=0.005, rely=0.01, relwidth=0.985, relheight=0.985)
-    
+
     def consulta_extrato(self):
         if self.entry_empresa.get() != '':
-            ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get(), self.window_one)
+            ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get())
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!")
             return
-        
+
         if self.entry_pessoa.get() != '':
-            ID_Pessoa = self.obter_Pessoa_ID(self.entry_pessoa.get(), self.window_one)
+            ID_Pessoa = self.obter_Pessoa_ID(self.entry_pessoa.get())
         else:
             ID_Pessoa = self.entry_pessoa.get()
-            
+
         if self.entry_unidade_negocio.get() != '':
-            ID_Unidade = self.obter_Unidade_ID(self.entry_unidade_negocio.get(), self.window_one)
+            ID_Unidade = self.obter_Unidade_ID(self.entry_unidade_negocio.get())
         else:
             ID_Unidade = self.entry_unidade_negocio.get()
 
@@ -189,8 +199,8 @@ class Extrato_Clientes_Fornecedores(Widgets):
         Dta_Anterior = last_year.strftime('%Y%m%d')
 
         Dta_Vcto_Inicio = datetime.strptime(Dta_Vcto_Inicio, "%d/%m/%Y").strftime('%Y-%m-%d')
-        Dta_Vcto_Fim = datetime.strptime(Dta_Vcto_Fim, "%d/%m/%Y").strftime('%Y-%m-%d') 
-        
+        Dta_Vcto_Fim = datetime.strptime(Dta_Vcto_Fim, "%d/%m/%Y").strftime('%Y-%m-%d')
+
         # Limpa a lista atual antes de inserir novos resultados
         self.LExtrato.delete(*self.LExtrato.get_children())
 
@@ -200,8 +210,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
         conditions_2 = []
         conditions_3 = []
         conditions_4 = []
-        
-        
+
         conditions_1.append("dd.ID_Empresa = %s ")
         params = [ID_Empresa]
         if ID_Pessoa != '':
@@ -213,7 +222,6 @@ class Extrato_Clientes_Fornecedores(Widgets):
         conditions_1.append("dd.Doc_Dta_Documento BETWEEN %s AND %s")
         params.append(Dta_Vcto_Inicio)
         params.append(Dta_Vcto_Fim)
-
 
         conditions_2.append("ff.ID_Empresa = %s ")
         params.append(ID_Empresa)
@@ -227,7 +235,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
         params.append(Dta_Vcto_Inicio)
         params.append(Dta_Vcto_Fim)
         conditions_2.append("ff.Fin_VlR_Liquidacao<>0")
-        
+
         conditions_3.append("dd.ID_Empresa = %s ")
         params.append(ID_Empresa)
         if ID_Pessoa != '':
@@ -250,7 +258,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
         conditions_4.append("ff.Fin_Dta_Liquidacao<=%s")
         params.append(Dta_Anterior)
         conditions_4.append("ff.Fin_VlR_Liquidacao<>0")
-   
+
         strSql = f"""
                     SELECT  
                     Empresa_Codigo, 
@@ -283,9 +291,9 @@ class Extrato_Clientes_Fornecedores(Widgets):
                     INNER JOIN TB_Pessoas         pp1 ON pp1.Pessoas_CPF_CNPJ=dd.ID_Pessoa AND pp1.Empresa_ID=dd.ID_Empresa
                     INNER JOIN TB_UnidadesNegocio un  ON un.Unidade_ID=dd.ID_Unidade AND un.Empresa_ID=dd.ID_Empresa
                     WHERE {' AND '.join(conditions_1)}
-                    
+
                     Union ALL
-                    
+
                     SELECT
                     ff.ID_Empresa                       AS Empresa_Codigo,
                     pp.Pri_Descricao                    AS Empresa_Descricao,
@@ -304,9 +312,9 @@ class Extrato_Clientes_Fornecedores(Widgets):
                     INNER JOIN TB_Pessoas         pp1 ON pp1.Pessoas_CPF_CNPJ=ff.ID_Pessoa AND pp1.Empresa_ID=ff.ID_Empresa
                     INNER JOIN TB_UnidadesNegocio un  ON un.Unidade_ID=ff.ID_Unidade AND un.Empresa_ID=ff.ID_Empresa
                     WHERE {' AND '.join(conditions_2)}
-                    
+
                     Union ALL
-                    
+
                     SELECT
                     dd.ID_Empresa                       AS Empresa_Codigo,
                     pp.Pri_Descricao                    AS Empresa_Descricao,
@@ -326,9 +334,9 @@ class Extrato_Clientes_Fornecedores(Widgets):
                     INNER JOIN TB_UnidadesNegocio un  ON un.Unidade_ID=dd.ID_Unidade AND un.Empresa_ID=dd.ID_Empresa
                     WHERE {' AND '.join(conditions_3)}
                     GROUP BY dd.ID_Empresa, pp.Pri_Descricao, dd.ID_Pessoa, pp1.Pessoas_Descricao, dd.ID_Unidade, un.Unidade_Descricao
-                    
+
                     Union ALL
-                    
+
                     SELECT
                     ff.ID_Empresa                           AS Empresa_Codigo,
                     pp.Pri_Descricao                        AS Empresa_Descricao,
@@ -352,12 +360,12 @@ class Extrato_Clientes_Fornecedores(Widgets):
                     GROUP BY Empresa_Codigo, Empresa_Descricao, Pessoa_Codigo, Pessoa_Descricao, Unidade_ID, Unidade_Descricao, Nr_Documento, Bco , Parcela, Dta, Tipo
                     ORDER BY Unidade_ID, Pessoa_Codigo, Dta, vlr DESC
                 """
-        
+
         results = db.executar_consulta(strSql, params)
-        
+
         # Carregar Lista
         icon_image = self.base64_to_photoimage('lupa')
-                
+
         # Configura as tags para o Treeview
         self.LExtrato.tag_configure('vermelho', foreground='red')  # Define a tag 'vermelho' para texto vermelho
         self.LExtrato.tag_configure('preto', foreground='black')  # Define a tag 'preto' para texto preto
@@ -375,36 +383,30 @@ class Extrato_Clientes_Fornecedores(Widgets):
 
             ID_Pessoa = entry["Pessoa_Codigo"]
             if ID_Pessoa not in unidade_map[ID_Unidade]["pessoas"]:
-                unidade_map[ID_Unidade]["pessoas"][ID_Pessoa] = {"DS_Pessoa": entry["Pessoa_Descricao"], "transactions": []}
-                
+                unidade_map[ID_Unidade]["pessoas"][ID_Pessoa] = {"DS_Pessoa": entry["Pessoa_Descricao"],
+                                                                 "transactions": []}
+
             unidade_map[ID_Unidade]["pessoas"][ID_Pessoa]["transactions"].append(entry)
 
         # Agrupando dados por Unidade
         for ID_Unidade, unit_data in unidade_map.items():
             # Adiciona a entrada da Unidade
-            unit_item = self.LExtrato.insert("", "end", text=ID_Unidade, values=(ID_Unidade, unit_data["DS_Unidade"], '', '', '', '', '', '', ''))
-            
+            unit_item = self.LExtrato.insert("", "end", text=ID_Unidade,
+                                             values=(ID_Unidade, unit_data["DS_Unidade"], '', '', '', '', '', '', ''))
+
             for ID_Pessoa, person_data in unit_data["pessoas"].items():
                 # Adiciona a entrada da Pessoa
                 # print(person_data["DS_Pessoa"])
-                person_item = self.LExtrato.insert("", "end", text=ID_Pessoa, values=(ID_Pessoa, person_data["DS_Pessoa"], '', '', '', '', '', '', ''))
+                person_item = self.LExtrato.insert("", "end", text=ID_Pessoa, values=(
+                    ID_Pessoa, person_data["DS_Pessoa"], '', '', '', '', '', '', ''))
 
                 saldo = 0  # Reinicia o saldo para cada pessoa
 
                 for transaction in person_data["transactions"]:
-                    
                     # Formata a data do documento
                     Dta_Documento = transaction["Dta"]
-                    try:
-                        # Tenta converter considerando o formato completo
-                        Dta_obj = datetime.strptime(Dta_Documento, "%Y-%m-%d")
-                    except ValueError:
-                        # Se falhar, você pode tratar o erro ou pode usar um formato alternativo
-                        if len(Dta_Documento) == 4:
-                            Dta_obj = datetime.strptime(Dta_Documento, "%Y")  # Para ano apenas
-                        else:
-                            messagebox.showinfo("Informação", "Formato de data inválido.", parent=self.window_one)
-                            
+                    Dta_obj = datetime.strptime(Dta_Documento, "%Y-%m-%d")
+                    # Dta_Documento = datetime.strptime(Dta_Documento, "%Y/%m/%d")
                     Dta_Documento = Dta_obj.strftime("%d/%m/%Y")
                     # Dta_Documento = transaction["Dta"]
                     tipo = transaction["Tipo"]
@@ -422,11 +424,13 @@ class Extrato_Clientes_Fornecedores(Widgets):
 
                     # Adiciona a linha de transação na lista
                     # print(person_item, Dta_Documento, tipo, banco, nr_documento, debit, credit, f"{saldo:,.2f}")
-                    self.LExtrato.insert("", "end", text="", values=('', '', Dta_Documento, tipo, banco, nr_documento, debit, credit, f"{saldo:,.2f}"))
-                                                                          
+                    self.LExtrato.insert("", "end", text="", values=(
+                        '', '', Dta_Documento, tipo, banco, nr_documento, debit, credit, f"{saldo:,.2f}"))
+
         self.LExtrato.tag_configure('odd', background='#eee')
         self.LExtrato.tag_configure('even', background='#ddd')
         self.LExtrato.configure(yscrollcommand=self.scrollbar.set)
         self.scrollbar.configure(command=self.LExtrato.yview)
-    
+
+
 Extrato_Clientes_Fornecedores()
