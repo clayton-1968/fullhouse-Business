@@ -139,7 +139,22 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
                                                         show='headings')
         # "CpfCnpj", "Descricao", "Unid_ID", "Unidade_Negocio", "Centro_ID", "Centro_Resultado", "Natureza_ID",
         # "Natureza_Financeira", "Valor", "Nr_Documento", "Status", "Anexo"), show='headings')
-        
+
+        # Atualiza o layout
+        self.tree.update_idletasks()
+
+        # Adequa as colunas ao conteudo
+        for col in self.tree["columns"]:
+            largura_max = tk.font.Font().measure(col)
+
+            for item in self.tree.get_children():
+                valor = self.tree.set(item, col)
+                largura = tk.font.Font().measure(valor)
+                if largura > largura_max:
+                    largura_max = largura
+
+            self.tree.column(col, width=largura_max + 20)
+
         # Definindo cores
         bg_color = '#FFFFFF'  # Fundo branco
         text_color = '#000000'  # Texto preto
@@ -147,7 +162,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         treestyle = ttk.Style()
         treestyle.theme_use('default')
-        treestyle.configure("Treeview", background=bg_color,foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
         treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
 
         col_widths = [10, 10, 10, 10, 800, 10, 100, 5]
@@ -155,10 +170,19 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         for col, header, width in zip(self.tree['columns'], headers, col_widths):
             self.tree.heading(col, text=header)
-            self.tree.column(col, width=width)
+            self.tree.column(col, width=width, anchor='e')
         
         self.tree.pack(expand=True, fill=tk.BOTH)
         self.tree.bind("<Double-1>", self.aprovar_documento)
+
+        # Scroll
+        scrollbar = ttk.Scrollbar(self.fr_tree, orient="vertical", command=self.tree.yview)
+        self.tree.configure(yscrollcommand=scrollbar.set)
+
+        self.tree.grid(row=0, column=0, sticky="nsew")
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        self.fr_tree.rowconfigure(0, weight=1)
+        self.fr_tree.columnconfigure(0, weight=1)
 
 
     def aprovar_documento(self, event):
@@ -239,7 +263,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
                 str(item['ID_Pessoa']),
                 str(item['Pessoas_Descricao']),
                 str(item['Doc_Num_Documento']),
-                str(item['Vlr_Total']),
+                f"{float(str(item['Vlr_Total'])):,.2f}".replace(",", "v").replace(".", ",").replace("v", "."),
                 str(item['Doc_AprovacaoJose']),
             )
             self.tree.insert('', 'end', values=formatted_item)
