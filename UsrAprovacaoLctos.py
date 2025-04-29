@@ -28,7 +28,6 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.combo_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_pessoa))
         # self.combo_empresa.bind("<<ComboboxSelected>>", self.preenche_cnpj)
 
-
         # CNPJ
         # self.fr_cnpj = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
         # self.fr_cnpj.place(relx=0.31, rely=0.02, relwidth=0.10, relheight=0.09)
@@ -53,9 +52,11 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.entry_unidade_negocio.pack()
         self.entry_unidade_negocio.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
         self.entry_unidade_negocio.bind("<Button-1>", lambda event:
-            self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one), self.entry_unidade_negocio))
+        self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one),
+                                        self.entry_unidade_negocio))
         self.entry_unidade_negocio.bind('<Down>', lambda event:
-            self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one), self.entry_unidade_negocio))
+        self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one),
+                                        self.entry_unidade_negocio))
 
         # Centro de Resultado
         self.fr_centro = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
@@ -68,10 +69,12 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.entry_centro = AutocompleteCombobox(self.fr_centro, width=30, font=('Times', 11), completevalues=centro)
         self.entry_centro.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
         self.entry_centro.bind("<Button-1>",
-                               lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one),
+                               lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(
+                                   self.combo_empresa.get(), self.window_one),
                                                                              self.entry_centro))
         self.entry_centro.bind('<Down>',
-                               lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one),
+                               lambda event: self.atualizar_centro_resultado(event, self.obter_Empresa_ID(
+                                   self.combo_empresa.get(), self.window_one),
                                                                              self.entry_centro))
         self.entry_centro.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_natureza))
 
@@ -82,13 +85,18 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.lb_natureza.place(relx=0.35, rely=0.01, relheight=0.25, relwidth=0.55)
 
         natureza = []
-        self.entry_natureza = AutocompleteCombobox(self.fr_natureza, width=30, font=('Times', 11), completevalues=natureza)
+        self.entry_natureza = AutocompleteCombobox(self.fr_natureza, width=30, font=('Times', 11),
+                                                   completevalues=natureza)
         self.entry_natureza.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
         self.entry_natureza.bind("<Button-1>", lambda event: self.atualizar_natureza_financeira(event,
-                                                                                                self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one),
+                                                                                                self.obter_Empresa_ID(
+                                                                                                    self.combo_empresa.get(),
+                                                                                                    self.window_one),
                                                                                                 self.entry_natureza))
         self.entry_natureza.bind('<Down>', lambda event: self.atualizar_natureza_financeira(event,
-                                                                                            self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one),
+                                                                                            self.obter_Empresa_ID(
+                                                                                                self.combo_empresa.get(),
+                                                                                                self.window_one),
                                                                                             self.entry_natureza))
         self.entry_natureza.bind("<Return>", lambda event: self.muda_barrinha(event, None))
 
@@ -112,7 +120,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         # Box aprovados
         self.aprovados_var = tk.BooleanVar()
         self.aprovados_cbox = customtkinter.CTkCheckBox(self.fr_botao_box, text="Aprovados",
-                            variable=self.aprovados_var)
+                                                        variable=self.aprovados_var)
         self.aprovados_cbox.place(relx=0.05, rely=0.25, relwidth=0.4, relheight=0.5)
 
         # Botão de consulta
@@ -128,15 +136,15 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.fr_tree.place(relx=0.005, rely=0.20, relwidth=0.99, relheight=0.875)
 
         self.tree = ttk.Treeview(self.fr_tree, columns=(
-                                                        "Unid_ID", 
-                                                        "Centro_ID", 
-                                                        "Natureza_ID", 
-                                                        "Pessoa_ID", 
-                                                        "Pessoas_Descricao", 
-                                                        "Nr_Documento", 
-                                                        "Valor", 
-                                                        "Status"),
-                                                        show='headings')
+            "Unid_ID",
+            "Centro_ID",
+            "Natureza_ID",
+            "Pessoa_ID",
+            "Pessoas_Descricao",
+            "Nr_Documento",
+            "Valor",
+            "Status"),
+                                 show='headings')
         # "CpfCnpj", "Descricao", "Unid_ID", "Unidade_Negocio", "Centro_ID", "Centro_Resultado", "Natureza_ID",
         # "Natureza_Financeira", "Valor", "Nr_Documento", "Status", "Anexo"), show='headings')
 
@@ -162,7 +170,8 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         treestyle = ttk.Style()
         treestyle.theme_use('default')
-        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color,
+                            borderwidth=0)
         treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
 
         col_widths = [10, 10, 10, 10, 800, 10, 100, 5]
@@ -171,7 +180,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         for col, header, width in zip(self.tree['columns'], headers, col_widths):
             self.tree.heading(col, text=header)
             self.tree.column(col, width=width, anchor='e')
-        
+
         self.tree.pack(expand=True, fill=tk.BOTH)
         self.tree.bind("<Double-1>", self.aprovar_documento)
 
@@ -183,7 +192,6 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         scrollbar.grid(row=0, column=1, sticky="ns")
         self.fr_tree.rowconfigure(0, weight=1)
         self.fr_tree.columnconfigure(0, weight=1)
-
 
     def aprovar_documento(self, event):
         self.selected_item = self.tree.selection()
@@ -208,7 +216,6 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
             except:
                 messagebox.showerror("Erro", "Ocorreu um erro ao tentar aprovar um documento!", parent=self.window_one)
                 return
-
 
     def consulta_aprovacoes(self):
         self.tree.delete(*self.tree.get_children())
@@ -245,7 +252,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
             query += ' AND Doc_AprovacaoJose = "N" AND Doc_AprovacaoZe = "N"'
 
         # O CAMPO DATA NÃO ESTÁ SENDO FILTRADO PORQUE NÃO TEMOS O CAMPO NA TABELA
-        
+
         myresult = db._querying(query)
         consulta = [(consulta) for consulta in myresult]
 
