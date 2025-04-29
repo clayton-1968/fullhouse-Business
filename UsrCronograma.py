@@ -209,7 +209,21 @@ class Cronograma_Atividades(Widgets, Projetos):
             )
             self.LCronograma.insert(
                 parent="", index="end", image=self.icon_image_amarelo, values=tarefa_info)
-
+            
+            tarefa_id_nova = '01'
+            tarefa_ds_nova = 'Preencher Descrição Nova Tarefa...................!!!!'
+            data_inicial_prevista = datetime.now()
+            data_conclusao_prevista = datetime.now()
+            
+            
+            self.gravar_cronograma_incluir(
+                                            projeto_id, 
+                                            projeto_ds, 
+                                            tarefa_id_nova,
+                                            tarefa_ds_nova, 
+                                            data_inicial_prevista, 
+                                            data_conclusao_prevista
+                                            )
             # Segunda Tarefa em Branco
             nrregistros += 1
             tarefa_info = []
@@ -229,9 +243,20 @@ class Cronograma_Atividades(Widgets, Projetos):
                 '',
                 '',
             )
-            self.LCronograma.insert(
-                parent="", index="end", image=self.icon_image_amarelo, values=tarefa_info)
+            self.LCronograma.insert(parent="", index="end", image=self.icon_image_amarelo, values=tarefa_info)
 
+            tarefa_id_nova = '01.01'
+            tarefa_ds_nova = 'Preencher Descrição Nova Tarefa...................!!!!'
+            data_inicial_prevista = datetime.now()
+            data_conclusao_prevista = datetime.now()
+            self.gravar_cronograma_incluir(
+                                            projeto_id, 
+                                            projeto_ds, 
+                                            tarefa_id_nova,
+                                            tarefa_ds_nova, 
+                                            data_inicial_prevista, 
+                                            data_conclusao_prevista
+                                            )
         else:
             tarefa_info = []
             nrregistros = 1
@@ -618,83 +643,147 @@ class Cronograma_Atividades(Widgets, Projetos):
             return False
 
     def parse_date(self, date_str, fallback_date=None):
-        if date_str:
-            # Adjust format as required
-            return datetime.strptime(date_str, '%Y-%m-%d')
+        if isinstance(date_str, datetime):
+            return date_str  # Retorna se já for um objeto datetime
+
+        if date_str:  # Verifica se date_str não é vazio
+            try:
+                # Tenta analisar o formato com hora
+                # Formato para data com hora
+                return datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S')
+            except ValueError as e:
+                pass
+
+            try:
+                # Se necessário, tenta o formato sem hora
+                # Formato sem hora
+                return datetime.strptime(date_str, '%d/%m/%Y')
+            except ValueError as e:
+                pass
+
         if fallback_date:
-            return datetime.strptime(fallback_date, '%Y-%m-%d')
-        return None
+            if isinstance(fallback_date, datetime):
+                return fallback_date  # Retorne se já é um objeto datetime
+            try:
+                # Formato do fallback
+                return datetime.strptime(fallback_date, '%Y-%m-%d %H:%M:%S')
+            except ValueError as e:
+                pass
+
+        return None  # Retorna None se não conseguiu analisar
 
     def predessessora(self, item_id):
-        try:
+        # try:
+            current_values = self.LCronograma.item(item_id).get('values')
+            tasks_ids = self.LCronograma.get_children()
             task = self.LCronograma.item(item_id)
             lin = task['values'][0]
             strEndereco = task['values'][4] if task['values'][4] else ""
+
+            tarefa_check = None
+            tarefa_check = '01.02.01'
+            semaforo = []
 
             tarefa_id = task['values'][1]
             tarefa_dependencia = str(task['values'][4])
             tempo_espera = float(task['values'][5])
             tempo_previsto = float(task['values'][6])
-            data_inicial_prevista = task['values'][8]
-            data_inicial_realizada = task['values'][9]
-            data_conclusao_prevista = task['values'][10]
-            data_conclusao_realizada = task['values'][11]
+
+            per_conclusao = float(task['values'][7].replace("%", ""))
+            data_inicial_prevista = self.parse_date(task['values'][8])
+            data_inicial_realizada = self.parse_date(task['values'][9])
+            data_conclusao_prevista = self.parse_date(task['values'][10])
+            data_conclusao_realizada = self.parse_date(task['values'][11])
 
             nr_caracteres = len(str(strEndereco))
             dta_precedente = None
             lin_dependente = ''
-
-            if nr_caracteres == 0:
-                dta_precedente = None
-
-            else:
+            if nr_caracteres != 0:
                 for viContador in range(nr_caracteres):
                     char = str(strEndereco)[viContador]
                     if char != ';':
                         lin_dependente += char
                     else:
-                        if int(lin_dependente) >= len(task):
+                        if int(lin_dependente) >= len(self.LCronograma.get_children()):
                             return
 
-                        dep_task = task[int(lin_dependente)]
-                        dep_date = dep_task['sub_items'][9]
-                        dep_conclusion_date = dep_task['sub_items'][11]
-
-                        if dep_date and self.is_valid_date(dep_date):
-                            if dta_precedente is None:
-                                dta_precedente = self.parse_date(
-                                    dep_conclusion_date, dep_task['sub_items'][10])
+                        index = int(lin_dependente)
+                        dep_task_id = tasks_ids[index]
+                        dep_sub_items = self.LCronograma.item(dep_task_id, 'values')
+                        
+                        data_inicial_realizada = self.parse_date(dep_sub_items[9])
+                        data_conclusao_prevista = self.parse_date(dep_sub_items[10])
+                        data_conclusao_realizada = self.parse_date(dep_sub_items[11])
+                        if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
+                            if data_conclusao_realizada and self.is_valid_date(data_conclusao_realizada):
+                                if dta_precedente is not None and dta_precedente < data_conclusao_realizada:
+                                    dta_precedente = data_conclusao_realizada
+                                else:
+                                    dta_precedente = data_conclusao_prevista
                             else:
-                                dta_precedente = max(dta_precedente, self.parse_date(
-                                    dep_conclusion_date, dep_task['sub_items'][10]))
-                        lin_dependente = ""
+                                dta_precedente = data_conclusao_prevista
+                        else:
+                            if dta_precedente is None or dta_precedente < data_conclusao_prevista:
+                                dta_precedente = data_conclusao_prevista
 
-                if lin_dependente and int(lin_dependente) < len(task):
-                    dep_task = task[int(lin_dependente)]
-                    dep_date = dep_task['sub_items'][9]
-                    dep_conclusion_date = dep_task['sub_items'][11]
+                        lin_dependente = ''
 
-                    if dep_date and self.is_valid_date(dep_date):
-                        dta_precedente = max(dta_precedente, self.parse_date(
-                            dep_conclusion_date, dep_task['sub_items'][10]))
+                if lin_dependente and int(lin_dependente) <= len(self.LCronograma.get_children()):
+                    index = int(lin_dependente) - 1
+                    dep_task_id = tasks_ids[index]
+                    dep_task = self.LCronograma.item(dep_task_id, 'values')
+                    dep_sub_items = self.LCronograma.item(dep_task_id, 'values')
 
-            if dta_precedente:
-                task['sub_items'][8] = dta_precedente + \
-                    timedelta(days=tempo_espera)
+                    data_inicial_realizada = self.parse_date(dep_sub_items[9])
+                    data_conclusao_prevista = self.parse_date(dep_sub_items[10])
+                    data_conclusao_realizada = self.parse_date(dep_sub_items[11])
 
-            # Handling the next task in the list
-            if lin + 1 < len(task):
-                next_task = task[lin + 1]
-                if len(next_task['sub_items'][1]) <= len(task['sub_items'][1]):
-                    if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
-                        task['sub_items'][10] = self.parse_date(
-                            data_inicial_realizada) + timedelta(days=tempo_previsto)
+                    if data_conclusao_realizada and self.is_valid_date(data_conclusao_realizada):
+                        if dta_precedente is None or dta_precedente < data_conclusao_realizada:
+                            dta_precedente = data_conclusao_realizada
                     else:
-                        task['sub_items'][10] = self.parse_date(
-                            data_inicial_prevista) + timedelta(days=tempo_previsto)
+                        if dta_precedente is None or dta_precedente < data_conclusao_prevista:
+                            dta_precedente = data_conclusao_prevista
+                else:
+                    if dta_precedente is None or dta_precedente < data_conclusao_prevista:
+                        dta_precedente = data_conclusao_prevista
 
-        except Exception as e:
-            print(f"Error in calculate_predecessor: {str(e)}")
+                if dta_precedente or dta_precedente is not None:
+                    current_values[8] = (
+                        dta_precedente + timedelta(days=tempo_espera)).strftime("%d/%m/%Y")
+
+                nr_caracteres = int(len(task['values'][1]))
+                if lin + 1 < len(self.LCronograma.get_children()):
+                    index = int(lin + 1)
+                    next_task_id = tasks_ids[index]
+                    next_task = self.LCronograma.item(next_task_id, 'values')
+                    nr_caracteres_seguintes = int(len(next_task[1]))
+
+                    if nr_caracteres_seguintes <= nr_caracteres:
+                        if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
+                            current_values[10] = (self.parse_date(data_inicial_realizada) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
+                        else:
+                            current_values[10] = (self.parse_date(data_inicial_prevista) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
+            else:
+                nr_caracteres = int(len(task['values'][1]))
+                if lin + 1 < len(self.LCronograma.get_children()):
+                    index = int(lin + 1)
+                    next_task_id = tasks_ids[index]
+                    next_task = self.LCronograma.item(next_task_id, 'values')
+                    nr_caracteres_seguintes = int(len(next_task[1]))
+
+                    if nr_caracteres_seguintes <= nr_caracteres:
+                        if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
+                            current_values[10] = (self.parse_date(
+                                data_inicial_realizada) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
+                        else:
+                            current_values[10] = (self.parse_date(
+                                data_inicial_prevista) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
+
+            self.LCronograma.item(item_id, values=current_values)
+
+        # except Exception as e:
+        #     print(f"Error in calculate_predecessor: {str(e)}")
 
     def ajustar_list(self):
         try:
@@ -747,36 +836,36 @@ class Cronograma_Atividades(Widgets, Projetos):
             messagebox.showerror("Erro!", f"Erro: {str(e)}")
 
     def status_on(self, dta_inicio_prev, dta_inicio_real, dta_conclusao_prev, dta_conclusao_real, per_conclusao):
-        # try:
-        if isinstance(dta_conclusao_prev, str):
-            dta_conclusao_prev = datetime.strptime(
-                dta_conclusao_prev, "%Y-%m-%d").date()
+        try:
+            if isinstance(dta_conclusao_prev, str):
+                dta_conclusao_prev = datetime.strptime(
+                    dta_conclusao_prev, "%Y-%m-%d").date()
 
-        today = datetime.now().date()
-        if dta_inicio_real == '':
-            if dta_inicio_prev < today:
-                icon_image = self.icon_image_vermelho
-            else:
-                icon_image = self.icon_image_amarelo
-        else:
-            if dta_conclusao_real == '':
-                if dta_inicio_real != '' and dta_conclusao_prev < today:
+            today = datetime.now().date()
+            if dta_inicio_real == '':
+                if dta_inicio_prev < today:
                     icon_image = self.icon_image_vermelho
                 else:
-                    icon_image = self.icon_image_azul
-            elif float(per_conclusao.replace("%", "")) == 100.00:
-                icon_image = self.icon_image_verde
-            elif dta_conclusao_prev >= today:
-                icon_image = self.icon_image_azul
-            elif dta_conclusao_prev < today:
-                icon_image = self.icon_image_vermelho
+                    icon_image = self.icon_image_amarelo
             else:
-                icon_image = self.icon_image_amarelo
+                if dta_conclusao_real == '':
+                    if dta_inicio_real != '' and dta_conclusao_prev < today:
+                        icon_image = self.icon_image_vermelho
+                    else:
+                        icon_image = self.icon_image_azul
+                elif float(per_conclusao.replace("%", "")) == 100.00:
+                    icon_image = self.icon_image_verde
+                elif dta_conclusao_prev >= today:
+                    icon_image = self.icon_image_azul
+                elif dta_conclusao_prev < today:
+                    icon_image = self.icon_image_vermelho
+                else:
+                    icon_image = self.icon_image_amarelo
 
-        return icon_image
+            return icon_image
 
-        # except Exception as e:
-        # messagebox.showerror("Error", f"An error occurred: {str(e)}")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
     def incluir_tarefas(self, projeto_id, projeto_ds, linha, tarefa_id, selected_index):
         # Parametros Iniciais
@@ -865,8 +954,7 @@ class Cronograma_Atividades(Widgets, Projetos):
         # Adicionar na Lista
         nrcarat = len(tarefa_id_nova)
         per_conclusao = 0
-        semaforo = self.status_on(
-            data_inicial_prevista, '', data_inicial_prevista, '', per_conclusao)
+        semaforo = self.status_on(data_inicial_prevista, '', data_inicial_prevista, '', per_conclusao)
         tarefa_info = (
             nrcampo,
             tarefa_id_nova,
@@ -900,7 +988,7 @@ class Cronograma_Atividades(Widgets, Projetos):
         # messagebox.showinfo("Sucesso", "Nova tarefa incluída com sucesso!")
 
     def gravar_cronograma_incluir(self, projeto_id, projeto_ds, tarefa_id_nova, tarefa_ds_nova, data_inicial_prevista, data_conclusao_prevista):
-        try:
+        # try:
             if not projeto_id:
                 messagebox.showinfo("Gestor de Negócios",
                                     "Preencher o Projeto!!")
@@ -973,10 +1061,10 @@ class Cronograma_Atividades(Widgets, Projetos):
             myresult = db.executar_consulta(vsSQL, params)
             # messagebox.showinfo("Sucesso", "Compras gravadas com sucesso!")
 
-        except Exception as e:
-            messagebox.showinfo(f"Error occurred: {str(e)}")
-        finally:
-            pass
+        # except Exception as e:
+        #     messagebox.showinfo(f"Error occurred: {str(e)}")
+        # finally:
+        #     pass
 
     def gravar_cronograma_total(self, janela):
         try:
@@ -1019,14 +1107,13 @@ class Cronograma_Atividades(Widgets, Projetos):
 
             for i in range(len(self.LCronograma.get_children())):
                 self.process_records()
-
                 item = self.LCronograma.get_children()[i]
                 values = self.LCronograma.item(item, 'values')
                 # Assign values from the selected item (simulating UsrCronograma)
                 projeto_ID = projeto_id
                 projeto_DS = projeto_ds
                 projeto_cr = 0
-                tarefa_id = values[1]
+                tarefa_id = str(values[1]).zfill(2)  # '01' manter como string
                 tarefa_DS = values[2].strip()
                 responsavel_nome = values[3]
                 tarefa_dependencia = values[4]
@@ -1069,7 +1156,7 @@ class Cronograma_Atividades(Widgets, Projetos):
                             observacao = %s,
                             anexos = %s
                         WHERE projeto_ID = %s AND tarefa_ID = %s
-                        """
+                    """
 
                 parameters = (
                                 projeto_DS,
@@ -1093,7 +1180,6 @@ class Cronograma_Atividades(Widgets, Projetos):
                                 projeto_ID,
                                 tarefa_id
                             )
-
                 # Execute the SQL command
                 db.executar_consulta(sql, parameters)
                 # messagebox.showinfo("Sucesso", "Tarefa Alterada com sucesso!")

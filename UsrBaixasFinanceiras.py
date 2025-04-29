@@ -29,7 +29,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
     def criar_widgets_baixas_financeiras(self):
         # Empresa
-        self.frame_empresa(self.frame_principal, 0, 0.02, 0.30, 0.09)
+        self.frame_empresa(self.frame_principal, 0.005, 0.02, 0.40, 0.09)
         self.combo_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_pessoa))
         # self.combo_empresa.bind("<<ComboboxSelected>>", self.preenche_cnpj)
 
@@ -148,14 +148,23 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
         self.lb_agencia = customtkinter.CTkLabel(self.fr_agencia, text="Agência")
         self.lb_agencia.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
-        self.entry_agencia = customtkinter.CTkEntry(self.fr_agencia, fg_color="white", text_color="black", justify=tk.RIGHT)
-        self.entry_agencia.place(relx=0.01, rely=0.5, relwidth=0.65, relheight=0.4)
-        self.entry_agencia.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_agencia_dv))
+        self.agencias = []
+        self.entry_agencia = AutocompleteCombobox(self.fr_agencia, width=30, justify=tk.RIGHT, font=('Times', 8),
+                                                completevalues=self.agencias)
+        
+        self.entry_agencia.place(relx=0.01, rely=0.5, relwidth=0.99, relheight=0.4)
+        self.entry_agencia.bind("<Button-1>", lambda event: self.atualizar_agencias(
+                                                                    event,
+                                                                    self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one), 
+                                                                    self.obter_banco(self.entry_banco.get(), self.window_one), 
+                                                                    self.entry_agencia, 
+                                                                    ))
+        self.entry_agencia.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_contacorrente))
 
-        self.entry_agencia_dv = customtkinter.CTkEntry(self.fr_agencia, fg_color="white", text_color="black",
-                                                       justify=tk.RIGHT)
-        self.entry_agencia_dv.place(relx=0.62, rely=0.5, relwidth=0.35, relheight=0.4)
-        self.entry_agencia_dv.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_contacorrente))
+        # self.entry_agencia_dv = customtkinter.CTkEntry(self.fr_agencia, fg_color="white", text_color="black",
+        #                                                justify=tk.RIGHT)
+        # self.entry_agencia_dv.place(relx=0.62, rely=0.5, relwidth=0.35, relheight=0.4)
+        # self.entry_agencia_dv.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_contacorrente))
 
         # Conta
         self.fr_contacorrente = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
@@ -164,15 +173,21 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
         self.lb_contacorrente = customtkinter.CTkLabel(self.fr_contacorrente, text="Conta")
         self.lb_contacorrente.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
-        self.entry_contacorrente = customtkinter.CTkEntry(self.fr_contacorrente, fg_color="white", text_color="black",
-                                                          justify=tk.RIGHT)
-        self.entry_contacorrente.place(relx=0.01, rely=0.5, relwidth=0.65, relheight=0.4)
+        self.contascorrente = []
+        self.entry_contacorrente = AutocompleteCombobox(self.fr_contacorrente, width=30, justify=tk.RIGHT, font=('Times', 8),
+                                                completevalues=self.contascorrente)
+        self.entry_contacorrente.place(relx=0.01, rely=0.5, relwidth=0.99, relheight=0.4)
+        self.entry_contacorrente.bind("<Button-1>", lambda event: self.atualizar_contascorrente(
+                                                                    event,
+                                                                    self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one), 
+                                                                    self.obter_banco(self.entry_banco.get(), self.window_one), 
+                                                                    self.entry_contacorrente))
         self.entry_contacorrente.bind("<Return>", lambda event: self.muda_barrinha(event, None))
 
-        self.entry_contacorrente_dv = customtkinter.CTkEntry(self.fr_contacorrente, fg_color="white", text_color="black",
-                                                       justify=tk.RIGHT)
-        self.entry_contacorrente_dv.place(relx=0.62, rely=0.5, relwidth=0.35, relheight=0.4)
-        self.entry_contacorrente_dv.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_contacorrente))
+        # self.entry_contacorrente_dv = customtkinter.CTkEntry(self.fr_contacorrente, fg_color="white", text_color="black",
+        #                                                justify=tk.RIGHT)
+        # self.entry_contacorrente_dv.place(relx=0.62, rely=0.5, relwidth=0.35, relheight=0.4)
+        # self.entry_contacorrente_dv.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_contacorrente))
 
         # Frame título
         self.ft_titulo = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)

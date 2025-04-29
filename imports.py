@@ -26,9 +26,12 @@ from customtkinter import *
 import tkinter as tk  # Importação do tkinter para o anchor
 
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+# import pandas as pd
+# import matplotlib.pyplot as plt
+# from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+# from matplotlib.patches import Circle
+# import threading
+
 
 import base64
 import customtkinter
@@ -40,3 +43,7 @@ import hashlib
 import smtplib
 import warnings
 warnings.filterwarnings("ignore", category=SyntaxWarning)
+
+# Definindo cursores como strings
+CURSOR_HAND = 'hand2'
+CURSOR_DEFAULT = ''
