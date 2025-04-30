@@ -154,4 +154,4 @@ class Widgets(Consultas, Limpeza, Formatos, Formularios, Functions, Gravar, Atua
         self.combo_frete.bind("<Button-1>", lambda event: self.atualizar_frete(event, self.combo_frete))
         self.combo_frete.bind('<Down>', lambda event: self.atualizar_frete(event, self.combo_frete))
 
-
+    
