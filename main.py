@@ -21,8 +21,6 @@ from UsrBaixasFinanceiras             import BaixasFinanceiras
 from UsrCronograma                    import Cronograma_Atividades
 from UsrAnexos                        import Pesquisa_Anexos
 from UsrTelaPrincipal                 import Tela_Principal
-from UsrCadastro_Curvas_Negocio       import Cadastrar_Curvas_Negocio
-
 
 
 
@@ -47,8 +45,7 @@ class PrimaryWindow(
                     BaixasFinanceiras,
                     Cronograma_Atividades,
                     Pesquisa_Anexos,
-                    Tela_Principal,
-                    Cadastrar_Curvas_Negocio
+                    Tela_Principal
                     ):
 
     def __init__(self):
@@ -97,8 +94,6 @@ class PrimaryWindow(
                 self.baixas_financeiras(self.principal_frame)
             elif modulo == 'Cronograma_Barra_Projetos':
                 self.cronograma_atividades()
-            elif modulo == 'Cadastro_Curvas':
-                self.cadastrar_curvas_negocio()
 
     def login_screen(self):
         # Configura a janela principal
@@ -211,7 +206,7 @@ class PrimaryWindow(
         spacer.pack(expand=True)
         
         # Criando o label para a versão do aplicativo
-        lb_version = ctk.CTkLabel(self.principal_frame, text="Versão: 1.00.00.008", text_color='white')
+        lb_version = ctk.CTkLabel(self.principal_frame, text="Versão: 1.00.00.007", text_color='white')
         lb_version.pack(side="bottom", pady=(5, 0), padx=10, fill="x")  # Posicionando no rodapé
 
         # Criando o label para o copyright
@@ -289,7 +284,7 @@ class PrimaryWindow(
         filemenu3.add_command(label="Estudos", command=lambda: self.menu_conectar('Indicadores'))
         filemenu3.add_command(label="Tpo Empreendimento")
         filemenu3.add_command(label="Cadastro Estudos")
-        filemenu3.add_command(label="Curvas de Negócio", command=lambda: self.menu_conectar('Cadastro_Curvas'))
+        filemenu3.add_command(label="Curvas de Negócio")
         filemenu3.add_command(label="Etapas Curvas")
         filemenu3.add_command(label="Status Negócio")  # , command=modo_claro)
 
