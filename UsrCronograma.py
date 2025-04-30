@@ -316,7 +316,7 @@ class Cronograma_Atividades(Widgets, Projetos):
 
                 tarefa_info = (
                     nrregistros,
-                    record.get('tarefa_ID'),
+                    str(record.get('tarefa_ID')).zfill(2),
                     ' ' * round(nrcarat) + record.get('tarefa_DS'),
                     record.get('responsavel_nome'),
                     record.get('tarefa_dependencia'),
@@ -396,7 +396,7 @@ class Cronograma_Atividades(Widgets, Projetos):
                 item_text = self.LCronograma.item(selected_item, 'text')
                 values = self.LCronograma.item(selected_item, 'values')
                 lin = self.LCronograma.index(selected_item)
-                tarefa_id = values[1]
+                tarefa_id = str(values[1]).zfill(2)
                 self.excluir_tarefas(projeto_id, tarefa_id, lin)
             else:
                 messagebox.showinfo(
@@ -673,7 +673,7 @@ class Cronograma_Atividades(Widgets, Projetos):
         return None  # Retorna None se não conseguiu analisar
 
     def predessessora(self, item_id):
-        # try:
+        try:
             current_values = self.LCronograma.item(item_id).get('values')
             tasks_ids = self.LCronograma.get_children()
             task = self.LCronograma.item(item_id)
@@ -765,7 +765,8 @@ class Cronograma_Atividades(Widgets, Projetos):
                         else:
                             current_values[10] = (self.parse_date(data_inicial_prevista) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
             else:
-                nr_caracteres = int(len(task['values'][1]))
+                nr_caracteres = int(len(str(task['values'][1]).zfill(2)))
+                 
                 if lin + 1 < len(self.LCronograma.get_children()):
                     index = int(lin + 1)
                     next_task_id = tasks_ids[index]
@@ -782,8 +783,8 @@ class Cronograma_Atividades(Widgets, Projetos):
 
             self.LCronograma.item(item_id, values=current_values)
 
-        # except Exception as e:
-        #     print(f"Error in calculate_predecessor: {str(e)}")
+        except Exception as e:
+            print(f"Error in calculate_predecessor: {str(e)}")
 
     def ajustar_list(self):
         try:
@@ -793,7 +794,7 @@ class Cronograma_Atividades(Widgets, Projetos):
                 task_data = self.LCronograma.item(
                     item_id)  # Obtém os dados do item
                 # Assume tarefa_ID está na posição 1
-                tarefa_id = str(task_data['values'][1])
+                tarefa_id = str(task_data['values'][1]).zfill(2)
                 nrcarat = len(tarefa_id.upper())
                 linha = i + 1
 
@@ -932,8 +933,7 @@ class Cronograma_Atividades(Widgets, Projetos):
                 # Extrai os últimos dois caracteres de nivel_ultimo e incrementa
                 numero_atual = int(nivel_ultimo[-2:]) + 1
                 # numero_atual = '00' + numero_atual
-                numero_formatado = str(numero_atual).zfill(
-                    2)  # Garante que tenha 2 dígitos
+                numero_formatado = str(numero_atual).zfill(2)  # Garante que tenha 2 dígitos
                 # Concatena e retorna o novo ID
                 # print(parte_inicial, numero_formatado)
                 novo_nivel_ultimo = parte_inicial + numero_formatado
@@ -1196,7 +1196,7 @@ class Cronograma_Atividades(Widgets, Projetos):
             # Use o índice selecionado para obter o ID
             item_id = self.LCronograma.get_children()[linha]
             values = self.LCronograma.item(item_id, 'values')
-            tarefa_id = values[1]
+            tarefa_id = str(values[1]).zfill(2)
             current_task_length = len(tarefa_id)
 
             # Determine a linha seguinte
@@ -1822,7 +1822,7 @@ class TreeviewEdit(ttk.Treeview):
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
     def predessessora(self, item_id):
-        # try:
+        try:
             current_values = self.item(item_id).get('values')
             tasks_ids = self.get_children()
             task = self.item(item_id)
@@ -1863,12 +1863,7 @@ class TreeviewEdit(ttk.Treeview):
                         data_inicial_realizada = self.parse_date(dep_sub_items[9])
                         data_conclusao_prevista = self.parse_date(dep_sub_items[10])
                         data_conclusao_realizada = self.parse_date(dep_sub_items[11])
-                        # print(
-                        #     data_inicial_realizada,
-                        #     data_conclusao_prevista,
-                        #     data_conclusao_realizada
-                        # )
-                        # breakpoint()
+                        
                         if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
                             if data_conclusao_realizada and self.is_valid_date(data_conclusao_realizada):
                                 if dta_precedente is not None and dta_precedente < data_conclusao_realizada:
@@ -1937,8 +1932,8 @@ class TreeviewEdit(ttk.Treeview):
 
             self.item(item_id, values=current_values)
 
-        # except Exception as e:
-            # print(f"Error in calculate_predecessor: {str(e)}")
+        except Exception as e:
+            print(f"Error in calculate_predecessor: {str(e)}")
 
     def ajustar_list(self):
         try:
