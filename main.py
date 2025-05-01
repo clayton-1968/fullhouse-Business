@@ -22,7 +22,7 @@ from UsrCronograma                    import Cronograma_Atividades
 from UsrAnexos                        import Pesquisa_Anexos
 from UsrTelaPrincipal                 import Tela_Principal
 from UsrCadastro_Curvas_Negocio       import Cadastrar_Curvas_Negocio
-
+from UsrBorderoBancario               import BorderoBancario
 
 
 
@@ -48,7 +48,8 @@ class PrimaryWindow(
                     Cronograma_Atividades,
                     Pesquisa_Anexos,
                     Tela_Principal,
-                    Cadastrar_Curvas_Negocio
+                    Cadastrar_Curvas_Negocio,
+                    BorderoBancario
                     ):
 
     def __init__(self):
@@ -99,6 +100,8 @@ class PrimaryWindow(
                 self.cronograma_atividades()
             elif modulo == 'Cadastro_Curvas':
                 self.cadastrar_curvas_negocio()
+            elif modulo == 'Bordero_Bancario':
+                self.consultar_bordero(self.principal_frame)
 
     def login_screen(self):
         # Configura a janela principal
@@ -295,7 +298,7 @@ class PrimaryWindow(
 
         filemenu4.add_command(label="Lcto (CPA/CRE)", command=lambda: self.menu_conectar('Lcto_Documentos'))
         filemenu4.add_command(label="Aprovação Lçtos", command=lambda: self.menu_conectar('Aprovacao_Lctos'))
-        filemenu4.add_command(label="Borderô Bancário")
+        filemenu4.add_command(label="Borderô Bancário", command=lambda: self.menu_conectar('Bordero_Bancario'))
         filemenu4.add_command(label="Baixas Financeiras", command=lambda: self.menu_conectar('Baixas_Financeiras'))
         filemenu4.add_command(label="Relatório Cli/Fornec.", command=lambda: self.menu_conectar('Extrato_Financeiro'))
         filemenu4.add_command(label="Extrato Bancário", command=lambda: self.menu_conectar('Extrato_Bancario'))
