@@ -452,7 +452,12 @@ class Processar_Premissas_Orcamento(Widgets):
         # Botão de Calcular
         icon_image = self.base64_to_photoimage('save')
         self.btn_processar_premissas = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=CalPremissas)
-        self.btn_processar_premissas.place(relx=0.955, rely=0.012, relwidth=0.04, relheight=0.05)
+        self.btn_processar_premissas.place(relx=0.91, rely=0.012, relwidth=0.04, relheight=0.05)
+
+        # Botão Sair 
+        icon_image = self.base64_to_photoimage('sair')
+        self.btn_sair_projeto = customtkinter.CTkButton(janela, text='Sair', image=icon_image, fg_color='transparent', command=self.tela_principal)
+        self.btn_sair_projeto.place(relx=0.955, rely=0.012, relwidth=0.04, relheight=0.05)
  
     def custos(self, preco_p0, quantidade, id_reajuste, periodicidade, dt_inicio: datetime, dt_fim: datetime, dt_lancamento: datetime, data_reajuste: datetime):
         """

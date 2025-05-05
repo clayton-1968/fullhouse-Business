@@ -83,7 +83,7 @@ class Simulador_Estudos_Rel(Widgets):
         # Tipo do Projeto
         coordenadas_relx=0.60
         coordenadas_rely=0.01
-        coordenadas_relwidth=0.20
+        coordenadas_relwidth=0.15
         coordenadas_relheight=0.07
         fr_tpo_projeto = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         fr_tpo_projeto.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
@@ -91,8 +91,7 @@ class Simulador_Estudos_Rel(Widgets):
         lb_tpo_projeto.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
 
         tpo_projeto = []
-        # tpo_projeto = [(tpo_projeto['Tipo_Empreendimento']) for tpo_projeto in tpo_projeto]
-
+        
         self.entry_tpo_projeto = AutocompleteCombobox(fr_tpo_projeto, width=30, font=('Times', 11), completevalues=tpo_projeto)
         self.entry_tpo_projeto.pack()
         self.entry_tpo_projeto.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
@@ -102,7 +101,7 @@ class Simulador_Estudos_Rel(Widgets):
         
         
         # Nome do Projeto
-        coordenadas_relx=0.80
+        coordenadas_relx=0.75
         coordenadas_rely=0.01
         coordenadas_relwidth=0.15
         coordenadas_relheight=0.07
@@ -132,7 +131,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_nome_cenario.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_area_total))
 
         # Icon de Consulta
-        coordenadas_relx = 0.95
+        coordenadas_relx = 0.90
         coordenadas_rely = 0.01
         coordenadas_relwidth = 0.05
         coordenadas_relheight = 0.07
@@ -142,7 +141,14 @@ class Simulador_Estudos_Rel(Widgets):
                                                     text='',
                                                     image=icon_image, 
                                                     fg_color='transparent', 
-                                                    command=lambda: [self.consultar_simulacao(janela)]
+                                                    command=lambda: [self.consultar_simulacao(
+                                                                    janela,
+                                                                    self.obter_Empresa_ID(self.entry_empresa.get(), janela), 
+                                                                    self.entry_uf.get(), 
+                                                                    self.entry_municipio.get(), 
+                                                                    self.entry_tpo_projeto.get(), 
+                                                                    self.entry_nome_cenario
+                                                                    )]
                                                         )
         
         self.btn_consultar.pack()

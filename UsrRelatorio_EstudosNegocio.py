@@ -39,7 +39,7 @@ class Resumo_Estudos(Widgets):
         # Status
         coordenadas_relx = 0.62
         coordenadas_rely = 0.01
-        coordenadas_relwidth = 0.28
+        coordenadas_relwidth = 0.22
         coordenadas_relheight = 0.07
         self.fram_status(janela, coordenadas_relx, coordenadas_rely, coordenadas_relwidth, coordenadas_relheight)
 
@@ -284,7 +284,9 @@ class Resumo_Estudos(Widgets):
         icon_image = self.base64_to_photoimage('lupa')
         self.btn_consultar = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=consultar)
         self.btn_consultar.pack(pady=10)
-        self.btn_consultar.place(relx=0.905, rely=0.02, relwidth=0.04, relheight=0.05)
+        self.btn_consultar.place(relx=0.85, rely=0.02, relwidth=0.04, relheight=0.05)
+        # Adicionar o tooltip
+        ToolTip(self.btn_consultar, "Consultar Estudos")
 
         # Botão Incluir Novo Estudo
         def novo_estudo():
@@ -306,6 +308,15 @@ class Resumo_Estudos(Widgets):
         icon_image = self.base64_to_photoimage('open_book')
         self.btn_novo_estudo = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=novo_estudo)
         self.btn_novo_estudo.pack(pady=10)
-        self.btn_novo_estudo.place(relx=0.95, rely=0.02, relwidth=0.04, relheight=0.05)
+        self.btn_novo_estudo.place(relx=0.905, rely=0.02, relwidth=0.04, relheight=0.05)
+        # Adicionar o tooltip
+        ToolTip(self.btn_novo_estudo, "Incluir Novo Estudo")
+        
+        # Botão Sair 
+        icon_image = self.base64_to_photoimage('sair')
+        self.btn_sair_projeto = customtkinter.CTkButton(janela, text='Sair', image=icon_image, fg_color='transparent', command=self.tela_principal)
+        self.btn_sair_projeto.pack(pady=10)
+        self.btn_sair_projeto.place(relx=0.95, rely=0.02, relwidth=0.04, relheight=0.05)
+        
 
 Resumo_Estudos()

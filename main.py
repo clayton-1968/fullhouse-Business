@@ -202,23 +202,7 @@ class PrimaryWindow(
         self.principal_frame = customtkinter.CTkFrame(self.window_one, fg_color='black')  # Frame Principal
         self.principal_frame.pack(pady=10, padx=10, fill="both", expand=True)
         
-        # # Adicionando um título
-        # title_label = ctk.CTkLabel(self.principal_frame, text="FG - FullGestor", font=("Roboto", 30, "bold"), text_color='white')
-        # title_label.pack(pady=10)
-        
-        # Adicionando um espaço para permitir que outros widgets fiquem acima (se houver)
-        spacer = ctk.CTkLabel(self.principal_frame, text="")
-        spacer.pack(expand=True)
-        
-        # Criando o label para a versão do aplicativo
-        lb_version = ctk.CTkLabel(self.principal_frame, text="Versão: 1.00.00.009", text_color='white')
-        lb_version.pack(side="bottom", pady=(5, 0), padx=10, fill="x")  # Posicionando no rodapé
-
-        # Criando o label para o copyright
-        lb_copyright = ctk.CTkLabel(self.principal_frame, text="Feito por FullHouse Serviços em Tecnologia - Todos os direitos reservados", text_color='white')
-        lb_copyright.pack(side="bottom", pady=(0, 10), padx=10, fill="x")  # Posicionando no rodapé
-        
-
+        self.tela_principal()
         self.menus()
         
         def site_rfz():

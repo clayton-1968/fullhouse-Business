@@ -54,7 +54,7 @@ class Resumo_Premissas(Widgets):
 
         # Tipo Lançamento
         fr_tpo_lancamento = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_tpo_lancamento.place(relx=0.80, rely=0.01,relwidth=0.10, relheight=0.07)
+        fr_tpo_lancamento.place(relx=0.80, rely=0.01,relwidth=0.06, relheight=0.07)
         lb_tpo_lancamento = customtkinter.CTkLabel(fr_tpo_lancamento, text="Tipo Lçto", anchor='w')
         lb_tpo_lancamento.place(relx=0.009, rely=0.01, relheight=0.30, relwidth=0.55)
 
@@ -246,13 +246,13 @@ class Resumo_Premissas(Widgets):
                     
                     ID_Lcto = ''
                     if Empresa_DS != '':
-                        ID_Empresa = self.obter_Empresa_ID(Empresa_DS)
+                        ID_Empresa = self.obter_Empresa_ID(Empresa_DS, self.window_one)
                     else:
                         messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!")
                         return
                     
                     if Orc_DS != '':
-                        ID_Orc = self.obter_Orc_ID(Orc_DS)
+                        ID_Orc = self.obter_Orc_ID(Orc_DS, self.window_one)
                     else:
                         messagebox.showinfo("Gestor de Negócios", "Preencher Orçamento!!")
                         return
@@ -287,7 +287,7 @@ class Resumo_Premissas(Widgets):
         icon_image = self.base64_to_photoimage('lupa')
         self.btn_consultar = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=consultar)
         self.btn_consultar.pack(pady=10)
-        self.btn_consultar.place(relx=0.905, rely=0.02, relwidth=0.04, relheight=0.05)
+        self.btn_consultar.place(relx=0.86, rely=0.02, relwidth=0.04, relheight=0.05)
 
         # Botão Incluir Novo Estudo
         def nova_premissa():
@@ -312,7 +312,12 @@ class Resumo_Premissas(Widgets):
         icon_image = self.base64_to_photoimage('open_book')
         self.btn_novo_estudo = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=nova_premissa)
         self.btn_novo_estudo.pack(pady=10)
-        self.btn_novo_estudo.place(relx=0.95, rely=0.02, relwidth=0.04, relheight=0.05)
+        self.btn_novo_estudo.place(relx=0.905, rely=0.02, relwidth=0.04, relheight=0.05)
+
+        # Botão Sair 
+        icon_image = self.base64_to_photoimage('sair')
+        self.btn_sair_projeto = customtkinter.CTkButton(janela, text='Sair', image=icon_image, fg_color='transparent', command=self.tela_principal)
+        self.btn_sair_projeto.place(relx=0.95, rely=0.02, relwidth=0.04, relheight=0.05)
     
     def Consulta_Premissas(self, ID_Empresa, ID_Orc, Orc_Tpo, ID_Cen, ID_Nat):
         ID_Empresa = str(ID_Empresa.strip()) if ID_Empresa != '' else None

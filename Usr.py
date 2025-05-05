@@ -6,7 +6,7 @@ db = MySqlDatabase()
 
 """Função de Autenticação do Usuário"""
 
-versao = '1.00.00.009'
+versao = '1.00.00.013'
 
 CREDENTIALS_FILE = 'credentials.txt'
 
@@ -23,8 +23,7 @@ class Login(Limpeza):
                             u.Usr_senhaexcel, 
                             sv.versao_nr 
                         FROM usuarios u  
-                        JOIN sys_versao sv 
-                        ON sv.versao_dta = (SELECT MAX(versao_dta) FROM sys_versao)  
+                        JOIN sys_versao sv ON sv.versao_id=(SELECT MAX(versao_id) FROM sys_versao)  
                         WHERE u.Usr_Email = %s"""   
             
             myresult = db.executar_consulta(vsSQL, Usr_Email)
@@ -34,6 +33,7 @@ class Login(Limpeza):
                 self.save_credentials(username, password, remember)
 
                 versao_sys = myresult[0]['versao_nr']
+                self.versao_ds = versao_sys
                 if versao_sys != versao:
                     messagebox.showinfo('Gestor Negócios', 'Versão do Sistema desatualizada, favor atualizar.')
                     caminho_exec = r"C:\FullBusiness\atualizador.exe"  # Caminho para o executável
@@ -119,7 +119,7 @@ class Login(Limpeza):
 
     def autenticar_usuarios(Per_Modulo):
         """atenticar o acesso do usuário no modulo"""
-        UsR_Login = session['Usr_login']
+        UsR_Login = os.environ.get('Usr_login')
         Permitido = False
         # if UsR_Login == 'Admin' or UsR_Login == 'ADMIN' or UsR_Login == 'admin':
         #     Permitido = True
@@ -231,6 +231,11 @@ class Login(Limpeza):
                     'Gestor de Negócios', 'E-mail cadastrado, seu acesso foi liberado.')
                 self.cadastrese_user.delete('0', 'end')
                 self.cadastrese_senha.delete('0', 'end')
+                self.cadastrese_user.destroy()
+                self.cadastrese_senha.destroy()
+                self.cadastrese.destroy()
+                self.window_one.quit()
+                self.login_screen().delete('0', 'end')
                 self.cadastrese_user.destroy()
                 self.cadastrese_senha.destroy()
                 self.cadastrese.destroy()
