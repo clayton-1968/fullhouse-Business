@@ -90,7 +90,6 @@ class Processar_Premissas_Orcamento(Widgets):
             orcamentos = db.executar_consulta(vsSQL, params)
             
             if orcamentos:
-                # first_record = orcamentos[0]  # Gets the first dictionary
                 if orcamentos[0]['Orc_Status'] == "F":
                     messagebox.showinfo("Gestor de Negócios", "ESTE ORÇAMENTO JÁ ESTÁ FINALIZADO!!")
                     return
@@ -164,7 +163,7 @@ class Processar_Premissas_Orcamento(Widgets):
             coordenadas_relheight = 0.20
             self.frm_barra_progresso = customtkinter.CTkFrame(janela, border_color="gray75", border_width=0, fg_color='transparent')
             self.frm_barra_progresso.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
-            lb_barra_progresso = customtkinter.CTkLabel(self.frm_barra_progesso, text="Aguarde Processando...", anchor='w')
+            lb_barra_progresso = customtkinter.CTkLabel(self.frm_barra_progresso, text="Aguarde Processando...", anchor='w')
             lb_barra_progresso.place(relx=0.001, rely=0.10, relheight=0.25, relwidth=0.55)
             
             # Cria a Barra de Progresso
@@ -240,8 +239,7 @@ class Processar_Premissas_Orcamento(Widgets):
                                 
                             """
                     indice = db.executar_consulta(vsSQL, params)
-                    
-                    id_reajuste = 1 if not indice else indice['Idx_Valor']
+                    id_reajuste = float(indice[0]['Idx_Valor']) if indice else 1 
                     
                     # Logic for Data_Lancamento and other calculations
                     periodicidade = premissa['Periodi_ID']

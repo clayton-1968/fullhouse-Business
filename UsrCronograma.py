@@ -89,19 +89,22 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
 
         # Listbox _ Cronograma de Atividades
         # Definindo cores
-        bg_color = '#FFFFFF'  # Fundo branco
-        text_color = '#000000'  # Texto preto
-        selected_color = '#0078d7'  # Azul para selecionados
-        
         treestyle = ttk.Style()
         treestyle.theme_use('default')
-        treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
-        treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
+        treestyle.configure("Treeview", 
+                            background='#FFFFFF',
+                            foreground="black",
+                            rowheight=25,
+                            fieldbackground="#D3D3D3")
+        treestyle.map('Treeview', background=[('selected', '#4A6984')])
+        # Adicione estas linhas para criar as linhas de grade
+        treestyle.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])  # Remove the borders
+        treestyle.configure("Treeview", highlightthickness=0, bd=0, font=('Calibri', 11))  # Modify the font of the body
+        treestyle.configure("Treeview.Heading",  font=('Calibri', 13,'bold'))  # Modify the font of the headings
+        treestyle.configure("Treeview", rowheight=30)  # Adjust row height
 
-        self.fr_list = customtkinter.CTkFrame(
-            janela, border_color="gray75", border_width=1)
-        self.fr_list.place(relx=0.005, rely=0.085,
-                           relwidth=0.99, relheight=0.91)
+        self.fr_list = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        self.fr_list.place(relx=0.005, rely=0.085, relwidth=0.99, relheight=0.91)
 
         self.scrollbar = ttk.Scrollbar(self.fr_list, orient='vertical')
         self.scrollbar.pack(side='right', fill='y')
@@ -123,6 +126,10 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
             'observacao',
         ))  # , show='headings tree'
 
+        # Após criar a Treeview, configure as tags para as linhas alternadas
+        self.LCronograma.tag_configure('oddrow', background="white")
+        self.LCronograma.tag_configure('evenrow', background="#E8E8E8")
+
         self.LCronograma.heading('#0', text='Status', anchor='center')
         self.LCronograma.heading('#1', text='Nr.', anchor='center')
         self.LCronograma.heading('#2', text='Código', anchor='center')
@@ -134,8 +141,7 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
         self.LCronograma.heading('#8', text='% Conclusão', anchor='center')
         self.LCronograma.heading('#9', text='Início Prev.', anchor='center')
         self.LCronograma.heading('#10', text='Início Real', anchor='center')
-        self.LCronograma.heading(
-            '#11', text='Conclusão Prev.', anchor='center')
+        self.LCronograma.heading('#11', text='Conclusão Prev.', anchor='center')
         self.LCronograma.heading('#12', text='Conclusão Real', anchor='center')
         self.LCronograma.heading('#13', text='Observação', anchor='center')
 
@@ -202,7 +208,13 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
         self.icon_image_amarelo = self.base64_to_farois('semafaro_amarelo')
         self.icon_image_vermelho = self.base64_to_farois('semafaro_vermelho')
         
+        
+            
+        
         if not self.list_tarefas:
+            if not messagebox.askyesno("Confirmar", "Tem Certeza que deseja Excluir?"):
+                return
+            
             # Tarefa em Branco
             nrregistros = 1
             tarefa_info = []
@@ -222,8 +234,8 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
                 '',
                 ''
             )
-            self.LCronograma.insert(
-                parent="", index="end", image=self.icon_image_amarelo, values=tarefa_info)
+            self.LCronograma.insert(parent="", index="end", image=self.icon_image_amarelo, values=tarefa_info, tags=('evenrow' if nrregistros % 2 == 0 else 'oddrow',))
+            
             
             tarefa_id_nova = '01'
             tarefa_ds_nova = 'Preencher Descrição Nova Tarefa...................!!!!'
@@ -346,9 +358,9 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
                 )
                 semaforo = []
                 per_conclusao = float(per_conclusao.replace("%", ""))
-                item_id = self.LCronograma.insert(parent="", index="end", image=semaforo, values=tarefa_info)
+                item_id = self.LCronograma.insert(parent="", index="end", image=semaforo, values=tarefa_info, tags=('evenrow' if nrregistros % 2 == 0 else 'oddrow',))
                 semaforo = self.status_on(item_id, data_realizada_prev, data_realizada, data_conclusao_prev, data_conclusao, per_conclusao)
-                self.LCronograma.item(item_id, image=semaforo)
+                self.LCronograma.item(item_id, image=semaforo, tags=('evenrow' if nrregistros % 2 == 0 else 'oddrow',))
                 nrregistros += 1
 
         self.LCronograma.tag_configure('odd', background='#eee')

@@ -20,6 +20,7 @@ from UsrExtratoBancario               import ExtratoBancario
 from UsrBaixasFinanceiras             import BaixasFinanceiras
 from UsrCronograma                    import Cronograma_Atividades
 from UsrAnexos                        import Pesquisa_Anexos
+from UsrAnexos                        import Pesquisa_Anexos_Simulador
 from UsrTelaPrincipal                 import Tela_Principal
 from UsrCadastro_Curvas_Negocio       import Cadastrar_Curvas_Negocio
 
@@ -47,6 +48,7 @@ class PrimaryWindow(
                     BaixasFinanceiras,
                     Cronograma_Atividades,
                     Pesquisa_Anexos,
+                    Pesquisa_Anexos_Simulador,
                     Tela_Principal,
                     Cadastrar_Curvas_Negocio
                     ):

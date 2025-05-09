@@ -485,7 +485,7 @@ class Gravar():
             messagebox.showinfo('Gestor Negócios', 'Status do Estudo em Branco!!!', parent=self.janela_simulador_rel)
             return
         
-        TAnexos = self.entry_informacoes_anexos.get()
+        TAnexos = ''
         
         TDta_Contrato = self.entry_informacoes_data.get()
         TDta_Contrato = datetime.strptime(TDta_Contrato, "%d/%m/%Y")  # Ajuste o formato conforme necessário
@@ -3529,6 +3529,14 @@ class Limpeza():
         width = self.window_one.winfo_screenwidth()
         height = self.window_one.winfo_screenheight()
         self.window_one.geometry(f"{width}x{height}+0+0") 
+    
+    def on_closing_tela_simulador_anexos(self):
+        self.janela_simulador_anexos.destroy()  # Fechar a janela principal    
+        self.janela_simulador_anexos = None  # Initialize the attribute
+        self.window_one.update_idletasks()  # Update the window to get correct dimensions
+        width = self.window_one.winfo_screenwidth()
+        height = self.window_one.winfo_screenheight()
+        self.window_one.geometry(f"{width}x{height}+0+0") 
 
     def on_closing_tela_pesquisa_mercado(self):
         self.janela_pesquisa_mercado.destroy()  # Fechar a janela principal    
@@ -3889,8 +3897,6 @@ class Limpeza():
         self.entry_informacoes_status.delete(0, 'end')
         self.entry_informacoes_status.insert(0, '')
 
-        self.entry_informacoes_anexos.delete(0, 'end')
-        
         self.entry_informacoes_data.delete(0, 'end')
         self.entry_informacoes_data.insert(0, dta_atual.strftime("%d/%m/%Y"))
         

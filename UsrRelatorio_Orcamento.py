@@ -176,7 +176,6 @@ class Relatorio_Orcamento(Widgets):
             lista = self.consulta_relatorio_orcamento(ID_Empresa, ID_Orcamento, ID_Centro_Resultado, Dta_Inicio_str, Dta_Fim, strClassificacao)
             if lista == []:
                 # Limpa a lista atual antes de inserir novos resultados
-                self.LOrcamento.delete(*self.LOrcamento.get_children())
                 messagebox.showinfo("Informação", "Nenhum orçamento encontrado.", parent=janela)
                 return
             

@@ -728,7 +728,7 @@ class Versoes(Icons, Functions):
                         versao_dta
                     FROM
                         sys_versao
-                    ORDER BY versao_nr ASC """
+                    ORDER BY versao_id, versao_nr ASC """
         
         myresult = db._querying(vs_sql)
         consulta = [(consulta) for consulta in myresult]
