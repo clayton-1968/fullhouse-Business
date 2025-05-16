@@ -1384,9 +1384,9 @@ class Consultas_Financeiro():
             messagebox.showerror("Erro", "Preencher a Natureza Financeira!", parent=self.window_one)
             return
         
-        ID_Produto = self.obter_Produto_ID(item_produto)
-        ID_CR = self.obter_Centro_ID(item_centro)
-        ID_Nat = self.obter_Natureza_ID(item_natureza)
+        ID_Produto = self.obter_Produto_ID(item_produto, self.window_one)
+        ID_CR = self.obter_Centro_ID(item_centro, self.window_one)
+        ID_Nat = self.obter_Natureza_ID(item_natureza, self.window_one)
         
         if self.entry_itens_nota_peso.get() != '': 
             item_peso = float(self.entry_itens_nota_peso.get().replace('.', '').replace(',', '.')[:15])
@@ -1758,7 +1758,7 @@ class Consultas_Financeiro():
             data_vcto = datetime.strptime(values[1], "%d/%m/%Y") 
             Dta_Parc = data_vcto.strftime("%Y-%m-%d") 
             Vlr_Parc = float(values[2].replace('.', '').replace(',', '.')[:15])
-            FormaLiquidacao_ID = self.obter_FormaLiquidacao_ID(values[3]) 
+            FormaLiquidacao_ID = self.obter_FormaLiquidacao_ID(values[3], self.window_one) 
             if TipoLan == "D":
                 Vlr_Parc *= -1  # Negate the value if TipoLan is "D"
 
@@ -1799,9 +1799,9 @@ class Consultas_Financeiro():
             item = self.LItens.item(item_ids[i])
             values = item['values']
             Nr_Item = values[0]  
-            ID_Produto = self. obter_Produto_ID(values[1])  
-            ID_CR = self.obter_Centro_ID(values[2])      
-            ID_Nat = self.obter_Natureza_ID(values[3])  
+            ID_Produto = self. obter_Produto_ID(values[1], self.window_one)  
+            ID_CR = self.obter_Centro_ID(values[2], self.window_one)      
+            ID_Nat = self.obter_Natureza_ID(values[3], self.window_one)  
             Kg_Peso = float(values[4].replace('.', '').replace(',', '.')[:15])
             QtD = float(values[5].replace('.', '').replace(',', '.')[:15])  
             
@@ -2058,7 +2058,7 @@ class Consultas_Financeiro():
                 DS_Observacao = record['Doc_DS_Observacao']
                 SerieNota = record['Doc_Serie']
                 NotaEstado = record['Doc_Estado']
-                Frete = self.obter_Frete_DS(str(record['Doc_Frete']))
+                Frete = self.obter_Frete_DS(str(record['Doc_Frete']), self.window_one)
                 FormaLiquidacao_ID = record['TipoPagamento_ID']
                 FormaLiquidacao_DS = record['TipoPagamento_Cod']
                 
@@ -5457,7 +5457,7 @@ class Functions():
     
     # Drop Natureza Financeira
     def get_bancos(self):
-        strSql = "SELECT ID_Banco, DS_Banco FROM TB_Bcos ORDER BY DS_Banco"
+        strSql = "SELECT ID_Banco, CONCAT(ID_Banco, ' - ', DS_Banco) AS DS_Banco FROM TB_Bcos ORDER BY DS_Banco"
         myresult = db._querying(strSql)
         bancos = [(banco['ID_Banco'], banco['DS_Banco']) for banco in myresult]
         return bancos

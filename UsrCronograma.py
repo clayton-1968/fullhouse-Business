@@ -96,7 +96,11 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
                             foreground="black",
                             rowheight=25,
                             fieldbackground="#D3D3D3")
-        treestyle.map('Treeview', background=[('selected', '#4A6984')])
+        # Configura o estilo para a linha selecionada
+        treestyle.map('Treeview', 
+                    background=[('selected', '#4A6984')],  # Cor de fundo quando selecionado
+                    foreground=[('selected', 'white')])  # Cor do texto quando selecionado
+        
         # Adicione estas linhas para criar as linhas de grade
         treestyle.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])  # Remove the borders
         treestyle.configure("Treeview", highlightthickness=0, bd=0, font=('Calibri', 11))  # Modify the font of the body
@@ -126,10 +130,10 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
             'observacao',
         ))  # , show='headings tree'
 
-        # Após criar a Treeview, configure as tags para as linhas alternadas
-        self.LCronograma.tag_configure('oddrow', background="white")
-        self.LCronograma.tag_configure('evenrow', background="#E8E8E8")
-
+        # Configuração opcional para linhas alternadas (zebra striping)
+        self.LCronograma.tag_configure('oddrow', background='white')
+        self.LCronograma.tag_configure('evenrow', background='#F0F0F0')
+        
         self.LCronograma.heading('#0', text='Status', anchor='center')
         self.LCronograma.heading('#1', text='Nr.', anchor='center')
         self.LCronograma.heading('#2', text='Código', anchor='center')
@@ -305,10 +309,8 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
                 if data_realizada_prev == str(dta_branco):
                     data_realizada_prev = ''
                 else:
-                    data_realizada_prev = datetime.strptime(
-                        data_realizada_prev, "%Y-%m-%d")
-                    data_realizada_prev = data_realizada_prev.strftime(
-                        "%d/%m/%Y")  # Formato desejado: "DD/MM/YYYY"
+                    data_realizada_prev = datetime.strptime(data_realizada_prev, "%Y-%m-%d")
+                    data_realizada_prev = data_realizada_prev.strftime("%d/%m/%Y")  # Formato desejado: "DD/MM/YYYY"
 
                 if data_realizada == str(dta_branco):
                     data_realizada = ''

@@ -250,6 +250,10 @@
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrBaixasFinanceiras.py',
    'PYMODULE'),
+  ('UsrBorderoBancario',
+   'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
+   'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrBorderoBancario.py',
+   'PYMODULE'),
   ('UsrCadastro_Curvas_Negocio',
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrCadastro_Curvas_Negocio.py',
