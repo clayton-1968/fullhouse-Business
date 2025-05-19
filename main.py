@@ -23,7 +23,7 @@ from UsrAnexos                        import Pesquisa_Anexos
 from UsrTelaPrincipal                 import Tela_Principal
 from UsrCadastro_Curvas_Negocio       import Cadastrar_Curvas_Negocio
 from UsrBorderoBancario               import BorderoBancario
-
+from UsrAlterar_Senha                 import AlterarSenha
 
 
 class PrimaryWindow(
@@ -49,7 +49,8 @@ class PrimaryWindow(
                     Pesquisa_Anexos,
                     Tela_Principal,
                     Cadastrar_Curvas_Negocio,
-                    BorderoBancario
+                    BorderoBancario,
+                    AlterarSenha
                     ):
 
     def __init__(self):
@@ -102,6 +103,9 @@ class PrimaryWindow(
                 self.cadastrar_curvas_negocio()
             elif modulo == 'Bordero_Bancario':
                 self.consultar_bordero(self.principal_frame)
+            elif modulo == 'Alterar_Senha':
+                self.alterar_senha(self.principal_frame, self.username)
+
 
     def login_screen(self):
         # Configura a janela principal
@@ -149,10 +153,12 @@ class PrimaryWindow(
             self.insert_senha.insert(0, password)
             self.cbk_lembrar_senha.select()
 
+        self.username = self.insert_user.get()
+
         # Botão de login
         self.btn_login = customtkinter.CTkButton(self.login_frame, text='Login',
                                                  command=lambda: self.loginauth(
-                                                     username=self.insert_user.get(),
+                                                     username=self.username,
                                                      password=self.insert_senha.get(),
                                                      remember=self.lembrar_senha.get()))
         self.btn_login.pack(pady=10)
@@ -160,6 +166,7 @@ class PrimaryWindow(
         # Link para cadastro
         customtkinter.CTkLabel(self.login_frame, text="Ainda não é cadastrado? ").pack(pady=10)
         customtkinter.CTkButton(self.login_frame, text='Cadastre-se', command=self.tela_cadastro).pack(pady=10)
+
 
     def tela_cadastro(self):
         self.clear_frame()
@@ -284,7 +291,7 @@ class PrimaryWindow(
         filemenu.add_command(label="Contas Bancárias")
         filemenu.add_command(label="Produtos e Serviços")
         filemenu.add_command(label="Unidades Medidas")
-        filemenu.add_command(label="Trocar Senha")  # , command=self.cadtec)
+        filemenu.add_command(label="Trocar Senha", command=lambda: self.menu_conectar('Alterar_Senha'))
 
         filemenu2.add_command(label="Informe Gestão")
         filemenu2.add_command(label="Previsão Financeira")
