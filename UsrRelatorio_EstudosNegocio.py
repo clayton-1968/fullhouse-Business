@@ -39,11 +39,11 @@ class Resumo_Estudos(Widgets):
         # Status
         coordenadas_relx = 0.62
         coordenadas_rely = 0.01
-        coordenadas_relwidth = 0.22
+        coordenadas_relwidth = 0.20
         coordenadas_relheight = 0.07
         self.fram_status(janela, coordenadas_relx, coordenadas_rely, coordenadas_relwidth, coordenadas_relheight)
 
-        def consultar():
+        def consultar(Tpo_Rel):
             if self.combo_empresa.get() != '':
                 ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), janela)
             else:
@@ -53,7 +53,7 @@ class Resumo_Estudos(Widgets):
             UF = self.combo_uf.get()
             Cidade = self.combo_municipio.get()
             Status = self.combo_status.get()
-            lista = self.Consulta_Negocios(ID_Empresa, UF, Cidade, Status)
+            lista = self.Consulta_Negocios(ID_Empresa, UF, Cidade, Status, Tpo_Rel)
             
             self.fr_list_estudosnegocios = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
             self.fr_list_estudosnegocios.place(relx=0.005, rely=0.09, relwidth=0.986, relheight=0.87)
@@ -302,11 +302,19 @@ class Resumo_Estudos(Widgets):
 
         # Botão de Consultar
         icon_image = self.base64_to_photoimage('lupa')
-        self.btn_consultar = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=consultar)
+        self.btn_consultar = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=lambda: consultar(1))
         self.btn_consultar.pack(pady=10)
-        self.btn_consultar.place(relx=0.85, rely=0.02, relwidth=0.04, relheight=0.05)
+        self.btn_consultar.place(relx=0.825, rely=0.02, relwidth=0.04, relheight=0.05)
         # Adicionar o tooltip
         ToolTip(self.btn_consultar, "Consultar Estudos")
+
+        # Botão de Consultar Lixeira
+        icon_image = self.base64_to_photoimage('trash')
+        self.btn_lixeira = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=lambda: consultar(2))
+        self.btn_lixeira.pack(pady=10)
+        self.btn_lixeira.place(relx=0.87, rely=0.02, relwidth=0.04, relheight=0.05)
+        # Adicionar o tooltip
+        ToolTip(self.btn_lixeira, "Lixeira")
 
         # Botão Incluir Novo Estudo
         def novo_estudo():
@@ -328,7 +336,7 @@ class Resumo_Estudos(Widgets):
         icon_image = self.base64_to_photoimage('open_book')
         self.btn_novo_estudo = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=novo_estudo)
         self.btn_novo_estudo.pack(pady=10)
-        self.btn_novo_estudo.place(relx=0.905, rely=0.02, relwidth=0.04, relheight=0.05)
+        self.btn_novo_estudo.place(relx=0.915, rely=0.02, relwidth=0.04, relheight=0.05)
         # Adicionar o tooltip
         ToolTip(self.btn_novo_estudo, "Incluir Novo Estudo")
         

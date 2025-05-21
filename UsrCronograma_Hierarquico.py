@@ -9,7 +9,7 @@ from UsrCadastros import Cronograma_Atividades_Copiar
 ################# criando janela ###############
 class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
     def cronograma_atividades(self):
-        self.window_one.title('Cronograma Atividades')
+        self.window_one.title('Cronograma Atividades - Hierarquia')
         self.images = {}
         self.clearFrame_principal()
         self.frame_cabecalho_cronograma_atividades(self.principal_frame)
@@ -49,35 +49,42 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
         # Adicionar o tooltip
         ToolTip(self.btn_consultar_projeto, "Consultar Cronograma de Atividades")
 
+        # Opções Aberto ou Fechado
+        self.check_var_aberto_fechado = customtkinter.StringVar(value="off")
+        self.checkbox_aberto_fechado = customtkinter.CTkCheckBox(janela, text='Resumido', variable=self.check_var_aberto_fechado, onvalue="on", offvalue="off")        
+        self.checkbox_aberto_fechado.place(relx=0.555, rely=0.02, relwidth=0.10, relheight=0.05)
+
         # Botão de Salvar Cronograma
         icon_image = self.base64_to_photoimage('save')
         self.btn_salvar_projeto = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=lambda: self.gravar_cronograma_total(janela))
         self.btn_salvar_projeto.pack(pady=10)
-        self.btn_salvar_projeto.place(relx=0.545, rely=0.02, relwidth=0.04, relheight=0.05)
+        self.btn_salvar_projeto.place(relx=0.66, rely=0.02, relwidth=0.04, relheight=0.05)
         # Adicionar o tooltip
         ToolTip(self.btn_salvar_projeto, "Salvar Cronograma de Atividades")
 
         # Botão Copiar Template Cronograma
         icon_image = self.base64_to_photoimage('copia')
-        self.btn_copiar_atividades = customtkinter.CTkButton(janela, text='Copiar Template', image=icon_image, fg_color='transparent', command=self.cad_cronograma_atividades_copiar)
+        self.btn_copiar_atividades = customtkinter.CTkButton(janela, text='Copiar', image=icon_image, fg_color='transparent', command=self.cad_cronograma_atividades_copiar)
         self.btn_copiar_atividades.pack(pady=10)
-        self.btn_copiar_atividades.place(relx=0.60, rely=0.02, relwidth=0.15, relheight=0.05)
+        self.btn_copiar_atividades.place(relx=0.705, rely=0.02, relwidth=0.055, relheight=0.05)
         # Adicionar o tooltip
         ToolTip(self.btn_copiar_atividades, "Copiar Atividades de um Template para um Novo Programa de Atividades")
 
         # Botão Incluir Cronograma
         icon_image = self.base64_to_photoimage('open_book')
-        self.btn_novo_projeto = customtkinter.CTkButton(janela, text='Novo Programa', image=icon_image, fg_color='transparent', command=self.cad_projetos)
+        self.btn_novo_projeto = customtkinter.CTkButton(janela, text='Novo', image=icon_image, fg_color='transparent', command=self.cad_projetos)
         self.btn_novo_projeto.pack(pady=10)
-        self.btn_novo_projeto.place(relx=0.765, rely=0.02, relwidth=0.15, relheight=0.05)
+        self.btn_novo_projeto.place(relx=0.765, rely=0.02, relwidth=0.08, relheight=0.05)
         # Adicionar o tooltip
         ToolTip(self.btn_novo_projeto, "Incluir Novo Programa Atividades")
-        
+         
         # Botão Sair Cronograma
         icon_image = self.base64_to_photoimage('sair')
         self.btn_sair_projeto = customtkinter.CTkButton(janela, text='Sair', image=icon_image, fg_color='transparent', command=self.tela_principal)
         self.btn_sair_projeto.pack(pady=10)
         self.btn_sair_projeto.place(relx=0.955, rely=0.02, relwidth=0.04, relheight=0.05)
+        # Adicionar o tooltip
+        ToolTip(self.btn_sair_projeto, "Sair do Cronograma")
       
     def consulta_cronograma_atividades(self, janela):
         projeto_ds = self.entry_projeto.get()
@@ -152,9 +159,9 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
         Col = 50
         Col1 = 30
 
-        self.LCronograma.column('#0', width=2, anchor='c')
-        self.LCronograma.column('Nr', width=5, anchor='c')
-        self.LCronograma.column('tarefa_id', width=40, anchor='w')
+        self.LCronograma.column('#0', width=100, anchor='c')
+        self.LCronograma.column('Nr', width=3, anchor='c')
+        self.LCronograma.column('tarefa_id', width=100, anchor='w')
         self.LCronograma.column('tarefa_DS', width=400, anchor='w')
         self.LCronograma.column('responsavel_nome', width=25, anchor='w')
         self.LCronograma.column('tarefa_dependencia', width=Col, anchor='c')
@@ -184,6 +191,7 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
                             pa.projeto_DS               AS projeto_DS, 
                             pa.tarefa_ID                AS tarefa_ID, 
                             pa.tarefa_DS                AS tarefa_DS, 
+                            pa.parent_id                AS parent_id,
                             pa.responsavel_nome         AS responsavel_nome,
                             pa.tarefa_dependencia       AS tarefa_dependencia, 
                             pa.tempo_espera             AS tempo_espera, 
@@ -212,88 +220,96 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
         self.icon_image_amarelo = self.base64_to_farois('semafaro_amarelo')
         self.icon_image_vermelho = self.base64_to_farois('semafaro_vermelho')
         
-        
-            
+        # Criar um dicionário para armazenar os itens da TreeView
+        self.tree_items = {}    
+    
         
         if not self.list_tarefas:
-            if not messagebox.askyesno("Confirmar", "Tem Certeza que deseja Excluir?"):
-                return
+            messagebox.showinfo("Gestor de Negócios", "Projeto sem tarefas!!")
+            # if not messagebox.askyesno("Confirmar", "Tem Certeza que deseja Excluir?"):
+            return
             
-            # Tarefa em Branco
-            nrregistros = 1
-            tarefa_info = []
-            tarefa_info = (
-                nrregistros,
-                '01',
-                ' ' *
-                round(2) + "Preencher Descrição Nova Tarefa...................!!!!",
-                '',
-                '',
-                0,
-                1,
-                '0.00%',
-                datetime.now().strftime("%d/%m/%Y"),
-                '',
-                datetime.now().strftime("%d/%m/%Y"),
-                '',
-                ''
-            )
-            self.LCronograma.insert(parent="", index="end", image=self.icon_image_amarelo, values=tarefa_info, tags=('evenrow' if nrregistros % 2 == 0 else 'oddrow',))
-            
-            
-            tarefa_id_nova = '01'
-            tarefa_ds_nova = 'Preencher Descrição Nova Tarefa...................!!!!'
-            data_inicial_prevista = datetime.now()
-            data_conclusao_prevista = datetime.now()
+            # # Tarefa em Branco
+            # nrregistros = 1
+            # tarefa_mae_id = '01'
+            # tarefa_info = []
+            # tarefa_info = (
+            #     nrregistros,
+            #     '01',
+            #     ' ' *
+            #     round(2) + "Preencher Descrição Nova Tarefa...................!!!!",
+            #     '',
+            #     '',
+            #     0,
+            #     1,
+            #     '0.00%',
+            #     datetime.now().strftime("%d/%m/%Y"),
+            #     '',
+            #     datetime.now().strftime("%d/%m/%Y"),
+            #     '',
+            #     ''
+            # )
+            # self.LCronograma.insert(parent="", index="end", image=self.icon_image_amarelo, values=tarefa_info, tags=('evenrow' if nrregistros % 2 == 0 else 'oddrow',))
             
             
-            self.gravar_cronograma_incluir(
-                                            projeto_id, 
-                                            projeto_ds, 
-                                            tarefa_id_nova,
-                                            tarefa_ds_nova, 
-                                            data_inicial_prevista, 
-                                            data_conclusao_prevista
-                                            )
-            # Segunda Tarefa em Branco
-            nrregistros += 1
-            tarefa_info = []
-            tarefa_info = (
-                nrregistros,
-                '01.01',
-                ' ' *
-                round(5) + "Preencher Descrição Nova Tarefa...................!!!!",
-                '',
-                '',
-                0,
-                1,
-                '0.00%',
-                datetime.now().strftime("%d/%m/%Y"),
-                '',
-                datetime.now().strftime("%d/%m/%Y"),
-                '',
-                '',
-            )
-            self.LCronograma.insert(parent="", index="end", image=self.icon_image_amarelo, values=tarefa_info)
+            # tarefa_id_nova = '01'
+            # tarefa_ds_nova = 'Preencher Descrição Nova Tarefa...................!!!!'
+            # data_inicial_prevista = datetime.now()
+            # data_conclusao_prevista = datetime.now()
+            
+            
+            # self.gravar_cronograma_incluir(
+            #                                 projeto_id, 
+            #                                 projeto_ds, 
+            #                                 tarefa_id_nova,
+            #                                 tarefa_ds_nova,
+            #                                 tarefa_mae_id, 
+            #                                 data_inicial_prevista, 
+            #                                 data_conclusao_prevista
+            #                                 )
+            # # Segunda Tarefa em Branco
+            # nrregistros += 1
+            # tarefa_mae_id = '01'
+            # tarefa_info = []
+            # tarefa_info = (
+            #     nrregistros,
+            #     '01.01',
+            #     ' ' *
+            #     round(5) + "Preencher Descrição Nova Tarefa...................!!!!",
+            #     '',
+            #     '',
+            #     0,
+            #     1,
+            #     '0.00%',
+            #     datetime.now().strftime("%d/%m/%Y"),
+            #     '',
+            #     datetime.now().strftime("%d/%m/%Y"),
+            #     '',
+            #     '',
+            # )
+            # self.LCronograma.insert(parent="", index="end", image=self.icon_image_amarelo, values=tarefa_info)
 
-            tarefa_id_nova = '01.01'
-            tarefa_ds_nova = 'Preencher Descrição Nova Tarefa...................!!!!'
-            data_inicial_prevista = datetime.now()
-            data_conclusao_prevista = datetime.now()
-            self.gravar_cronograma_incluir(
-                                            projeto_id, 
-                                            projeto_ds, 
-                                            tarefa_id_nova,
-                                            tarefa_ds_nova, 
-                                            data_inicial_prevista, 
-                                            data_conclusao_prevista
-                                            )
+            # tarefa_id_nova = '01.01'
+            # tarefa_ds_nova = 'Preencher Descrição Nova Tarefa...................!!!!'
+            # data_inicial_prevista = datetime.now()
+            # data_conclusao_prevista = datetime.now()
+            # self.gravar_cronograma_incluir(
+            #                                 projeto_id, 
+            #                                 projeto_ds, 
+            #                                 tarefa_id_nova,
+            #                                 tarefa_ds_nova,
+            #                                 tarefa_mae_id,
+            #                                 data_inicial_prevista, 
+            #                                 data_conclusao_prevista
+            #                                 )
         else:
             tarefa_info = []
             nrregistros = 1
             for record in self.list_tarefas:
                 empresa_projeto_id = record.get('projeto_empresa')
                 tarefa_id = str(record.get('tarefa_ID')).zfill(2)
+                parent_id = record.get('parent_id')
+
                 nrcarat = len(record.get('tarefa_ID'))
                 dta_branco = str('1899-12-30')
                 data_realizada = datetime.strftime(
@@ -341,7 +357,7 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
                     Observacao = ''
                 else:
                     Observacao = record.get('observacao')
-
+                
                 tarefa_info = (
                     nrregistros,
                     tarefa_id,
@@ -358,12 +374,32 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
                     data_conclusao,
                     Observacao,
                 )
+                # Inserir o item na TreeView
+                if parent_id:
+                    parent_item = self.tree_items.get(parent_id)
+                    item_id = self.LCronograma.insert(parent_item, 'end', values=tarefa_info, tags=('evenrow' if nrregistros % 2 == 0 else 'oddrow',))
+                else:
+                    item_id = self.LCronograma.insert('', 'end', values=tarefa_info, tags=('evenrow' if nrregistros % 2 == 0 else 'oddrow',))
+
+                # Armazenar o item no dicionário
+                self.tree_items[tarefa_id] = item_id
+
+                # Configurar o semáforo
                 semaforo = []
                 per_conclusao = float(per_conclusao.replace("%", ""))
-                item_id = self.LCronograma.insert(parent="", index="end", image=semaforo, values=tarefa_info, tags=('evenrow' if nrregistros % 2 == 0 else 'oddrow',))
                 semaforo = self.status_on(item_id, data_realizada_prev, data_realizada, data_conclusao_prev, data_conclusao, per_conclusao)
-                self.LCronograma.item(item_id, image=semaforo, tags=('evenrow' if nrregistros % 2 == 0 else 'oddrow',))
+                self.LCronograma.item(item_id, image=semaforo)
+
                 nrregistros += 1
+
+        def expand_all(tree, item=""):
+            tree.item(item, open=True)
+            for child in tree.get_children(item):
+                expand_all(tree, child)
+
+        # Após o loop de inserção das tarefas, chame a função para expandir todos os itens
+        if self.checkbox_aberto_fechado.get() == 'off':
+            expand_all(self.LCronograma)
 
         self.LCronograma.tag_configure('odd', background='#eee')
         self.LCronograma.tag_configure('even', background='#ddd')
@@ -379,8 +415,8 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
                 values = self.LCronograma.item(selected_item, 'values')
                 lin = self.LCronograma.index(selected_item)
                 tarefa_id = values[1]
-                self.incluir_tarefas(projeto_id, projeto_ds,
-                                     lin, tarefa_id, selected_item)
+                
+                self.incluir_tarefas(projeto_id, projeto_ds, lin, tarefa_id, selected_item)
             else:
                 messagebox.showinfo(
                     "Erro", "Selecione a posição para inclusão da Tarefa!")
@@ -416,21 +452,46 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
             if self.entry_projeto.get() != '':
                 projeto_id = self.obter_Projeto_ID(self.entry_projeto.get(), janela)
             else:
-                messagebox.showinfo("Gestor de Negócios",
-                                    "Preencher o Projeto!!")
+                messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto!!")
                 return
 
             selected_item = self.LCronograma.selection()
             if selected_item:
-                item_text = self.LCronograma.item(selected_item, 'text')
+                if self.LCronograma.get_children(selected_item):
+                    messagebox.showwarning("Aviso", "Não é possível excluir uma tarefa que possui subtarefas.")
+                    return
+                
                 values = self.LCronograma.item(selected_item, 'values')
                 lin = self.LCronograma.index(selected_item)
                 tarefa_id = str(values[1]).zfill(2)
-                self.excluir_tarefas(projeto_id, tarefa_id, lin)
+                
+                # Identificar a tarefa mãe
+                parent_item = self.LCronograma.parent(selected_item)
+                parent_values = self.LCronograma.item(parent_item, 'values')
+                parent_lin = self.LCronograma.index(parent_item)
+                parent_tarefa_id = str(parent_values[1]).zfill(2)
+                    
+  
+                # Identificar os filhos
+                children = self.LCronograma.get_children(selected_item)
+                for child in children:
+                    child_values = self.LCronograma.item(child, 'values')
+                    child_lin = self.LCronograma.index(child)
+                    child_tarefa_id = str(child_values[1]).zfill(2)
+                
+                if messagebox.askyesno("Confirmar", "Tem certeza que deseja excluir esta tarefa?"):
+                    try:
+                        self.excluir_tarefas(projeto_id, tarefa_id)
+                        self.LCronograma.delete(selected_item)
+                        self.atualizar_dependencias_exclusao(lin)
+                        self.atualiza_cronograma_interacao(10)
+                        self.ajustar_list()
+
+                        messagebox.showinfo("Sucesso", "Tarefa excluída com sucesso!")
+                    except Exception as e:
+                        messagebox.showerror("Erro", f"Não foi possível excluir a tarefa: {str(e)}")
             else:
-                messagebox.showinfo(
-                    "Erro", "Selecione a posição para Exclusão da Tarefa!")
-                return
+                messagebox.showinfo("Erro", "Selecione a posição para Exclusão da Tarefa!")
 
         def postPopUpMenu(event):
             row_id = self.LCronograma.identify_row(event.y)
@@ -816,22 +877,24 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
         try:
             total_items = len(self.LCronograma.get_children())
             
-            for i in range(total_items):
-                item_id = self.LCronograma.get_children()[i]
+            def process_item(item_id, level=0):
                 task_data = self.LCronograma.item(item_id)
                 tarefa_id = str(task_data['values'][1]).zfill(2)
                 nrcarat = len(tarefa_id.upper())
 
-                if i < total_items - 1:  # Se não for o último item
-                    next_item_id = self.LCronograma.get_children()[i + 1]
+                children = self.LCronograma.get_children(item_id)
+                is_last = (len(children) == 0)
+
+                if not is_last:
+                    next_item_id = children[0]
                     next_task_data = self.LCronograma.item(next_item_id)
                     next_tarefa_id = str(next_task_data['values'][1])
                     nrcarat_seguinte = len(next_tarefa_id.upper())
-                else:  # Se for o último item
-                    nrcarat_seguinte = 0  # Ou qualquer valor que garanta a formatação desejada
+                else:
+                    nrcarat_seguinte = 0
 
                 # Aplica formatação baseada nos critérios
-                if nrcarat_seguinte > nrcarat or (i == total_items - 1 and nrcarat <= 2):
+                if nrcarat_seguinte > nrcarat or (is_last and nrcarat <= 2):
                     self.LCronograma.item(item_id, tags=('bold_blue',))
                 elif nrcarat_seguinte == nrcarat and nrcarat > 2:
                     self.LCronograma.item(item_id, tags=('normal_black',))
@@ -840,21 +903,30 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
                 else:
                     self.LCronograma.item(item_id, tags=('normal_black',))
 
-            per_conclusao = float(task_data['values'][7].replace("%", ""))
-            data_inicial_prevista = self.parse_date(task_data['values'][8])
-            data_inicial_realizada = self.parse_date(task_data['values'][9])
-            data_conclusao_prevista = self.parse_date(task_data['values'][10])
-            data_conclusao_realizada = self.parse_date(task_data['values'][11])
-            
-            semaforo = self.status_on(
-                                    item_id, 
-                                    data_inicial_prevista, 
-                                    data_inicial_realizada,
-                                    data_conclusao_prevista, 
-                                    data_conclusao_realizada, 
-                                    per_conclusao)
-            
-            self.LCronograma.item(item_id, image=semaforo)
+                per_conclusao = float(task_data['values'][7].replace("%", ""))
+                data_inicial_prevista = self.parse_date(task_data['values'][8])
+                data_inicial_realizada = self.parse_date(task_data['values'][9])
+                data_conclusao_prevista = self.parse_date(task_data['values'][10])
+                data_conclusao_realizada = self.parse_date(task_data['values'][11])
+                
+                semaforo = self.status_on(
+                    item_id, 
+                    data_inicial_prevista, 
+                    data_inicial_realizada,
+                    data_conclusao_prevista, 
+                    data_conclusao_realizada, 
+                    per_conclusao
+                )
+                
+                self.LCronograma.item(item_id, image=semaforo)
+
+                # Processa recursivamente as tarefas filhas
+                for child in children:
+                    process_item(child, level + 1)
+
+            # Processa todos os itens de nível superior
+            for item_id in self.LCronograma.get_children():
+                process_item(item_id)
 
             # Configura as tags para o Treeview
             self.LCronograma.tag_configure('bold_blue', font=('Helvetica', 10, 'bold'), foreground='blue')
@@ -864,7 +936,7 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
             messagebox.showerror("Erro!", f"Erro: {str(e)}")
 
     def status_on(self, selected_iid, dta_inicio_prev, dta_inicio_real, dta_conclusao_prev, dta_conclusao_real, per_conclusao):
-        # try:
+        try:
             # Carrega os farois
             icon_image_azul = self.base64_to_farois('semafaro_azul')
             icon_image_verde = self.base64_to_farois('semafaro_verde')
@@ -948,65 +1020,170 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
 
             return icon_image
 
-        # except Exception as e:
-        #     messagebox.showerror("Error", f"An error occurred: {str(e)}")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
-    def incluir_tarefas(self, projeto_id, projeto_ds, linha, tarefa_id, selected_index):
+    # def incluir_tarefas(self, projeto_id, projeto_ds, linha, tarefa_id, selected_index):
+    #     # Parametros Iniciais
+    #     nrcampo = int(linha) + 2
+    #     tarefa_id = tarefa_id.replace(".", "")
+    #     Linha_Incluir = int(linha) + 1
+
+    #     tarefa_id_nova = ''
+    #     tarefa_ds_nova = "Preencher Descricão Nova Tarefa...................!!!!"
+    #     responsavel_nome = ''
+    #     tarefa_dependencia = ''
+    #     tempo_previsto = 1
+    #     percentual_execucao = '0.00%'
+    #     data_inicial_prevista = datetime.now().date()
+    #     data_conclusao_prevista = data_inicial_prevista
+    #     dias_diferenca_inicio = ''
+
+    #     prazo_fatal_dias = 0
+    #     dias_diferenca_conclusao = 0
+    #     status_projeto = ''
+    #     observacao = ''
+
+    #     nivel_inclusao = len(tarefa_id)
+    #     nivel_inclusao_mae = len(tarefa_id)
+    #     nivel_secundario = ''
+    #     nivel_ultimo = ''
+    #     lin = int(linha) + 1
+    #     # Checar e determinar o código novo
+    #     for i in range(lin, len(self.LCronograma.get_children())):
+    #         item = self.LCronograma.get_children()[i]
+    #         values = self.LCronograma.item(item, 'values')
+    #         # Supondo que o segundo subitem é o que você quer
+    #         nivel_secundario = len(values[1].replace(".", ""))
+    #         if nivel_inclusao == nivel_secundario:
+    #             nivel_ultimo = values[1]
+        
+    #     # Verifica se Nivel_Ultimo está vazio
+    #     if nivel_ultimo == '':
+    #         # Incrementa os últimos dois dígitos
+    #         tarefa_mae_id = tarefa_id
+    #         nivel_ultimo = tarefa_id[:nivel_inclusao - 2] + str(int(tarefa_id[-2:]) + 1).zfill(2)
+    #         Linha_Incluir = 'end'
+    #     else:
+    #         tarefa_mae_id = tarefa_id[:-3] if len(tarefa_id) > 3 else ''
+    #         nivel_inclusao = len(tarefa_id) + 2
+    #         nivel_secundario = ""
+    #         nivel_ultimo = ""
+    #         linha += 1  # Ajusta linha para o próximo item
+    #         # Segundo Loop
+    #         for i in range(lin, len(self.LCronograma.get_children())):
+    #             item = self.LCronograma.get_children()[i]
+    #             values = self.LCronograma.item(item, 'values')
+    #             nivel_secundario = len(values[1].replace(".", ""))
+    #             if nivel_inclusao == nivel_secundario and values[1].replace(".", "")[:nivel_inclusao_mae] == tarefa_id.replace(".", ""):
+    #                 nrcampo = self.LCronograma.index(item) + 2
+    #                 Linha_Incluir = self.LCronograma.index(item) + 1
+    #                 nivel_ultimo = values[1]
+
+    #         # Define Nivel_Ultimo baseado no resultado do segundo loop
+    #         def calcular_nivel_ultimo(tarefa_id, nivel_inclusao, nivel_ultimo):
+    #             # Extrai a parte inicial do tarefa_id
+    #             parte_inicial = tarefa_id[:nivel_inclusao - 2]
+    #             # Extrai os últimos dois caracteres de nivel_ultimo e incrementa
+    #             numero_atual = int(nivel_ultimo[-2:]) + 1
+    #             # numero_atual = '00' + numero_atual
+    #             numero_formatado = str(numero_atual).zfill(2)  # Garante que tenha 2 dígitos
+    #             # Concatena e retorna o novo ID
+    #             # print(parte_inicial, numero_formatado)
+    #             novo_nivel_ultimo = parte_inicial + numero_formatado
+    #             return novo_nivel_ultimo
+
+    #         if nivel_ultimo == '':
+    #             nivel_ultimo = tarefa_id + "01"
+    #         else:
+    #             novo_nivel_ultimo = calcular_nivel_ultimo(
+    #                 tarefa_id, nivel_inclusao, nivel_ultimo)
+    #             # tarefa_id[:nivel_inclusao - 2] + str(int(nivel_ultimo[-2:]) + 1).zfill(2)
+    #             nivel_ultimo = novo_nivel_ultimo
+
+    #     # Construir o Código
+    #     tarefa_id_nova = ".".join([nivel_ultimo[i:i+2]
+    #                               for i in range(0, len(nivel_ultimo), 2)])
+
+    #     # Adicionar na Lista
+    #     nrcarat = len(tarefa_id_nova)
+    #     tarefa_info = (
+    #         nrcampo,
+    #         str(tarefa_id_nova).zfill(2),
+    #         ' ' * round(nrcarat) + tarefa_ds_nova,
+    #         '',  # Responsável
+    #         '',  # Dependência
+    #         0,   # Tempo de espera
+    #         1,   # Tempo previsto
+    #         percentual_execucao,
+    #         data_inicial_prevista.strftime("%d/%m/%Y"),
+    #         '',  # Data Realizada
+    #         data_conclusao_prevista.strftime("%d/%m/%Y"),
+    #         '',  # Data de Conclusão Realizada
+    #         '',  # Observação
+    #     )
+    #     # Adicionar na Tela
+    #     # identificador_unico = f"item_{len(self.LCronograma.get_children()) + 1}"
+    #     identificador_unico = f"item_{uuid.uuid4().hex}"
+    #     per_conclusao = 0
+    #     semaforo = self.status_on(identificador_unico, data_inicial_prevista, '', data_inicial_prevista, '', per_conclusao)
+
+    #     self.LCronograma.insert(
+    #         '',
+    #         Linha_Incluir,
+    #         iid=identificador_unico,
+    #         image=semaforo,
+    #         values=tarefa_info
+    #     )
+    #     # Gravar no Banco de Dados
+    #     # self.gravar_cronograma_incluir(projeto_id, projeto_ds, tarefa_id_nova,
+    #     #                                tarefa_ds_nova, tarefa_mae_id, data_inicial_prevista, data_conclusao_prevista)
+    #     # Atualizar os indices
+    #     self.atualizar_dependencias(tarefa_id_nova)
+    #     self.atualiza_cronograma_interacao(10)
+    #     self.ajustar_list()
+    
+    def incluir_tarefas(self, projeto_id, projeto_ds, linha, tarefa_id, selected_item):
         # Parametros Iniciais
         nrcampo = int(linha) + 2
         tarefa_id = tarefa_id.replace(".", "")
-        Linha_Incluir = int(linha) + 1
-
-        tarefa_id_nova = ''
         tarefa_ds_nova = "Preencher Descricão Nova Tarefa...................!!!!"
-        responsavel_nome = ''
-        tarefa_dependencia = ''
-        tempo_previsto = 1
+        
         percentual_execucao = '0.00%'
         data_inicial_prevista = datetime.now().date()
         data_conclusao_prevista = data_inicial_prevista
-        dias_diferenca_inicio = ''
-
-        prazo_fatal_dias = 0
-        dias_diferenca_conclusao = 0
-        status_projeto = ''
-        observacao = ''
-
+        
         nivel_inclusao = len(tarefa_id)
         nivel_inclusao_mae = len(tarefa_id)
-        nivel_secundario = ''
         nivel_ultimo = ''
         lin = int(linha) + 1
-
-        # Checar e determinar o código novo
-        for i in range(lin, len(self.LCronograma.get_children())):
-            item = self.LCronograma.get_children()[i]
-            values = self.LCronograma.item(item, 'values')
-            # Supondo que o segundo subitem é o que você quer
-            nivel_secundario = len(values[1].replace(".", ""))
-
-            if nivel_inclusao == nivel_secundario:
-                nivel_ultimo = values[1]
-
-        # Verifica se Nivel_Ultimo está vazio
+        
+        nivel_ultimo = self.determinar_novo_codigo(tarefa_id, selected_item)
+      
+        # Verificar se é uma tarefa filha ou uma nova tarefa principal
         if nivel_ultimo == '':
             # Incrementa os últimos dois dígitos
             nivel_ultimo = tarefa_id[:nivel_inclusao - 2] + str(int(tarefa_id[-2:]) + 1).zfill(2)
             Linha_Incluir = 'end'
-        else:
+
+        else:  # É uma nova tarefa principal
             nivel_inclusao = len(tarefa_id) + 2
             nivel_secundario = ""
             nivel_ultimo = ""
             linha += 1  # Ajusta linha para o próximo item
+
+            selected_index = self.LCronograma.index(selected_item)
+
             # Segundo Loop
-            for i in range(lin, len(self.LCronograma.get_children())):
-                item = self.LCronograma.get_children()[i]
-                values = self.LCronograma.item(item, 'values')
-                nivel_secundario = len(values[1].replace(".", ""))
-                if nivel_inclusao == nivel_secundario and values[1].replace(".", "")[:nivel_inclusao_mae] == tarefa_id.replace(".", ""):
-                    nrcampo = self.LCronograma.index(item) + 2
-                    Linha_Incluir = self.LCronograma.index(item) + 1
-                    nivel_ultimo = values[1]
+            # print(selected_index, len(self.LCronograma.get_children()))
+            # for i in range(selected_index, len(self.LCronograma.get_children())):
+            #     item = self.LCronograma.get_children()[i]
+            #     values = self.LCronograma.item(item, 'values')
+            #     nivel_secundario = len(values[1].replace(".", ""))
+            #     if nivel_inclusao == nivel_secundario and values[1].replace(".", "")[:nivel_inclusao_mae] == tarefa_id.replace(".", ""):
+            #         nrcampo = self.LCronograma.index(item) + 2
+            #         Linha_Incluir = self.LCronograma.index(item) + 1
+            #         nivel_ultimo = values[1]
 
             # Define Nivel_Ultimo baseado no resultado do segundo loop
             def calcular_nivel_ultimo(tarefa_id, nivel_inclusao, nivel_ultimo):
@@ -1027,12 +1204,163 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
                 novo_nivel_ultimo = calcular_nivel_ultimo(tarefa_id, nivel_inclusao, nivel_ultimo)
                 nivel_ultimo = novo_nivel_ultimo
 
+
+
+
+
+
+            # # Incrementar o número da tarefa principal
+            # if nivel_ultimo:
+            #     nivel_ultimo = nivel_ultimo[:nivel_inclusao - 2] + str(int(nivel_ultimo[-2:]) + 1).zfill(2)
+            # else:
+            #     nivel_ultimo = ".01"
+            
+            Linha_Incluir = 'end'
+
         # Construir o Código
         tarefa_id_nova = ".".join([nivel_ultimo[i:i+2] for i in range(0, len(nivel_ultimo), 2)])
-
+        tarefa_mae_id = tarefa_id_nova[:-3] if len(tarefa_id_nova) > 3 else ''
+        
         # Adicionar na Lista
         nrcarat = len(tarefa_id_nova)
-        tarefa_info = (
+        tarefa_info = self.criar_tarefa_info(nrcampo, tarefa_id_nova, tarefa_ds_nova, nrcarat, percentual_execucao, data_inicial_prevista, data_conclusao_prevista)
+
+        # Adicionar na Tela
+        identificador_unico = f"item_{uuid.uuid4().hex}"
+        per_conclusao = 0
+        semaforo = self.status_on(identificador_unico, data_inicial_prevista, '', data_inicial_prevista, '', per_conclusao)
+
+        self.LCronograma.insert(
+            '',
+            Linha_Incluir,
+            iid=identificador_unico,
+            image=semaforo,
+            values=tarefa_info
+        )
+
+        print('Gravando tarefa...')
+        breakpoint()
+        # Gravar no Banco de Dados
+        # self.gravar_cronograma_incluir(projeto_id, projeto_ds, tarefa_id_nova,
+        #                             tarefa_ds_nova, tarefa_mae_id, data_inicial_prevista, data_conclusao_prevista)
+        
+        # self.consulta_cronograma_atividades(self.principal_frame)
+
+        # Atualizar os indices
+        self.atualizar_dependencias(tarefa_id_nova)
+        self.atualiza_cronograma_interacao(10)
+        self.ajustar_list()
+
+    def encontrar_ultima_subtarefa(self, tarefa_mae_id):
+        nivel_ultimo = tarefa_mae_id  # Inicializa com a tarefa mãe
+        tarefa_mae_id_sem_pontos = tarefa_mae_id.replace(".", "")
+        
+        for item in self.LCronograma.get_children():
+            values = self.LCronograma.item(item, 'values')
+            item_id = values[1]
+            item_id_sem_pontos = item_id.replace(".", "")
+            
+            print(f'Analisando: {item_id}, Tarefa mãe: {tarefa_mae_id}')
+            
+            if item_id_sem_pontos.startswith(tarefa_mae_id_sem_pontos) and item_id != tarefa_mae_id:
+                if len(item_id_sem_pontos) == len(tarefa_mae_id_sem_pontos) + 2:
+                    nivel_ultimo = item_id
+                # Não precisamos do 'else' aqui, pois queremos continuar procurando
+        
+        # Se não encontrou nenhuma subtarefa, adiciona "01" à tarefa mãe
+        if nivel_ultimo == tarefa_mae_id:
+            nivel_ultimo += ".01"
+        else:
+            # Incrementa o último número da subtarefa
+            partes = nivel_ultimo.split(".")
+            ultimo_numero = int(partes[-1])
+            partes[-1] = f"{ultimo_numero + 1:02d}"
+            nivel_ultimo = ".".join(partes)
+        
+        print(f"Última subtarefa encontrada: {nivel_ultimo}")
+        return nivel_ultimo
+
+    def encontrar_posicao_insercao(self, linha, tarefa_base_id):
+        ultima_posicao = linha
+        nivel_base = len(tarefa_base_id)
+        
+        print(f"Buscando posição de inserção para tarefa base: {tarefa_base_id}")
+        
+        for i in range(linha + 1, len(self.LCronograma.get_children())):
+            item = self.LCronograma.get_children()[i]
+            values = self.LCronograma.item(item, 'values')
+            tarefa_atual = values[1].replace(".", "")
+            
+            print(f"Analisando tarefa: {tarefa_atual}")
+            
+            if tarefa_atual.startswith(tarefa_base_id):
+                ultima_posicao = i
+                print(f"Subtarefa encontrada, atualizando última posição para: {ultima_posicao}")
+            elif len(tarefa_atual) <= nivel_base:
+                print(f"Tarefa de nível superior ou igual encontrada: {tarefa_atual}")
+                break
+        
+        posicao_final = ultima_posicao + 1
+        print(f"Posição de inserção final: {posicao_final}")
+        return posicao_final
+    
+    def encontrar_ultima_tarefa_principal(self):
+        for i in range(len(self.LCronograma.get_children()) - 1, -1, -1):
+            item = self.LCronograma.get_children()[i]
+            values = self.LCronograma.item(item, 'values')
+            if len(values[1]) == 2:
+                return values[1]
+        return ''
+
+    def determinar_novo_codigo(self, tarefa_id, item_selecionado):
+        nivel_inclusao = len(tarefa_id.replace(".", ""))
+        nivel_ultimo = ''
+        
+        # Encontrar o índice do item selecionado
+        todos_itens = self.LCronograma.get_children()
+        try:
+            indice_inicio = todos_itens.index(item_selecionado)
+        except ValueError:
+            # Se o item selecionado não for encontrado, começamos do início
+            indice_inicio = 0
+        
+        def processar_item(item, nivel_atual):
+            nonlocal nivel_ultimo
+            values = self.LCronograma.item(item, 'values')
+            item_id = values[1].replace(".", "")
+            
+            if len(item_id) == nivel_inclusao:
+                nivel_ultimo = item_id
+            elif len(item_id) > nivel_inclusao:
+                # Processa os filhos
+                for child in self.LCronograma.get_children(item):
+                    processar_item(child, len(item_id))
+            elif len(item_id) < nivel_inclusao:
+                # Encontramos um item de nível superior, paramos a busca
+                return False
+            
+            return True
+
+        # Processa todos os itens a partir do item selecionado
+        for item in todos_itens[indice_inicio:]:
+            if not processar_item(item, nivel_inclusao):
+                break
+
+        # Determinar o novo código
+        if nivel_ultimo == '':
+            # É uma nova tarefa principal
+            novo_codigo = tarefa_id[:nivel_inclusao - 2] + str(int(tarefa_id[-2:]) + 1).zfill(2)
+        else:
+            # É uma subtarefa
+            parte_inicial = tarefa_id[:nivel_inclusao - 2]
+            numero_atual = int(nivel_ultimo[-2:]) + 1
+            novo_codigo = parte_inicial + str(numero_atual).zfill(2)
+
+        return ".".join([novo_codigo[i:i+2] for i in range(0, len(novo_codigo), 2)])
+    
+    def criar_tarefa_info(self, nrcampo, tarefa_id_nova, tarefa_ds_nova, nrcarat, 
+                        percentual_execucao, data_inicial_prevista, data_conclusao_prevista):
+        return (
             nrcampo,
             str(tarefa_id_nova).zfill(2),
             ' ' * round(nrcarat) + tarefa_ds_nova,
@@ -1047,34 +1375,14 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
             '',  # Data de Conclusão Realizada
             '',  # Observação
         )
-        # Adicionar na Tela
-        # identificador_unico = f"item_{len(self.LCronograma.get_children()) + 1}"
-        identificador_unico = f"item_{uuid.uuid4().hex}"
-        per_conclusao = 0
-        semaforo = self.status_on(identificador_unico, data_inicial_prevista, '', data_inicial_prevista, '', per_conclusao)
-
-        self.LCronograma.insert(
-            '',
-            Linha_Incluir,
-            iid=identificador_unico,
-            image=semaforo,
-            values=tarefa_info
-        )
-        # Gravar no Banco de Dados
-        self.gravar_cronograma_incluir(projeto_id, projeto_ds, tarefa_id_nova,
-                                       tarefa_ds_nova, data_inicial_prevista, data_conclusao_prevista)
-        # Atualizar os indices
-        self.atualizar_dependencias(tarefa_id_nova)
-        self.atualiza_cronograma_interacao(10)
-        self.ajustar_list()
-        # messagebox.showinfo("Sucesso", "Nova tarefa incluída com sucesso!")
-
-    def gravar_cronograma_incluir(self, projeto_id, projeto_ds, tarefa_id_nova, tarefa_ds_nova, data_inicial_prevista, data_conclusao_prevista):
-        # try:
+            
+    ##----------------------------------------------------------------------------##
+    def gravar_cronograma_incluir(self, projeto_id, projeto_ds, tarefa_id_nova, tarefa_ds_nova, tarefa_mae_id, data_inicial_prevista, data_conclusao_prevista):
+        try:
             if not projeto_id:
-                messagebox.showinfo("Gestor de Negócios",
-                                    "Preencher o Projeto!!")
+                messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto!!")
                 return
+            
             self.atualiza_cronograma_interacao(10)
             projeto_cr = 0
             responsavel_nome = ""
@@ -1099,6 +1407,7 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
                                                             projeto_cr, 
                                                             tarefa_ID, 
                                                             tarefa_DS, 
+                                                            parent_ID,
                                                             responsavel_nome, 
                                                             tarefa_dependencia,
                                                             tempo_espera, 
@@ -1114,7 +1423,7 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
                                                             status, 
                                                             observacao, 
                                                             anexos)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """
             params = (
                 projeto_id,
@@ -1122,6 +1431,7 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
                 projeto_cr,
                 tarefa_id_nova,
                 tarefa_ds_nova.replace("'", " "),
+                tarefa_mae_id,
                 responsavel_nome,
                 tarefa_dependencia,
                 round(tempo_espera, 0),
@@ -1141,12 +1451,11 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
 
             # Execute SQL command
             myresult = db.executar_consulta(vsSQL, params)
-            # messagebox.showinfo("Sucesso", "Compras gravadas com sucesso!")
-
-        # except Exception as e:
-        #     messagebox.showinfo(f"Error occurred: {str(e)}")
-        # finally:
-        #     pass
+            
+        except Exception as e:
+            messagebox.showinfo(f"Error occurred: {str(e)}")
+        finally:
+            pass
 
     def gravar_cronograma_total(self, janela):
         try:
@@ -1197,6 +1506,11 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
                 projeto_cr = 0
                 tarefa_id = str(values[1]).zfill(2)  # '01' manter como string
                 tarefa_DS = values[2].strip()
+                nivel_atual = len(tarefa_id)
+                if nivel_atual == 2:
+                    tarefa_mae_id = ''
+                else:
+                    tarefa_mae_id = tarefa_id[:-3] if len(tarefa_id) > 3 else ''
                 responsavel_nome = values[3]
                 tarefa_dependencia = values[4]
                 Tempo_Espera = values[5]
@@ -1219,31 +1533,34 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
 
                 sql = """
                         UPDATE programas_atividades SET
-                            projeto_DS = %s,
-                            projeto_cr = %s,
-                            tarefa_DS = %s,
-                            responsavel_nome = %s,
-                            tarefa_dependencia = %s,
-                            tempo_espera = %s,
-                            tempo_previsto = %s,
-                            percentual_execucao = %s,
-                            Data_inicial_prevista = %s,
-                            Data_inicial_Realizada = %s,
-                            dias_diferenca_inicio = %s,
-                            data_conclusao_prevista = %s,
+                            projeto_DS               = %s,
+                            projeto_cr               = %s,
+                            tarefa_DS                = %s,
+                            parent_ID                = %s,
+                            responsavel_nome         = %s,
+                            tarefa_dependencia       = %s,
+                            tempo_espera             = %s,
+                            tempo_previsto           = %s,
+                            percentual_execucao      = %s,
+                            Data_inicial_prevista    = %s,
+                            Data_inicial_Realizada   = %s,
+                            dias_diferenca_inicio    = %s,
+                            data_conclusao_prevista  = %s,
                             data_conclusao_realizada = %s,
-                            prazo_fatal_dias = %s,
-                            dias_diferenca = %s,
-                            status = %s,
-                            observacao = %s,
-                            anexos = %s
-                        WHERE projeto_ID = %s AND tarefa_ID = %s
+                            prazo_fatal_dias         = %s,
+                            dias_diferenca           = %s,
+                            status                   = %s,
+                            observacao               = %s,
+                            anexos                   = %s
+                        WHERE projeto_ID    = %s 
+                              AND tarefa_ID = %s
                     """
 
                 parameters = (
                                 projeto_DS,
                                 projeto_cr,
                                 tarefa_DS.replace("'", " "),
+                                tarefa_mae_id,
                                 responsavel_nome,
                                 tarefa_dependencia,
                                 Tempo_Espera,
@@ -1272,63 +1589,21 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
         finally:
             pass
 
-    def excluir_tarefas(self, projeto_id, tarefa_id, linha):
+    def excluir_tarefas(self, projeto_id, tarefa_id):
         try:
-            linha_base_predessessora = linha
-            item_id = self.LCronograma.get_children()[linha]
-            values = self.LCronograma.item(item_id, 'values')
-            tarefa_id = str(values[1]).zfill(2)
-            current_task_length = len(tarefa_id)
-
-            next_index = linha + 1
-            if next_index < len(self.LCronograma.get_children()):
-                next_item_id = self.LCronograma.get_children()[next_index]  
-                next_values = self.LCronograma.item(next_item_id, 'values')
-                next_task_length = len(next_values[1])
-            else:
-                next_task_length = current_task_length
-
-            if current_task_length < next_task_length:
-                messagebox.showinfo("Info", "Não pode Excluir uma tarefa mãe sem excluir as tarefas filhas!")
-                return
-
-            if not messagebox.askyesno("Confirmar", "Tem Certeza que deseja Excluir?"):
-                return
-            
             db.begin_transaction()
-
             try:
                 delete_sql = f"DELETE FROM programas_atividades WHERE projeto_id={projeto_id} AND tarefa_id='{tarefa_id}'"
                 db._querying(delete_sql)
-
-                self.LCronograma.delete(item_id)
-
-                for idx, task in enumerate(self.LCronograma.get_children()):
-                    task_data = self.LCronograma.item(task)
-                    task_data['task_index'] = idx + 1  # Atualiza índice exibido
-            
-                self.atualizar_dependencias_exclusao(linha_base_predessessora)
-                self.atualiza_cronograma_interacao(10)
-                self.ajustar_list()
-
                 db.commit_transaction()
-                messagebox.showinfo("Sucesso", "Tarefa excluída com sucesso!")
-            
             except Exception as e:
                 db.rollback_transaction()
-                raise e
-
+                messagebox.showerror("Erro", f"Um erro ocorreu ao excluir a tarefa: {str(e)}")
         except Exception as e:
-            messagebox.showerror("Erro", f"Um erro ocorreu ao excluir a tarefa: {str(e)}")
-            # Tenta realizar o rollback se uma transação estiver em andamento
-            try:
-                db.rollback_transaction()
-            except:
-                pass  
+            messagebox.showerror("Erro", f"Um erro ocorreu ao processar a exclusão: {str(e)}")
         finally:
             try:
                 db.closing()
-                # db.close_connection()
             except:
                 pass
 
@@ -1535,6 +1810,7 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
             messagebox.showerror("Gestor de Negócios", f"Erro - ocorrência: {str(e)}", parent=self.principal_frame)
         finally:
             pass
+
 
 Cronograma_Atividades()
 
@@ -1770,6 +2046,7 @@ class TreeviewEdit(ttk.Treeview):
                 item_id = self.get_children()[i]
                 values = self.item(item_id, 'values')
                 tarefa_dependencia = values[4]
+                # if tarefa_dependencia:
                 self.predessessora(item_id)
 
         self.dta_tarefa_mae()
@@ -1979,9 +2256,9 @@ class TreeviewEdit(ttk.Treeview):
 
                     if nr_caracteres_seguintes <= nr_caracteres:
                         if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
-                            current_values[10] = (self.parse_date(data_inicial_realizada) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
+                            current_values[10] = (self.parse_date(data_inicial_realizada) + timedelta(days=tempo_espera) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
                         else:
-                            current_values[10] = (self.parse_date(data_inicial_prevista) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
+                            current_values[10] = (self.parse_date(data_inicial_prevista) + timedelta(days=tempo_espera) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
             else:
                 nr_caracteres = int(len(tarefa_id))
                 if lin + 1 < len(self.get_children()):

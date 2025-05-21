@@ -398,12 +398,12 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
                 Dta_Liquidacao = item['Dta_Liquidacao']
                 # Verifica se Dta_Liquidacao não é None ou vazio
                 if Dta_Liquidacao not in (None, '', '0000-00-00'):
-                    str(Dta_Liquidacao.strftime("%d/%m/%Y")),
+                    str(Dta_Liquidacao.strftime("%d/%m/%Y"))
                 else:
                     Dta_Liquidacao = ''
                 
                 formatted_item = (
-                    Dta_Liquidacao,
+                    str(Dta_Liquidacao.strftime("%d/%m/%Y")) if Dta_Liquidacao not in (None, '', '0000-00-00') else '',
                     str(item['ID_Pessoa']),
                     str(item['DS_Pessoa']) if item['DS_Pessoa'] else "Não Cadastrado!",
                     f"*{str(item['Num_Documento'])}",
@@ -519,7 +519,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
                     Dta_Liquidacao = ''
                     
                 formatted_item = (
-                    Dta_Liquidacao,
+                    str(Dta_Liquidacao.strftime("%d/%m/%Y")) if Dta_Liquidacao not in (None, '', '0000-00-00') else '',
                     str(item['ID_Pessoa']),
                     str(item['DS_Pessoa']) if item['DS_Pessoa'] else "Não Cadastrado!",
                     f"*{str(item['Num_Documento'])}",
@@ -575,7 +575,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
                     Dta_Liquidacao = ''
 
                 formatted_item = (
-                    Dta_Liquidacao,
+                    str(Dta_Liquidacao.strftime("%d/%m/%Y")) if Dta_Liquidacao not in (None, '', '0000-00-00') else '',
                     str(item['Fat_Pessoa']),
                     str(item['Pessoas_Descricao']),
                     f"*{str(item['Fat_NumDoc'])}",

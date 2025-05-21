@@ -2423,7 +2423,7 @@ class Consultas():
                 )
             self.LItens_cadastro_pessoas.insert('', 'end', values=formatted_item)
                   
-    def Consulta_Negocios(self, ID_Empresa, UF, Cidade, Status):
+    def Consulta_Negocios(self, ID_Empresa, UF, Cidade, Status, Tpo_Rel):
         ID_Empresa = str(ID_Empresa.strip()) if ID_Empresa != '' else None
         UF = UF.strip() if UF != '' else None
         Cidade = Cidade.strip() if Cidade != '' else None
@@ -2431,7 +2431,10 @@ class Consultas():
 
         conditions = []  # Lista para armazenar as condições
         # Condições iniciais
-        conditions.append("dd.Nome_da_Area <> ''")
+        if Tpo_Rel == 1:
+            conditions.append("dd.Nome_da_Area <> '' AND Status_Prospeccao <> 'Lixeira'")
+        else:
+            conditions.append("dd.Nome_da_Area <> '' AND Status_Prospeccao = 'Lixeira'")
 
         params = []
         if ID_Empresa is not None:
@@ -5636,8 +5639,13 @@ class Functions():
     
     # Drop Status
     def get_status(self, ID_Empresa):
-        strSqL = f"""SELECT Status FROM Status_Prospeccao
-        WHERE Empresa_ID='{str(ID_Empresa)}' ORDER BY Status_Order, Status"""
+        strSqL = f"""   SELECT 
+                            Status 
+                        FROM Status_Prospeccao
+                        WHERE 
+                            Empresa_ID='{str(ID_Empresa)}' 
+                        ORDER BY Status_Order
+                """
 
         myresult = db._querying(strSqL)
         status = [(status['Status']) for status in myresult]

@@ -24,6 +24,8 @@ from UsrAnexos                        import Pesquisa_Anexos_Simulador
 from UsrTelaPrincipal                 import Tela_Principal
 from UsrCadastro_Curvas_Negocio       import Cadastrar_Curvas_Negocio
 from UsrBorderoBancario               import BorderoBancario
+from UsrAlterar_Senha                 import AlterarSenha
+from UsrUsuarios_Sistema              import UsuariosSistema
 
 
 
@@ -52,7 +54,9 @@ class PrimaryWindow(
                     Pesquisa_Anexos_Simulador,
                     Tela_Principal,
                     Cadastrar_Curvas_Negocio,
-                    BorderoBancario
+                    BorderoBancario,
+                    AlterarSenha,
+                    UsuariosSistema,
                     ):
 
     def __init__(self):
@@ -60,10 +64,6 @@ class PrimaryWindow(
         customtkinter.set_default_color_theme("dark-blue")
 
         self.login_screen()
-
-        # self.janela_simulador_rel = None  # Initialize the attribute
-        # self.janela_cadastro_pessoas = None
-        # self.janela_cadastro_produtos = None
         
     def menu_conectar(self, modulo):
         Permitido = self.usuario_autentic(os.environ.get('Usr_login'), modulo)
@@ -105,6 +105,10 @@ class PrimaryWindow(
                 self.cadastrar_curvas_negocio()
             elif modulo == 'Bordero_Bancario':
                 self.consultar_bordero(self.principal_frame)
+            elif modulo == 'Alterar_Senha':
+                self.alterar_senha(self.principal_frame, self.username)
+            elif modulo == "Usuarios_Sistema":
+                self.usuarios_sistema(self.principal_frame)
 
     def login_screen(self):
         # Configura a janela principal
@@ -151,11 +155,13 @@ class PrimaryWindow(
             self.insert_user.insert(0, username)
             self.insert_senha.insert(0, password)
             self.cbk_lembrar_senha.select()
+        
+        self.username = self.insert_user.get()
 
         # Botão de login
         self.btn_login = customtkinter.CTkButton(self.login_frame, text='Login',
                                                  command=lambda: self.loginauth(
-                                                     username=self.insert_user.get(),
+                                                     username=self.username,
                                                      password=self.insert_senha.get(),
                                                      remember=self.lembrar_senha.get()))
         self.btn_login.pack(pady=10)
@@ -271,7 +277,7 @@ class PrimaryWindow(
         filemenu.add_command(label="Contas Bancárias")
         filemenu.add_command(label="Produtos e Serviços")
         filemenu.add_command(label="Unidades Medidas")
-        filemenu.add_command(label="Trocar Senha")  # , command=self.cadtec)
+        filemenu.add_command(label="Trocar Senha", command=lambda: self.menu_conectar('Alterar_Senha'))
 
         filemenu2.add_command(label="Informe Gestão")
         filemenu2.add_command(label="Previsão Financeira")
@@ -291,8 +297,8 @@ class PrimaryWindow(
         filemenu4.add_command(label="Extrato Bancário", command=lambda: self.menu_conectar('Extrato_Bancario'))
 
         filemenu5.add_command(label="Cronograma", command=lambda: self.menu_conectar('Cronograma_Barra_Projetos'))
-        filemenu5.add_command(label="Reuniões")  # , command=modo_escuro)
-        filemenu5.add_command(label="Cad. Projetos")  # , command=modo_escuro)
+        filemenu5.add_command(label="Reuniões")
+        filemenu5.add_command(label="Cad. Projetos") 
         filemenu5.add_command(label="Envios de SMS")
         filemenu5.add_command(label="Envios de Whatsapp")
         # Criação de submenu Planejamento
@@ -347,7 +353,7 @@ class PrimaryWindow(
         filemenu6.add_command(label="Atendimento Cliente")
         filemenu6.add_command(label="Resumo clientes")
 
-        filemenu7.add_command(label="Usuários Sistema")
+        filemenu7.add_command(label="Usuários Sistema", command=lambda: self.menu_conectar('Usuarios_Sistema'))
         filemenu7.add_command(label="Permissões")  # , command=modo_escuro)
         filemenu7.add_command(label="Modulos")  # , command=modo_escuro)
         filemenu7.add_command(label="Clientes do Sistema")

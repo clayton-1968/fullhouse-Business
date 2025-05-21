@@ -2,6 +2,7 @@ import subprocess
 from funcoes import *
 import time
 from db.db_conector import MySqlDatabase
+import logging
 
 
 from datetime import *
