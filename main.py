@@ -24,6 +24,7 @@ from UsrTelaPrincipal                 import Tela_Principal
 from UsrCadastro_Curvas_Negocio       import Cadastrar_Curvas_Negocio
 from UsrBorderoBancario               import BorderoBancario
 from UsrAlterar_Senha                 import AlterarSenha
+from UsrUsuarios_Sistema              import UsuariosSistema
 
 
 class PrimaryWindow(
@@ -50,7 +51,8 @@ class PrimaryWindow(
                     Tela_Principal,
                     Cadastrar_Curvas_Negocio,
                     BorderoBancario,
-                    AlterarSenha
+                    AlterarSenha,
+                    UsuariosSistema,
                     ):
 
     def __init__(self):
@@ -105,6 +107,8 @@ class PrimaryWindow(
                 self.consultar_bordero(self.principal_frame)
             elif modulo == 'Alterar_Senha':
                 self.alterar_senha(self.principal_frame, self.username)
+            elif modulo == "Usuarios_Sistema":
+                self.usuarios_sistema(self.principal_frame)
 
 
     def login_screen(self):
@@ -282,7 +286,7 @@ class PrimaryWindow(
         menubar.add_cascade(label="Ajuda", menu=filemenu8)
         menubar.add_cascade(label="Sair", command=quit)
 
-        filemenu.add_command(label="Pessoas")  # , command=self.cadaut)
+        filemenu.add_command(label="Pessoas")
         filemenu.add_command(label="Unidades de Negócio")
         filemenu.add_command(label="Centro Resultados")
         filemenu.add_command(label="Naturezas Financeira")
@@ -367,7 +371,7 @@ class PrimaryWindow(
         filemenu6.add_command(label="Atendimento Cliente")
         filemenu6.add_command(label="Resumo clientes")
 
-        filemenu7.add_command(label="Usuários Sistema")
+        filemenu7.add_command(label="Usuários Sistema", command=lambda: self.menu_conectar('Usuarios_Sistema'))
         filemenu7.add_command(label="Permissões")  # , command=modo_escuro)
         filemenu7.add_command(label="Modulos")  # , command=modo_escuro)
         filemenu7.add_command(label="Clientes do Sistema")
