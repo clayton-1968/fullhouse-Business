@@ -25,7 +25,8 @@ from UsrCadastro_Curvas_Negocio       import Cadastrar_Curvas_Negocio
 from UsrBorderoBancario               import BorderoBancario
 from UsrAlterar_Senha                 import AlterarSenha
 from UsrUsuarios_Sistema              import UsuariosSistema
-
+from UsrPermissoes_Sistema            import PermissoesSistema
+from UsrContas_Pagar                  import ContasPagar
 
 class PrimaryWindow(
                     Login,
@@ -53,6 +54,8 @@ class PrimaryWindow(
                     BorderoBancario,
                     AlterarSenha,
                     UsuariosSistema,
+                    PermissoesSistema,
+                    ContasPagar,
                     ):
 
     def __init__(self):
@@ -107,8 +110,12 @@ class PrimaryWindow(
                 self.consultar_bordero(self.principal_frame)
             elif modulo == 'Alterar_Senha':
                 self.alterar_senha(self.principal_frame, self.username)
-            elif modulo == "Usuarios_Sistema":
+            elif modulo == 'Usuarios_Sistema':
                 self.usuarios_sistema(self.principal_frame)
+            elif modulo == 'Permissoes_Sistema':
+                self.permissoes_sistema(self.principal_frame)
+            elif modulo == 'Contas_Pagar':
+                self.contas_pagar(self.principal_frame)
 
 
     def login_screen(self):
@@ -313,6 +320,7 @@ class PrimaryWindow(
         filemenu4.add_command(label="Baixas Financeiras", command=lambda: self.menu_conectar('Baixas_Financeiras'))
         filemenu4.add_command(label="Relatório Cli/Fornec.", command=lambda: self.menu_conectar('Extrato_Financeiro'))
         filemenu4.add_command(label="Extrato Bancário", command=lambda: self.menu_conectar('Extrato_Bancario'))
+        filemenu4.add_command(label="Contas a Pagar", command=lambda: self.menu_conectar('Contas_Pagar'))
 
         filemenu5.add_command(label="Cronograma", command=lambda: self.menu_conectar('Cronograma_Barra_Projetos'))
         filemenu5.add_command(label="Reuniões")  # , command=modo_escuro)
@@ -372,7 +380,7 @@ class PrimaryWindow(
         filemenu6.add_command(label="Resumo clientes")
 
         filemenu7.add_command(label="Usuários Sistema", command=lambda: self.menu_conectar('Usuarios_Sistema'))
-        filemenu7.add_command(label="Permissões")  # , command=modo_escuro)
+        filemenu7.add_command(label="Permissões", command=lambda: self.menu_conectar('Permissoes_Sistema'))
         filemenu7.add_command(label="Modulos")  # , command=modo_escuro)
         filemenu7.add_command(label="Clientes do Sistema")
         filemenu7.add_command(label="Sistema Amortização")
