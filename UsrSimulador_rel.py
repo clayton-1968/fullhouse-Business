@@ -1758,6 +1758,7 @@ class Simulador_Estudos_Rel(Widgets):
         ToolTip(self.btn_consultar_maps, "Consultar Endereço Cadastrado")
         
         self.limpar_simulador_negocios()
+    
     def simulador_anexo(self, empresa_id, uf, cidade, tipo_estudo, nome_estudo, janela):
         
         if not empresa_id:

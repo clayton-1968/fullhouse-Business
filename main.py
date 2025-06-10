@@ -19,6 +19,7 @@ from UsrAprovacaoLctos                import AprovacaoLctos
 from UsrExtratoBancario               import ExtratoBancario
 from UsrBaixasFinanceiras             import BaixasFinanceiras
 from UsrCronograma                    import Cronograma_Atividades
+from UsrCronograma_Hierarquico        import Cronograma_Atividades_Hierarquico
 from UsrAnexos                        import Pesquisa_Anexos
 from UsrAnexos                        import Pesquisa_Anexos_Simulador
 from UsrTelaPrincipal                 import Tela_Principal
@@ -26,6 +27,9 @@ from UsrCadastro_Curvas_Negocio       import Cadastrar_Curvas_Negocio
 from UsrBorderoBancario               import BorderoBancario
 from UsrAlterar_Senha                 import AlterarSenha
 from UsrUsuarios_Sistema              import UsuariosSistema
+from UsrPermissoes_Sistema            import PermissoesSistema
+from UsrContas_Pagar                  import ContasPagar
+from UsrModulos_Sistema               import ModuloSistema
 
 
 
@@ -50,6 +54,7 @@ class PrimaryWindow(
                     ExtratoBancario,
                     BaixasFinanceiras,
                     Cronograma_Atividades,
+                    Cronograma_Atividades_Hierarquico,
                     Pesquisa_Anexos,
                     Pesquisa_Anexos_Simulador,
                     Tela_Principal,
@@ -57,6 +62,9 @@ class PrimaryWindow(
                     BorderoBancario,
                     AlterarSenha,
                     UsuariosSistema,
+                    PermissoesSistema,
+                    ContasPagar,
+                    ModuloSistema,
                     ):
 
     def __init__(self):
@@ -101,6 +109,8 @@ class PrimaryWindow(
                 self.baixas_financeiras(self.principal_frame)
             elif modulo == 'Cronograma_Barra_Projetos':
                 self.cronograma_atividades()
+            elif modulo == 'Cronograma_Barra_Projetos_Hierarquico':
+                self.cronograma_atividades_hierarquico()
             elif modulo == 'Cadastro_Curvas':
                 self.cadastrar_curvas_negocio()
             elif modulo == 'Bordero_Bancario':
@@ -109,6 +119,13 @@ class PrimaryWindow(
                 self.alterar_senha(self.principal_frame, self.username)
             elif modulo == "Usuarios_Sistema":
                 self.usuarios_sistema(self.principal_frame)
+            elif modulo == 'Permissoes_Sistema':
+                self.permissoes_sistema(self.principal_frame)
+            elif modulo == 'Contas_Pagar':
+                self.contas_pagar(self.principal_frame)
+            elif modulo == 'Modulos_Sistema': 
+                self.consultar_modulo(self.principal_frame)
+                
 
     def login_screen(self):
         # Configura a janela principal
@@ -295,8 +312,10 @@ class PrimaryWindow(
         filemenu4.add_command(label="Baixas Financeiras", command=lambda: self.menu_conectar('Baixas_Financeiras'))
         filemenu4.add_command(label="Relatório Cli/Fornec.", command=lambda: self.menu_conectar('Extrato_Financeiro'))
         filemenu4.add_command(label="Extrato Bancário", command=lambda: self.menu_conectar('Extrato_Bancario'))
+        filemenu4.add_command(label="Contas a Pagar", command=lambda: self.menu_conectar('Contas_Pagar'))
 
         filemenu5.add_command(label="Cronograma", command=lambda: self.menu_conectar('Cronograma_Barra_Projetos'))
+        filemenu5.add_command(label="Cronograma Hierarquico", command=lambda: self.menu_conectar('Cronograma_Barra_Projetos_Hierarquico'))
         filemenu5.add_command(label="Reuniões")
         filemenu5.add_command(label="Cad. Projetos") 
         filemenu5.add_command(label="Envios de SMS")
@@ -354,8 +373,8 @@ class PrimaryWindow(
         filemenu6.add_command(label="Resumo clientes")
 
         filemenu7.add_command(label="Usuários Sistema", command=lambda: self.menu_conectar('Usuarios_Sistema'))
-        filemenu7.add_command(label="Permissões")  # , command=modo_escuro)
-        filemenu7.add_command(label="Modulos")  # , command=modo_escuro)
+        filemenu7.add_command(label="Permissões", command=lambda: self.menu_conectar('Permissoes_Sistema'))
+        filemenu7.add_command(label="Modulos", command=lambda: self.menu_conectar('Modulos_Sistema'))  # , command=modo_escuro)
         filemenu7.add_command(label="Clientes do Sistema")
         filemenu7.add_command(label="Sistema Amortização")
         filemenu7.add_command(label="Atualizações - Versão Sistema", command=lambda: self.menu_conectar('Versoes'))
