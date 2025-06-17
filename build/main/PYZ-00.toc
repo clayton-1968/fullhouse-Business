@@ -238,6 +238,10 @@
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\Usr.py',
    'PYMODULE'),
+  ('UsrAlterar_Senha',
+   'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
+   'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrAlterar_Senha.py',
+   'PYMODULE'),
   ('UsrAnexos',
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrAnexos.py',
@@ -266,9 +270,17 @@
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrCalcular_Orcamento.py',
    'PYMODULE'),
+  ('UsrContas_Pagar',
+   'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
+   'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrContas_Pagar.py',
+   'PYMODULE'),
   ('UsrCronograma',
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrCronograma.py',
+   'PYMODULE'),
+  ('UsrCronograma_Hierarquico',
+   'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
+   'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrCronograma_Hierarquico.py',
    'PYMODULE'),
   ('UsrExtratoBancario',
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
@@ -277,6 +289,14 @@
   ('UsrExtratosClientes_Fornecedores',
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrExtratosClientes_Fornecedores.py',
+   'PYMODULE'),
+  ('UsrModulos_Sistema',
+   'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
+   'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrModulos_Sistema.py',
+   'PYMODULE'),
+  ('UsrPermissoes_Sistema',
+   'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
+   'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrPermissoes_Sistema.py',
    'PYMODULE'),
   ('UsrPesquisaMercado',
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
@@ -317,6 +337,10 @@
   ('UsrTelaPrincipal',
    'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
    'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrTelaPrincipal.py',
+   'PYMODULE'),
+  ('UsrUsuarios_Sistema',
+   'C:\\Users\\Clayton\\OneDrive - URBANVIX URBANIZADORA E INCORPORADORA '
+   'LTDA\\Documentos\\GitHub\\fullhouse-Business\\UsrUsuarios_Sistema.py',
    'PYMODULE'),
   ('__future__',
    'C:\\Users\\Clayton\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\__future__.py',

@@ -1,12 +1,11 @@
-from imports import *
-from widgets import Widgets
-from datetime import datetime
-from PIL import ImageTk, Image
+from imports      import *
+from widgets      import Widgets
+from datetime     import datetime
+from PIL          import ImageTk, Image
 from UsrCadastros import Projetos
 from UsrCadastros import Cronograma_Atividades_Copiar
 
 
-################# criando janela ###############
 class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades_Copiar):
     def cronograma_atividades_hierarquico(self):
         self.window_one.title('Cronograma Atividades - Hierarquia')
@@ -14,8 +13,6 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         self.clearFrame_principal()
         self.frame_cabecalho_cronograma_atividades_hierarquico(self.principal_frame)
 
-################# dividindo a janela ###############
-    
     def frame_cabecalho_cronograma_atividades_hierarquico(self, janela):
         # Projeto
         coordenadas_relx = 0.005
@@ -80,12 +77,27 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
          
         # Botão Sair Cronograma
         icon_image = self.base64_to_photoimage('sair')
-        self.btn_sair_projeto = customtkinter.CTkButton(janela, text='Sair', image=icon_image, fg_color='transparent', command=self.tela_principal)
+        self.btn_sair_projeto = customtkinter.CTkButton(janela, text='Sair', image=icon_image, fg_color='transparent', command=lambda: self.sair_cronograma_atividades_hierarquico(janela))
         self.btn_sair_projeto.pack(pady=10)
         self.btn_sair_projeto.place(relx=0.955, rely=0.02, relwidth=0.04, relheight=0.05)
         # Adicionar o tooltip
         ToolTip(self.btn_sair_projeto, "Sair do Cronograma")
-      
+    def sair_cronograma_atividades_hierarquico(self, janela):
+        if messagebox.askyesno("Confirmar", "Salvar o Programa de Atividades antes de Sair?"):
+            try:
+                if self.entry_projeto.get() != '' or len(self.LCronograma.get_children()) == 0:
+                    self.gravar_cronograma_total_hierarquico(janela)
+                    self.tela_principal()
+                else:
+                    messagebox.showinfo("Gestor de Negócios", "Carregar o Programa de Atividades!!", parent=janela)
+                    return
+            except Exception as e:
+                messagebox.showinfo("Gestor de Negócios", "Carregar um Programa de Atividades!!", parent=janela)
+                return
+                # messagebox.showerror("Erro", f"Não foi possível Salvar o Programa de Atividades: {str(e)}")
+        else:
+            self.tela_principal()
+          
     def consulta_cronograma_atividades_hierarquico(self, janela):
         projeto_ds = self.entry_projeto.get()
         if self.entry_projeto.get() != '':
@@ -319,16 +331,16 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
 
         def selected_incluir():
             selected_item = self.LCronograma.selection()
+            selected_index = selected_item
             if selected_item:
                 item_text = self.LCronograma.item(selected_item, 'text')
                 values = self.LCronograma.item(selected_item, 'values')
                 lin = self.LCronograma.index(selected_item)
                 tarefa_id = values[1]
                 
-                self.incluir_tarefas(projeto_id, projeto_ds, lin, tarefa_id, selected_item)
+                self.incluir_tarefas_hierarquico(projeto_id, projeto_ds, lin, tarefa_id, selected_index)
             else:
-                messagebox.showinfo(
-                    "Erro", "Selecione a posição para inclusão da Tarefa!")
+                messagebox.showinfo("Erro", "Selecione a posição para inclusão da Tarefa!")
                 return
                 # lin = 'end'
 
@@ -374,27 +386,13 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                 lin = self.LCronograma.index(selected_item)
                 tarefa_id = str(values[1]).zfill(2)
                 
-                # Identificar a tarefa mãe
-                parent_item = self.LCronograma.parent(selected_item)
-                parent_values = self.LCronograma.item(parent_item, 'values')
-                parent_lin = self.LCronograma.index(parent_item)
-                parent_tarefa_id = str(parent_values[1]).zfill(2)
-                    
-  
-                # Identificar os filhos
-                children = self.LCronograma.get_children(selected_item)
-                for child in children:
-                    child_values = self.LCronograma.item(child, 'values')
-                    child_lin = self.LCronograma.index(child)
-                    child_tarefa_id = str(child_values[1]).zfill(2)
-                
                 if messagebox.askyesno("Confirmar", "Tem certeza que deseja excluir esta tarefa?"):
                     try:
-                        self.excluir_tarefas(projeto_id, tarefa_id)
+                        self.excluir_tarefas_hierarquico(projeto_id, tarefa_id)
                         self.LCronograma.delete(selected_item)
-                        self.atualizar_dependencias_exclusao(lin)
-                        self.atualiza_cronograma_interacao(10)
-                        self.ajustar_list()
+                        self.atualizar_dependencias_exclusao_hierarquico(lin)
+                        self.atualizar_cronograma_interacao_hierarquico(10)
+                        self.ajustar_list_hierarquico()
 
                         messagebox.showinfo("Sucesso", "Tarefa excluída com sucesso!")
                     except Exception as e:
@@ -622,13 +620,14 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                 tarefa_dependencia = ""
 
     def atualizar_cronograma_interacao_hierarquico(self, nr_interacao):
+        all_numbers     = self.get_all_items_numbers()
+        all_dependentes = self.get_all_items_numbers()
+        nr_interacao = int(len(all_numbers))
         for _ in range(nr_interacao):
-            for item_id in self.LCronograma.get_children():
-                values = self.LCronograma.item(item_id, 'values')
-                tarefa_dependencia = values[4]
-                self.predessessora_hierarquico(item_id)
-
-        self.dta_tarefa_mae
+            for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
+                self.predessessora_hierarquico(child, all_dependentes)
+            
+            self.dta_tarefa_mae_hierarquico
         
     def is_valid_date_hierarquico(self, date_str):
         try:
@@ -667,121 +666,87 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
 
         return None  # Retorna None se não conseguiu analisar
 
-    def predessessora_hierarquico(self, item_id):
-        # try:
+    def predessessora_hierarquico(self, item_id, all_dependentes):
+        
+        try:
+            selected_iid = item_id
             current_values = self.LCronograma.item(item_id).get('values')
             tasks_ids = self.LCronograma.get_children()
             task = self.LCronograma.item(item_id)
             lin = task['values'][0]
             strEndereco = task['values'][4] if task['values'][4] else ""
+            
 
             tarefa_id = str(task['values'][1]).zfill(2)
-            current_values[1] = tarefa_id
+            tarefa_ds = str(task['values'][2])
             tarefa_dependencia = str(task['values'][4])
-            tempo_espera = float(task['values'][5])
-            tempo_previsto = float(task['values'][6])
+            tarefa_tempo_espera = float(task['values'][5])
+            tarefa_tempo_previsto = float(task['values'][6])
 
             per_conclusao = float(task['values'][7].replace("%", ""))
             data_inicial_prevista = self.parse_date(task['values'][8])
             data_inicial_realizada = self.parse_date(task['values'][9])
             data_conclusao_prevista = self.parse_date(task['values'][10])
             data_conclusao_realizada = self.parse_date(task['values'][11])
-
+            
             nr_caracteres = len(str(strEndereco))
             dta_precedente = None
             lin_dependente = ''
+            
             if nr_caracteres != 0:
+                
                 for viContador in range(nr_caracteres):
+                    
                     char = str(strEndereco)[viContador]
+                    
                     if char != ';':
                         lin_dependente += char
-                    else:
-                        if int(lin_dependente) >= len(self.LCronograma.get_children()):
-                            return
-
-                        index = int(lin_dependente)
-                        dep_task_id = tasks_ids[index]
-                        dep_sub_items = self.LCronograma.item(dep_task_id, 'values')
+                    
+                    
+                    if char == ';' or viContador == nr_caracteres - 1:
                         
-                        data_inicial_realizada = self.parse_date(dep_sub_items[9])
-                        data_conclusao_prevista = self.parse_date(dep_sub_items[10])
-                        data_conclusao_realizada = self.parse_date(dep_sub_items[11])
+                        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_dependentes:
+                            nr_items = len(all_dependentes)
+                            if int(lin_dependente) > int(nr_items):
+                                messagebox.showinfo("Gestor de Negócios", f"Linha Dependência Inválida - {tarefa_id} - {tarefa_ds}", parent=self.master)
+                                return
+                            
+                            if int(lin_dependente) == int(linha):
+                                data_inicial_realizada = self.parse_date( dta_inicial_realizada)
+                                data_conclusao_prevista = self.parse_date(dta_conclusao_prevista)
+                                data_conclusao_realizada = self.parse_date(dta_conclusao_realizada)
+                                
                         if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
+                            
                             if data_conclusao_realizada and self.is_valid_date(data_conclusao_realizada):
-                                if dta_precedente is not None and dta_precedente < data_conclusao_realizada:
+                                if dta_precedente is None or dta_precedente < data_conclusao_realizada:
                                     dta_precedente = data_conclusao_realizada
-                                else:
-                                    dta_precedente = data_conclusao_prevista
                             else:
                                 dta_precedente = data_conclusao_prevista
                         else:
                             if dta_precedente is None or dta_precedente < data_conclusao_prevista:
                                 dta_precedente = data_conclusao_prevista
+                                
 
                         lin_dependente = ''
-
-                if lin_dependente and int(lin_dependente) <= len(self.LCronograma.get_children()):
-                    index = int(lin_dependente) - 1
-                    dep_task_id = tasks_ids[index]
-                    dep_task = self.LCronograma.item(dep_task_id, 'values')
-                    dep_sub_items = self.LCronograma.item(dep_task_id, 'values')
-
-                    data_inicial_realizada = self.parse_date(dep_sub_items[9])
-                    data_conclusao_prevista = self.parse_date(dep_sub_items[10])
-                    data_conclusao_realizada = self.parse_date(dep_sub_items[11])
-
-                    if data_conclusao_realizada and self.is_valid_date(data_conclusao_realizada):
-                        if dta_precedente is None or dta_precedente < data_conclusao_realizada:
-                            dta_precedente = data_conclusao_realizada
-                    else:
-                        if dta_precedente is None or dta_precedente < data_conclusao_prevista:
-                            dta_precedente = data_conclusao_prevista
-                else:
-                    if dta_precedente is None or dta_precedente < data_conclusao_prevista:
-                        dta_precedente = data_conclusao_prevista
-
-                if dta_precedente or dta_precedente is not None:
-                    current_values[8] = (
-                        dta_precedente + timedelta(days=tempo_espera)).strftime("%d/%m/%Y")
                 
-                nr_caracteres = int(len(tarefa_id))
-                if lin + 1 < len(self.LCronograma.get_children()):
-                    index = int(lin + 1)
-                    next_task_id = tasks_ids[index]
-                    next_task = self.LCronograma.item(next_task_id, 'values')
-                    nr_caracteres_seguintes = int(len(next_task[1]))
-
-                    if nr_caracteres_seguintes <= nr_caracteres:
-                        if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
-                            current_values[10] = (self.parse_date(data_inicial_realizada) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
-                        else:
-                            current_values[10] = (self.parse_date(data_inicial_prevista) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
+                if dta_precedente or dta_precedente is not None:
+                    current_values[8] = (dta_precedente + timedelta(days=tarefa_tempo_espera)).strftime("%d/%m/%Y")
+                    current_values[10] = (self.parse_date(current_values[8]) + timedelta(days=tarefa_tempo_previsto)).strftime("%d/%m/%Y")
             else:
-                nr_caracteres = int(len(tarefa_id))
-                if lin + 1 < len(self.LCronograma.get_children()):
-                    index = int(lin + 1)
-                    next_task_id = tasks_ids[index]
-                    next_task = self.LCronograma.item(next_task_id, 'values')
-                    nr_caracteres_seguintes = int(len(next_task[1]))
-
-                    if nr_caracteres_seguintes <= nr_caracteres:
-                        if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
-                            current_values[10] = (self.parse_date(
-                                data_inicial_realizada) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
-                        else:
-                            current_values[10] = (self.parse_date(
-                                data_inicial_prevista) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
-            # print(current_values)
-            # breakpoint()
-            self.LCronograma.item(item_id, values=current_values)
-
-        # except Exception as e:
-        #     messagebox.showerror("Error", f"Error in calculate_predecessor: {str(e)}")
+                if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
+                    current_values[10] = (self.parse_date(data_inicial_realizada) + timedelta(days=tarefa_tempo_previsto)).strftime("%d/%m/%Y")
+                else:
+                    current_values[10] = (self.parse_date(data_inicial_prevista) + timedelta(days=tarefa_tempo_previsto)).strftime("%d/%m/%Y")
             
+            self.LCronograma.item(selected_iid, values=current_values)
+
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro no calculo das dependências: {str(e)}")
+
     def ajustar_list_hierarquico(self):
         try:
             total_items = len(self.LCronograma.get_children())
-            
             def process_item(item_id, level=0):
                 task_data = self.LCronograma.item(item_id)
                 tarefa_id = str(task_data['values'][1]).zfill(2)
@@ -809,12 +774,12 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                     self.LCronograma.item(item_id, tags=('normal_black',))
 
                 per_conclusao = float(task_data['values'][7].replace("%", ""))
-                data_inicial_prevista = self.parse_date(task_data['values'][8])
-                data_inicial_realizada = self.parse_date(task_data['values'][9])
-                data_conclusao_prevista = self.parse_date(task_data['values'][10])
-                data_conclusao_realizada = self.parse_date(task_data['values'][11])
+                data_inicial_prevista = self.parse_date_hierarquico(task_data['values'][8])
+                data_inicial_realizada = self.parse_date_hierarquico(task_data['values'][9])
+                data_conclusao_prevista = self.parse_date_hierarquico(task_data['values'][10])
+                data_conclusao_realizada = self.parse_date_hierarquico(task_data['values'][11])
                 
-                semaforo = self.status_on(
+                semaforo = self.status_on_hierarquico(
                     item_id, 
                     data_inicial_prevista, 
                     data_inicial_realizada,
@@ -838,9 +803,10 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             self.LCronograma.tag_configure('normal_black', font=('Helvetica', 10), foreground='black')
 
         except Exception as e:
-            messagebox.showerror("Erro!", f"Erro: {str(e)}")
+            messagebox.showerror("Erro!", f"Erro: {str(e)}") 
 
     def status_on_hierarquico(self, selected_iid, dta_inicio_prev, dta_inicio_real, dta_conclusao_prev, dta_conclusao_real, per_conclusao):
+        
         try:
             # Carrega os farois
             icon_image_azul = self.base64_to_farois('semafaro_azul')
@@ -885,8 +851,8 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                 except ValueError:
                     dta_conclusao_real = None  # ou use uma data padrão, como datetime.now().date()
 
-
             today = datetime.now().date()
+
             if dta_inicio_real == '' or dta_inicio_real is None:
                 if dta_inicio_prev < today:
                     icon_image = icon_image_vermelho
@@ -898,7 +864,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                     self.images[selected_iid] = icon_image
             else:
                 if dta_conclusao_real == '' or dta_conclusao_real is None:
-                    if dta_inicio_real != '' or dta_inicio_real is not None and dta_conclusao_prev < today:
+                    if (dta_inicio_real != '' or dta_inicio_real is not None) and dta_conclusao_prev < today:
                         icon_image = icon_image_vermelho
                         # Armazenar referência
                         self.images[selected_iid] = icon_image
@@ -928,7 +894,261 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
-    ##----------------------------------------------------------------------------##
+    def incluir_tarefas_hierarquico(self, projeto_id, projeto_ds, linha, tarefa_id, selected_item):
+        # Parametros Iniciais
+        nrcampo = int(linha) + 2
+        tarefa_id = tarefa_id.replace(".", "")
+        tarefa_ds_nova = "Preencher Descricão Nova Tarefa...................!!!!"
+        
+        percentual_execucao = '0.00%'
+        data_inicial_prevista = datetime.now().date()
+        data_conclusao_prevista = data_inicial_prevista
+        
+        nivel_inclusao = len(tarefa_id)
+        nivel_inclusao_mae = len(tarefa_id)
+        nivel_ultimo = ''
+        lin = int(linha) + 1
+        
+        nivel_ultimo = self.determinar_novo_codigo_hierarquico(tarefa_id, selected_item)
+      
+        # Verificar se é uma tarefa filha ou uma nova tarefa principal
+        if nivel_ultimo == '':
+            # Incrementa os últimos dois dígitos
+            nivel_ultimo = tarefa_id[:nivel_inclusao - 2] + str(int(tarefa_id[-2:]) + 1).zfill(2)
+            Linha_Incluir = 'end'
+
+        else:  # É uma nova tarefa principal
+            nivel_inclusao = len(tarefa_id) + 2
+            nivel_secundario = ""
+            nivel_ultimo = ""
+            linha += 1  # Ajusta linha para o próximo item
+
+            # Define Nivel_Ultimo baseado no resultado do segundo loop
+            def calcular_nivel_ultimo(tarefa_id, nivel_inclusao, nivel_ultimo):
+                parte_inicial = tarefa_id[:nivel_inclusao - 2]
+                numero_atual = int(nivel_ultimo[-2:]) + 1
+                numero_formatado = str(numero_atual).zfill(2)  # Garante que tenha 2 dígitos
+                novo_nivel_ultimo = parte_inicial + numero_formatado
+                return novo_nivel_ultimo
+
+            if nivel_ultimo == '':
+                nivel_ultimo = tarefa_id + "01"
+            else:
+                novo_nivel_ultimo = calcular_nivel_ultimo(tarefa_id, nivel_inclusao, nivel_ultimo)
+                nivel_ultimo = novo_nivel_ultimo
+
+            todos_itens = self.get_all_items_numbers()
+            selected_item_id = selected_item[0] if isinstance(selected_item, tuple) else selected_item
+            selected_index = next((index for index, item in enumerate(todos_itens) if item[0] == selected_item_id), None)
+            if selected_index is not None:
+                for item_data in todos_itens[selected_index:]:
+                    child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level = item_data
+                    if child == selected_item_id:
+                        Linha_Incluir = int(linha) + 1
+                        break
+            else:
+                Linha_Incluir = 'end'
+        
+        # Construir o Código
+        tarefa_id_nova = ".".join([nivel_ultimo[i:i+2] for i in range(0, len(nivel_ultimo), 2)])
+        tarefa_mae_id = tarefa_id_nova[:-3] if len(tarefa_id_nova) > 3 else ''
+        parent_id = tarefa_mae_id
+        
+        # Adicionar na Lista
+        nrcarat = len(tarefa_id_nova)
+        tarefa_info = self.criar_tarefa_info_hierarquico(nrcampo, tarefa_id_nova, tarefa_ds_nova, nrcarat, percentual_execucao, data_inicial_prevista, data_conclusao_prevista)
+        if parent_id:
+            parent_item = self.tree_items.get(parent_id)
+            item_id = self.LCronograma.insert(parent_item, Linha_Incluir, values=tarefa_info, tags=('evenrow' if Linha_Incluir % 2 == 0 else 'oddrow',))
+        else:
+            item_id = self.LCronograma.insert('', Linha_Incluir, values=tarefa_info, tags=('evenrow' if Linha_Incluir % 2 == 0 else 'oddrow',))
+
+        # Armazenar o item no dicionário
+        self.tree_items[tarefa_id] = item_id
+
+        
+        # Configurar o semáforo
+        identificador_unico = f"item_{uuid.uuid4().hex}"
+        per_conclusao = 0
+        semaforo = self.status_on_hierarquico(identificador_unico, data_inicial_prevista, '', data_inicial_prevista, '', per_conclusao)
+        self.LCronograma.item(item_id, image=semaforo)
+        
+        # Gravar no Banco de Dados
+        self.gravar_cronograma_incluir_hierarquico(projeto_id, projeto_ds, tarefa_id_nova,
+                                    tarefa_ds_nova, tarefa_mae_id, data_inicial_prevista, data_conclusao_prevista)
+        
+        # Atualizar os indices
+        self.atualizar_dependencias_hierarquico(tarefa_id_nova)
+        self.atualizar_cronograma_interacao_hierarquico(10)
+        self.ajustar_list_hierarquico()
+
+    def encontrar_ultima_subtarefa_hierarquico(self, tarefa_mae_id):
+        nivel_ultimo = tarefa_mae_id  # Inicializa com a tarefa mãe
+        tarefa_mae_id_sem_pontos = tarefa_mae_id.replace(".", "")
+        
+        for item in self.LCronograma.get_children():
+            values = self.LCronograma.item(item, 'values')
+            item_id = values[1]
+            item_id_sem_pontos = item_id.replace(".", "")
+            
+            print(f'Analisando: {item_id}, Tarefa mãe: {tarefa_mae_id}')
+            
+            if item_id_sem_pontos.startswith(tarefa_mae_id_sem_pontos) and item_id != tarefa_mae_id:
+                if len(item_id_sem_pontos) == len(tarefa_mae_id_sem_pontos) + 2:
+                    nivel_ultimo = item_id
+                # Não precisamos do 'else' aqui, pois queremos continuar procurando
+        
+        # Se não encontrou nenhuma subtarefa, adiciona "01" à tarefa mãe
+        if nivel_ultimo == tarefa_mae_id:
+            nivel_ultimo += ".01"
+        else:
+            # Incrementa o último número da subtarefa
+            partes = nivel_ultimo.split(".")
+            ultimo_numero = int(partes[-1])
+            partes[-1] = f"{ultimo_numero + 1:02d}"
+            nivel_ultimo = ".".join(partes)
+        
+        print(f"Última subtarefa encontrada: {nivel_ultimo}")
+        return nivel_ultimo
+
+    def encontrar_posicao_insercao_hierarquico(self, linha, tarefa_base_id):
+        ultima_posicao = linha
+        nivel_base = len(tarefa_base_id)
+        
+        print(f"Buscando posição de inserção para tarefa base: {tarefa_base_id}")
+        
+        for i in range(linha + 1, len(self.LCronograma.get_children())):
+            item = self.LCronograma.get_children()[i]
+            values = self.LCronograma.item(item, 'values')
+            tarefa_atual = values[1].replace(".", "")
+            
+            print(f"Analisando tarefa: {tarefa_atual}")
+            
+            if tarefa_atual.startswith(tarefa_base_id):
+                ultima_posicao = i
+                print(f"Subtarefa encontrada, atualizando última posição para: {ultima_posicao}")
+            elif len(tarefa_atual) <= nivel_base:
+                print(f"Tarefa de nível superior ou igual encontrada: {tarefa_atual}")
+                break
+        
+        posicao_final = ultima_posicao + 1
+        print(f"Posição de inserção final: {posicao_final}")
+        return posicao_final
+    
+    def encontrar_ultima_tarefa_principal_hierarquico(self):
+        for i in range(len(self.LCronograma.get_children()) - 1, -1, -1):
+            item = self.LCronograma.get_children()[i]
+            values = self.LCronograma.item(item, 'values')
+            if len(values[1]) == 2:
+                return values[1]
+        return ''
+
+    def determinar_novo_codigo_hierarquico(self, tarefa_id, item_selecionado):
+        nivel_inclusao = len(tarefa_id.replace(".", ""))
+        nivel_ultimo = ''
+        
+        # Encontrar o índice do item selecionado
+        todos_itens = self.LCronograma.get_children()
+        try:
+            indice_inicio = todos_itens.index(item_selecionado)
+        except ValueError:
+            # Se o item selecionado não for encontrado, começamos do início
+            indice_inicio = 0
+        
+        def processar_item(item, nivel_atual):
+            nonlocal nivel_ultimo
+            values = self.LCronograma.item(item, 'values')
+            item_id = values[1].replace(".", "")
+            
+            if len(item_id) == nivel_inclusao:
+                nivel_ultimo = item_id
+            elif len(item_id) > nivel_inclusao:
+                # Processa os filhos
+                for child in self.LCronograma.get_children(item):
+                    processar_item(child, len(item_id))
+            elif len(item_id) < nivel_inclusao:
+                # Encontramos um item de nível superior, paramos a busca
+                return False
+            
+            return True
+
+        # Processa todos os itens a partir do item selecionado
+        for item in todos_itens[indice_inicio:]:
+            if not processar_item(item, nivel_inclusao):
+                break
+
+        # Determinar o novo código
+        if nivel_ultimo == '':
+            # É uma nova tarefa principal
+            novo_codigo = tarefa_id[:nivel_inclusao - 2] + str(int(tarefa_id[-2:]) + 1).zfill(2)
+        else:
+            # É uma subtarefa
+            parte_inicial = tarefa_id[:nivel_inclusao - 2]
+            numero_atual = int(nivel_ultimo[-2:]) + 1
+            novo_codigo = parte_inicial + str(numero_atual).zfill(2)
+
+        return ".".join([novo_codigo[i:i+2] for i in range(0, len(novo_codigo), 2)])
+    
+    def criar_tarefa_info_hierarquico(self, nrcampo, tarefa_id_nova, tarefa_ds_nova, nrcarat, 
+                        percentual_execucao, data_inicial_prevista, data_conclusao_prevista):
+        return (
+            nrcampo,
+            str(tarefa_id_nova).zfill(2),
+            ' ' * round(nrcarat) + tarefa_ds_nova,
+            '',  # Responsável
+            '',  # Dependência
+            0,   # Tempo de espera
+            1,   # Tempo previsto
+            percentual_execucao,
+            data_inicial_prevista.strftime("%d/%m/%Y"),
+            '',  # Data Realizada
+            data_conclusao_prevista.strftime("%d/%m/%Y"),
+            '',  # Data de Conclusão Realizada
+            '',  # Observação
+        )
+
+    def get_all_items_numbers(self):
+        
+        def traverse(item='', level=0):
+            numbers = []
+            children = self.LCronograma.get_children(item)
+            for index, child in enumerate(children):
+                values = self.LCronograma.item(child, 'values')
+                if values:
+                    item_id = self.LCronograma.index(child)
+                    linha = values[0] 
+                    tarefa_id = values[1].zfill(2)
+                    tarefa_ds = values[2]
+                    responsavel = values[3]
+                    dependencia = values[4]
+                    tempo_espera = values[5]
+                    tempo_previsto = values[6]
+                    per_conclusao = float(values[7].replace("%", ""))
+                    dta_inicial_prevista = values[8]
+                    dta_inicial_realizada = values[9]
+                    dta_conclusao_prevista = values[10]
+                    dta_conclusao_realizada = values[11]
+                    numbers.append((
+                                    child, 
+                                    linha, 
+                                    tarefa_id, 
+                                    tarefa_ds, 
+                                    responsavel, 
+                                    dependencia, 
+                                    tempo_espera, 
+                                    tempo_previsto, 
+                                    per_conclusao, 
+                                    dta_inicial_prevista, 
+                                    dta_inicial_realizada, 
+                                    dta_conclusao_prevista, 
+                                    dta_conclusao_realizada, 
+                                    item_id, 
+                                    level))  
+                numbers.extend(traverse(child, level + 1))
+            return numbers
+
+        return traverse()
+  
     def gravar_cronograma_incluir_hierarquico(self, projeto_id, projeto_ds, tarefa_id_nova, tarefa_ds_nova, tarefa_mae_id, data_inicial_prevista, data_conclusao_prevista):
         try:
             if not projeto_id:
@@ -1020,7 +1240,11 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             if len(self.LCronograma.get_children()) == 0:
                 messagebox.showinfo("Gestor de Negócios", "Projeto sem tarefas para salvar!!", parent=janela)
                 return
-
+            
+            projeto_ID = projeto_id
+            projeto_DS = projeto_ds
+            projeto_cr = 0
+            
             # Cria uma nova janela (tela de carregamento)
             coordenadas_relx = 0.20
             coordenadas_rely = 0.30
@@ -1048,41 +1272,36 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             self.total_records = len(self.LCronograma.get_children())  # Total records to process
             self.current_index = 0
 
-            for i in range(len(self.LCronograma.get_children())):
-                self.process_records()
-                item = self.LCronograma.get_children()[i]
-                values = self.LCronograma.item(item, 'values')
-                # Assign values from the selected item (simulating UsrCronograma)
-                projeto_ID = projeto_id
-                projeto_DS = projeto_ds
-                projeto_cr = 0
-                tarefa_id = str(values[1]).zfill(2)  # '01' manter como string
-                tarefa_DS = values[2].strip()
+            def process_item(item_id, level=0):
+                task_data = self.LCronograma.item(item_id)
+                tarefa_id = str(task_data['values'][1]).zfill(2)
+                tarefa_DS = task_data['values'][2].strip()
                 nivel_atual = len(tarefa_id)
                 if nivel_atual == 2:
                     tarefa_mae_id = ''
                 else:
                     tarefa_mae_id = tarefa_id[:-3] if len(tarefa_id) > 3 else ''
-                responsavel_nome = values[3]
-                tarefa_dependencia = values[4]
-                Tempo_Espera = values[5]
-                Tempo_Previsto = values[6]
-                percentual_execucao = values[7]
-                data_inicial_Prevista = datetime.strptime(values[8], "%d/%m/%Y")
-                data_inicial_Realizada = datetime.strptime(values[9], "%d/%m/%Y") if values[9] else None
-                data_Conclusao_Prevista = datetime.strptime(values[10], "%d/%m/%Y")
-                data_Conclusao_Realizada = datetime.strptime(values[11], "%d/%m/%Y") if values[11] else None
+                
+                responsavel_nome = task_data['values'][3]
+                tarefa_dependencia = task_data['values'][4]
+                Tempo_Espera = task_data['values'][5]
+                Tempo_Previsto = task_data['values'][6]
+                percentual_execucao = task_data['values'][7]
+                data_inicial_Prevista = datetime.strptime(task_data['values'][8], "%d/%m/%Y")
+                data_inicial_Realizada = datetime.strptime(task_data['values'][9], "%d/%m/%Y") if task_data['values'][9] else None
+                data_Conclusao_Prevista = datetime.strptime(task_data['values'][10], "%d/%m/%Y")
+                data_Conclusao_Realizada = datetime.strptime(task_data['values'][11], "%d/%m/%Y") if task_data['values'][11] else None
                 prazo_fatal_dias = 0
                 dias_diferenca_Conclusao = 0
                 status_projeto = ""
-                observacao = values[12]
+                observacao = task_data['values'][12]
                 Anexos = ''
-
+                
                 # Calculate date differences
                 dias_diferenca_inicio = (data_inicial_Realizada - data_inicial_Prevista).days if data_inicial_Realizada else 0
                 prazo_fatal_dias = (datetime.now() - data_Conclusao_Prevista).days
                 dias_diferenca_Conclusao = (data_Conclusao_Prevista - data_Conclusao_Realizada).days if data_Conclusao_Realizada else 0
-
+                
                 sql = """
                         UPDATE programas_atividades SET
                             projeto_DS               = %s,
@@ -1133,8 +1352,19 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                             )
                 # Execute the SQL command
                 db.executar_consulta(sql, parameters)
-                # messagebox.showinfo("Sucesso", "Tarefa Alterada com sucesso!")
 
+                children = self.LCronograma.get_children(item_id)
+
+                
+                # Processa recursivamente as tarefas filhas
+                for child in children:
+                    process_item(child, level + 1)
+
+            # Processa todos os itens de nível superior
+            for item_id in self.LCronograma.get_children():
+                self.process_records()
+                process_item(item_id)
+            
         except Exception as e:
             messagebox.showinfo("Gestor de Negócios", f"Erro: {e}", parent=janela)
             return
@@ -1161,109 +1391,27 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
 
     def dta_tarefa_mae_hierarquico(self):
         dta_atualizacao = datetime.now()
-        for idx in range(len(self.LCronograma.get_children())):
-            values = self.LCronograma.item(idx, 'values')
+        def process_item(item_id, level=0):
+            task_data = self.LCronograma.item(item_id)
+            tarefa_id = str(task_data['values'][1]).zfill(2)
+            tarefa_DS = task_data['values'][2].strip()
+            nivel_atual = len(tarefa_id)
+            children = self.LCronograma.get_children(item_id)
+
+            # Processa recursivamente as tarefas filhas
+            for child in children:
+                process_item(child, level + 1)
+
+        # Processa todos os itens de nível superior
+        for item_id in self.LCronograma.get_children():
+            values = self.LCronograma.item(item_id, 'values')
             nrcarat = 0
             NrCampos = values[0]
             tarefa_id = values[1]
             nrcarat = len(tarefa_id)
 
-            Lin = idx + 1
-            if Lin > len(self.LCronograma.get_children()):
-                return
-            else:
-                NrCaraceteres_Reg_Seg = len(values[1])
-
-            nrcarat_seguinte = 0
-            nr_tarefas_concluidas = 0
-            data_inicial_prevista = None
-            data_inicial_realizada = None
-            data_conclusao_prevista = None
-            data_conclusao_realizada = None
-
-            values = self.LCronograma.item(Lin, 'values')
-            nrregistros = len(values[1])
-            linha = Lin + 1
-            while values[1][:nrcarat] == tarefa_id and len(self.LCronograma.get_children()) >= linha:
-                values = self.LCronograma.item(linha, 'values')
-                if len(values[1]) <= nrregistros:
-                    values = self.LCronograma.item(Lin, 'values')
-                    if values[8]:
-                        if not data_inicial_prevista:
-                            data_inicial_prevista = values[8]
-                        else:
-                            data_inicial_prevista = min(
-                                data_inicial_prevista, values[8])
-                    if values[9]:
-                        if not data_inicial_realizada:
-                            data_inicial_realizada = values[9]
-                        else:
-                            data_inicial_realizada = min(
-                                data_inicial_realizada, values[9])
-                    if values[10]:
-                        if not data_conclusao_prevista:
-                            data_conclusao_prevista = values[10]
-                        else:
-                            data_conclusao_prevista = max(
-                                data_conclusao_prevista, values[10])
-                    if values[11]:
-                        if not data_conclusao_realizada:
-                            data_conclusao_realizada = values[11]
-                        else:
-                            data_conclusao_realizada = max(
-                                data_conclusao_realizada, values[11])
-
-                    # Count completed tasks
-                    if values[7] == 1.0:
-                        nr_tarefas_concluidas += 1
-
-                    nrcarat_seguinte += 1
-
-                    # Calcular o Percentual de Execução
-                    percentual_execucao = nr_tarefas_concluidas / \
-                        nrcarat_seguinte if nrcarat_seguinte > 0 else 0
-
-                    # Atualização no List
-                    if idx < len(self.LCronograma.get_children()):
-                        if data_inicial_prevista:
-                            self.LCronograma[idx]['data_inicial_prevista'] = data_inicial_prevista
-                        if data_inicial_realizada:
-                            self.LCronograma[idx]['data_inicial_realizada'] = data_inicial_realizada
-                        if data_conclusao_prevista:
-                            self.LCronograma[idx]['data_conclusao_prevista'] = data_conclusao_prevista
-                        if data_conclusao_realizada:
-                            self.LCronograma[idx]['data_conclusao_realizada'] = data_conclusao_realizada
-
-                        self.LCronograma[idx]['percentual_execucao'] = percentual_execucao
-
-                        # Optionally display success message
-                        messagebox.showinfo(
-                            "Success", f"Task dates and percentages updated for: {self.LCronograma[idx]['tarefa_id']}")
-                Lin += 1
-                values = self.LCronograma.item(Lin, 'values')
-                nrregistros = len(values[1])
-                linha += 1
-                if Lin > len(self.LCronograma.get_children()):
-                    return
-                elif linha > len(self.LCronograma.get_children()):
-                    return
-
-            if nr_tarefas_concluidas != 0:
-                percentual_execucao = (
-                    nr_tarefas_concluidas / nrcarat_seguinte)
-            else:
-                percentual_execucao = 0
-
-            if NrCaraceteres_Reg_Seg > nrcarat:
-                if data_inicial_realizada and data_conclusao_realizada and percentual_execucao >= 1:
-                    self.LCronograma[idx]['data_conclusao_realizada'] = data_conclusao_realizada - \
-                        data_inicial_realizada
-                elif data_inicial_prevista and data_conclusao_prevista:
-                    self.LCronograma[idx]['data_conclusao_prevista'] = data_conclusao_prevista - \
-                        data_inicial_prevista
-
-                self.LCronograma[idx]['percentual_execucao'] = percentual_execucao
-
+            process_item(item_id)
+        
     def process_records_hierarquico(self):
         if self.current_index < self.total_records:
             self.current_index += 1 
@@ -1362,7 +1510,6 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             messagebox.showerror("Gestor de Negócios", f"Erro - ocorrência: {str(e)}", parent=self.principal_frame)
         finally:
             pass
-
 
 Cronograma_Atividades_Hierarquico()
 
@@ -1549,7 +1696,7 @@ class TreeviewEdit(ttk.Treeview):
             
             self.item(selected_iid, values=current_values)
 
-            self.atualiza_cronograma_interacao(1)
+            self.atualiza_cronograma_interacao(100)
             self.ajustar_list()
 
         event.widget.destroy()
@@ -1593,15 +1740,17 @@ class TreeviewEdit(ttk.Treeview):
         self.window_calendar.grab_set()
 
     def atualiza_cronograma_interacao(self, nr_interacao):
+        all_numbers     = self.get_all_items_numbers()
+        all_dependentes = self.get_all_items_numbers()
+        nr_interacao = int(len(all_numbers))
         for _ in range(nr_interacao):
-            all_numbers     = self.get_all_items_numbers()
-            all_dependentes = self.get_all_items_numbers()
-            for child, linha, dependencia, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
+            for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
                 self.predessessora(child, all_dependentes)
 
-        self.dta_tarefa_mae()
+            self.dta_tarefa_mae()
 
     def get_all_items_numbers(self):
+        
         def traverse(item='', level=0):
             numbers = []
             children = self.get_children(item)
@@ -1609,14 +1758,34 @@ class TreeviewEdit(ttk.Treeview):
                 values = self.item(child, 'values')
                 if values:
                     item_id = self.index(child)
-                    linha = values[0]  
+                    linha = values[0] 
+                    tarefa_id = values[1].zfill(2)
+                    tarefa_ds = values[2]
+                    responsavel = values[3]
                     dependencia = values[4]
+                    tempo_espera = values[5]
+                    tempo_previsto = values[6]
+                    per_conclusao = float(values[7].replace("%", ""))
                     dta_inicial_prevista = values[8]
                     dta_inicial_realizada = values[9]
                     dta_conclusao_prevista = values[10]
                     dta_conclusao_realizada = values[11]
-
-                    numbers.append((child, linha, dependencia, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level))  
+                    numbers.append((
+                                    child, 
+                                    linha, 
+                                    tarefa_id, 
+                                    tarefa_ds, 
+                                    responsavel, 
+                                    dependencia, 
+                                    tempo_espera, 
+                                    tempo_previsto, 
+                                    per_conclusao, 
+                                    dta_inicial_prevista, 
+                                    dta_inicial_realizada, 
+                                    dta_conclusao_prevista, 
+                                    dta_conclusao_realizada, 
+                                    item_id, 
+                                    level))  
                 numbers.extend(traverse(child, level + 1))
             return numbers
 
@@ -1708,7 +1877,7 @@ class TreeviewEdit(ttk.Treeview):
                     self.images[selected_iid] = icon_image
             else:
                 if dta_conclusao_real == '' or dta_conclusao_real is None:
-                    if dta_inicio_real != '' or dta_inicio_real is not None and dta_conclusao_prev < today:
+                    if (dta_inicio_real != '' or dta_inicio_real is not None) and dta_conclusao_prev < today:
                         icon_image = icon_image_vermelho
                         # Armazenar referência
                         self.images[selected_iid] = icon_image
@@ -1739,7 +1908,8 @@ class TreeviewEdit(ttk.Treeview):
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
     def predessessora(self, item_id, all_dependentes):
-        # try:
+        try:
+            selected_iid = item_id
             current_values = self.item(item_id).get('values')
             tasks_ids = self.get_children()
             task = self.item(item_id)
@@ -1748,9 +1918,10 @@ class TreeviewEdit(ttk.Treeview):
             
 
             tarefa_id = str(task['values'][1]).zfill(2)
+            tarefa_ds = str(task['values'][2])
             tarefa_dependencia = str(task['values'][4])
-            tempo_espera = float(task['values'][5])
-            tempo_previsto = float(task['values'][6])
+            tarefa_tempo_espera = float(task['values'][5])
+            tarefa_tempo_previsto = float(task['values'][6])
 
             per_conclusao = float(task['values'][7].replace("%", ""))
             data_inicial_prevista = self.parse_date(task['values'][8])
@@ -1761,15 +1932,23 @@ class TreeviewEdit(ttk.Treeview):
             nr_caracteres = len(str(strEndereco))
             dta_precedente = None
             lin_dependente = ''
+            
             if nr_caracteres != 0:
+                
                 for viContador in range(nr_caracteres):
+                    
                     char = str(strEndereco)[viContador]
+                    
                     if char != ';':
                         lin_dependente += char
                     
+                    
                     if char == ';' or viContador == nr_caracteres - 1:
-                        for child, linha, dependencia, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_dependentes:
-                            if int(lin_dependente) >= len(self.get_children()):
+                        
+                        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_dependentes:
+                            nr_items = len(all_dependentes)
+                            if int(lin_dependente) > int(nr_items):
+                                messagebox.showinfo("Gestor de Negócios", f"Linha Dependência Inválida - {tarefa_id} - {tarefa_ds}", parent=self.master)
                                 return
                             
                             if int(lin_dependente) == int(linha):
@@ -1778,75 +1957,55 @@ class TreeviewEdit(ttk.Treeview):
                                 data_conclusao_realizada = self.parse_date(dta_conclusao_realizada)
                                 
                         if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
+                            
                             if data_conclusao_realizada and self.is_valid_date(data_conclusao_realizada):
-                                if dta_precedente is not None and dta_precedente < data_conclusao_realizada:
+                                if dta_precedente is None or dta_precedente < data_conclusao_realizada:
                                     dta_precedente = data_conclusao_realizada
-                                else:
-                                    dta_precedente = data_conclusao_prevista
                             else:
                                 dta_precedente = data_conclusao_prevista
                         else:
                             if dta_precedente is None or dta_precedente < data_conclusao_prevista:
                                 dta_precedente = data_conclusao_prevista
+                                
 
                         lin_dependente = ''
-                 
                 
                 if dta_precedente or dta_precedente is not None:
-                    current_values[8] = (dta_precedente + timedelta(days=tempo_espera)).strftime("%d/%m/%Y")
-                    
-                nr_caracteres = int(len(tarefa_id))
-                if lin + 1 < len(self.get_children()):
-                    index = int(lin + 1)
-                    next_task_id = tasks_ids[index]
-                    next_task = self.item(next_task_id, 'values')
-                    nr_caracteres_seguintes = int(len(next_task[1]))
-
-                    if nr_caracteres_seguintes <= nr_caracteres:
-                        if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
-                            current_values[10] = (self.parse_date(data_inicial_realizada) + timedelta(days=tempo_espera) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
-                        else:
-                            current_values[10] = (self.parse_date(data_inicial_prevista) + timedelta(days=tempo_espera) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
+                    current_values[8] = (dta_precedente + timedelta(days=tarefa_tempo_espera)).strftime("%d/%m/%Y")
+                    current_values[10] = (self.parse_date(current_values[8]) + timedelta(days=tarefa_tempo_previsto)).strftime("%d/%m/%Y")
             else:
-                nr_caracteres = int(len(tarefa_id))
-                if lin + 1 < len(self.get_children()):
-                    index = int(lin + 1)
-                    next_task_id = tasks_ids[index]
-                    next_task = self.item(next_task_id, 'values')
-                    nr_caracteres_seguintes = int(len(next_task[1]))
+                if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
+                    current_values[10] = (self.parse_date(data_inicial_realizada) + timedelta(days=tarefa_tempo_previsto)).strftime("%d/%m/%Y")
+                else:
+                    current_values[10] = (self.parse_date(data_inicial_prevista) + timedelta(days=tarefa_tempo_previsto)).strftime("%d/%m/%Y")
+            
+            self.item(selected_iid, values=current_values)
 
-                    if nr_caracteres_seguintes <= nr_caracteres:
-                        if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
-                            current_values[10] = (self.parse_date(data_inicial_realizada) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
-                        else:
-                            current_values[10] = (self.parse_date(data_inicial_prevista) + timedelta(days=tempo_previsto)).strftime("%d/%m/%Y")
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro no calculo das dependências: {str(e)}")
 
-            self.item(item_id, values=current_values)
-
-        # except Exception as e:
-        #     messagebox.showerror("Erro", f"Erro no calculo das dependências: {str(e)}")
-          
     def ajustar_list(self):
         try:
-            for i in range(len(self.get_children())):  # Itera sobre os itens no Treeview
-                item_id = self.get_children()[i]
-                task_data = self.item(item_id)  # Obtém os dados do item
-                # Assume tarefa_ID está na posição 1
-                tarefa_id = str(task_data['values'][1])
+            total_items = len(self.get_children())
+            
+            def process_item(item_id, level=0):
+                task_data = self.item(item_id)
+                tarefa_id = str(task_data['values'][1]).zfill(2)
                 nrcarat = len(tarefa_id.upper())
-                linha = i + 1
 
-                if linha < len(self.get_children()):
-                    next_item_id = self.get_children()[linha]
+                children = self.get_children(item_id)
+                is_last = (len(children) == 0)
+
+                if not is_last:
+                    next_item_id = children[0]
                     next_task_data = self.item(next_item_id)
-                    # Assume tarefa_ID está na posição 1
                     next_tarefa_id = str(next_task_data['values'][1])
                     nrcarat_seguinte = len(next_tarefa_id.upper())
                 else:
-                    nrcarat_seguinte = nrcarat
+                    nrcarat_seguinte = 0
 
                 # Aplica formatação baseada nos critérios
-                if nrcarat_seguinte > nrcarat:
+                if nrcarat_seguinte > nrcarat or (is_last and nrcarat <= 2):
                     self.item(item_id, tags=('bold_blue',))
                 elif nrcarat_seguinte == nrcarat and nrcarat > 2:
                     self.item(item_id, tags=('normal_black',))
@@ -1855,89 +2014,202 @@ class TreeviewEdit(ttk.Treeview):
                 else:
                     self.item(item_id, tags=('normal_black',))
 
-                # Para última linha, verifica comparação com a linha anterior
-                if i == len(self.get_children()) - 1:
-                    # Assume tarefa_ID está na posição 1
-                    
-                    tarefa_id = str(self.item(item_id)['values'][1]).zfill(2)
-                    tarefa_id_anterior = str(self.item(self.get_children()[i - 1])['values'][1]).zfill(2)
-                    if len(tarefa_id.upper()) < len(tarefa_id_anterior.upper()):
-                        self.item(item_id, tags=('bold_blue',))
-
                 per_conclusao = float(task_data['values'][7].replace("%", ""))
                 data_inicial_prevista = self.parse_date(task_data['values'][8])
                 data_inicial_realizada = self.parse_date(task_data['values'][9])
                 data_conclusao_prevista = self.parse_date(task_data['values'][10])
                 data_conclusao_realizada = self.parse_date(task_data['values'][11])
                 
-                semaforo = self.status_on(item_id, data_inicial_prevista, data_inicial_realizada,
-                                        data_conclusao_prevista, data_conclusao_realizada, per_conclusao)
+                semaforo = self.status_on(
+                    item_id, 
+                    data_inicial_prevista, 
+                    data_inicial_realizada,
+                    data_conclusao_prevista, 
+                    data_conclusao_realizada, 
+                    per_conclusao
+                )
+                
                 self.item(item_id, image=semaforo)
+
+                # Processa recursivamente as tarefas filhas
+                for child in children:
+                    process_item(child, level + 1)
+
+            # Processa todos os itens de nível superior
+            for item_id in self.get_children():
+                process_item(item_id)
 
             # Configura as tags para o Treeview
             self.tag_configure('bold_blue', font=('Helvetica', 10, 'bold'), foreground='blue')
             self.tag_configure('normal_black', font=('Helvetica', 10), foreground='black')
 
         except Exception as e:
-            messagebox.showerror("Erro!", f"Erro: {str(e)}")  # Exibe mensagem de erro
+            messagebox.showerror("Erro!", f"Erro: {str(e)}")      
     
-    def dta_tarefa_mae(self):
-        for idx in range(len(self.get_children())):
-            item_id = self.get_children()[idx]
-            values = self.item(item_id, 'values')
-            tasks_ids = self.get_children()
+    def dta_tarefa_mae_old_maisneyu(self):
+        dta_atualizacao = datetime.now()
+        def process_item(item_id, level=0):
+            tarefa_atual = self.item(item_id)
+            Nr_Linha = tarefa_atual['values'][0]
+            tarefa_id = str(tarefa_atual['values'][1]).zfill(2)
+            tarefa_DS = tarefa_atual['values'][2].strip()
             
-            nrcarat = 0
-            NrCampos = values[0]
-            tarefa_id = values[1].zfill(2)
-            nrcarat = len(tarefa_id)
-            entry_descricao = values[2]
-            entry_responsavel = values[3]
-            entry_dependencia = values[4]
-            entry_tempo_espera = values[5]
-            entry_tempo_previsto = values[6]
-            per_conclusao = float(values[7].replace("%", ""))
-            data_inicial_prevista = self.parse_date(values[8])
-            data_inicial_realizada = self.parse_date(values[9])
-            data_conclusao_prevista = self.parse_date(values[10])
-            data_conclusao_realizada = self.parse_date(values[11])
-            dta_provisoria_inicial_prevista = ''
-            dta_provisoria_inicial_realizada = ''
-            dta_provisoria_conclusao_prevista = ''
-            dta_provisoria_conclusao_realizada = ''
-
-            Lin = idx + 1
-            if Lin >= len(self.get_children()):
-                return
-            else:
-                dep_task_id = tasks_ids[Lin]
-                dep_sub_items = self.item(dep_task_id, 'values')
-                tarefa_id_reg_seg = dep_sub_items[1].zfill(2)
-                NrCaraceteres_Reg_Seg = len(tarefa_id_reg_seg)
-
-            nrcarat_seguinte = 0
-            nr_tarefas_concluidas = 0
+            children = self.get_children(item_id)
             
-            nrregistros = int(len(tarefa_id_reg_seg))
-            linha = Lin + 1
-            
-            Lin_proxima = Lin
-            dep_task_id = tasks_ids[Lin]
-            dep_sub_items = self.item(dep_task_id, 'values')
-            
-            while tarefa_id_reg_seg[:nrcarat] == tarefa_id and len(self.get_children()) > linha:
+            # Processa recursivamente as tarefas filhas
+            for child in children:
+                process_item(child, level + 1)
                 
-                base_tarefa_sequencia_id = tasks_ids[linha]
-                base_tarefa_sequencia_items = self.item(base_tarefa_sequencia_id, 'values')
-                tarefa_id_reg_sequencia = base_tarefa_sequencia_items[1].zfill(2)
+
+        # Processa todos os itens de nível superior
+        for item_id in self.get_children():
+            tarefa_pai = self.item(item_id)
+            tarefa_id = str(tarefa_pai['values'][1]).zfill(2)
+            
+            process_item(item_id)
+
+    def dta_tarefa_mae_old_new(self):
+        dta_atualizacao = datetime.now()
+
+        nr = 1
+        def process_item(item_id, level=0):
+            task_data = self.item(item_id)
+            tarefa_id = str(task_data['values'][1]).zfill(2)
+            tarefa_DS = task_data['values'][2].strip()
+            
+            
+            if level > self.nivel_superior:
+                self.per_conclusao_items = float(task_data['values'][7].replace("%", ""))
+                self.data_inicial_prevista_items = self.parse_date(task_data['values'][8])
+                self.data_inicial_realizada_items = self.parse_date(task_data['values'][9])
+                self.data_conclusao_prevista_items = self.parse_date(task_data['values'][10])
+                self.data_conclusao_realizada_items = self.parse_date(task_data['values'][11])
                 
-                if int(len(tarefa_id_reg_sequencia)) <= int(nrregistros):
-                    per_conclusao_items = float(dep_sub_items[7].replace("%", ""))
-                    data_inicial_prevista_items = self.parse_date(dep_sub_items[8])
-                    data_inicial_realizada_items = self.parse_date(dep_sub_items[9])
-                    data_conclusao_prevista_items = self.parse_date(dep_sub_items[10])
-                    data_conclusao_realizada_items = self.parse_date(dep_sub_items[11])
+                if self.data_inicial_prevista_items is not None:
+                    if self.dta_provisoria_inicial_prevista == '':
+                        self.dta_provisoria_inicial_prevista = self.data_inicial_prevista_items
+                        self.data_inicial_prevista = self.data_inicial_prevista_items
+                    else:
+                        self.data_inicial_prevista = min(self.parse_date(self.data_inicial_prevista_items), self.parse_date(self.dta_provisoria_inicial_prevista))
+                        self.dta_provisoria_inicial_prevista = self.data_inicial_prevista
                     
+                if self.data_inicial_realizada_items is not None:
+                    if self.dta_provisoria_inicial_realizada == '':
+                        self.dta_provisoria_inicial_realizada = self.data_inicial_realizada_items
+                        self.data_inicial_realizada = self.data_inicial_realizada_items
+                    else:
+                        self.data_inicial_realizada = min(self.parse_date(self.data_inicial_realizada_items), self.parse_date(self.dta_provisoria_inicial_realizada))
+                        self.dta_provisoria_inicial_realizada = self.data_inicial_realizada 
+                
+                if self.data_conclusao_prevista_items is not None:
+                    if self.dta_provisoria_conclusao_prevista == '':
+                        self.dta_provisoria_conclusao_prevista = self.data_conclusao_prevista_items
+                        self.data_conclusao_prevista = self.data_conclusao_prevista_items 
+                    else:
+                        self.data_conclusao_prevista = max(self.parse_date(self.data_conclusao_prevista_items), self.parse_date(self.dta_provisoria_conclusao_prevista))
+                        self.dta_provisoria_conclusao_prevista = self.data_conclusao_prevista_items
+                
+                if self.data_conclusao_realizada_items is not None:
+                    if self.dta_provisoria_conclusao_realizada == '':
+                        self.dta_provisoria_conclusao_realizada = self.data_conclusao_realizada_items
+                        self.data_conclusao_realizada = self.data_conclusao_realizada_items
+                    else:
+                        self.data_conclusao_realizada = max(self.parse_date(self.data_conclusao_realizada_items), self.parse_date(self.dta_provisoria_conclusao_realizada))
+                        self.dta_provisoria_conclusao_realizada = self.data_conclusao_realizada
+                
+                # Count completed tasks
+                
+                if self.per_conclusao_items == 100.0:
+                    self.nr_tarefas_concluidas += 1
+
+            
+            # Calcular o Percentual de Execução
+            self.per_conclusao = (self.nr_tarefas_concluidas / self.nr_tarefas) * 100 if self.nr_tarefas > 0 else 0
+
+            # if level > nivel_superior:
+            #     tarefa_sub_id = item_id
+            #     tarefa_sub_valores     = self.item(item_id).get('values')
+            #     tarefa_sub_valores[8]  = (data_inicial_prevista).strftime("%d/%m/%Y")
+            #     tarefa_sub_valores[9]  = (data_inicial_realizada).strftime("%d/%m/%Y")
+            #     tarefa_sub_valores[10] = (data_conclusao_prevista).strftime("%d/%m/%Y")
+            #     tarefa_sub_valores[11] = (data_conclusao_realizada).strftime("%d/%m/%Y")
+            #     self.item(tarefa_sub_id, values=tarefa_sub_valores)
+            
+            children = self.get_children(item_id)
+            
+            # Processa recursivamente as tarefas filhas
+            for child in children:
+                self.nr_tarefas += 1
+                process_item(child, level + 1)
+
+        # Processa todos os itens de nível superior
+        for item_id in self.get_children():
+            self.data_inicial_prevista = None
+            self.data_inicial_realizada = None
+            self.data_conclusao_prevista = None
+            self.data_conclusao_realizada = None
+            self.dta_provisoria_inicial_prevista = ''
+            self.dta_provisoria_inicial_realizada = ''
+            self.dta_provisoria_conclusao_prevista = ''
+            self.dta_provisoria_conclusao_realizada = ''
+
+            tarefa_superior_id = item_id
+            tarefa_superior_valores = self.item(item_id).get('values')
+            tarefa_id = str(tarefa_superior_valores[1]).zfill(2)
+            tarefa_ds = tarefa_superior_valores[2].strip()
+            
+            self.nr_tarefas = 0
+            self.nr_tarefas_concluidas = 0
+            self.nivel_superior = 0
+            
+            process_item(item_id)
+            print(item_id, tarefa_id, tarefa_ds, self.data_inicial_prevista, self.data_inicial_realizada, self.data_conclusao_prevista, self.data_conclusao_realizada)
+            breakpoint()
+                
+            tarefa_superior_valores[7]  = f'{float(self.per_conclusao)/100:.2%}'
+            tarefa_superior_valores[8]  = self.data_inicial_prevista
+            tarefa_superior_valores[9]  = self.data_inicial_realizada
+            tarefa_superior_valores[10] = self.data_conclusao_prevista
+            tarefa_superior_valores[11] = self.data_conclusao_realizada
+            
+            self.item(tarefa_superior_id, values=tarefa_superior_valores)
+
+    def dta_tarefa_mae(self):
+        all_numbers       = self.get_all_items_numbers()
+        all_numbers_check = self.get_all_items_numbers()
+        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
+            item_idx = child
+            nrcarat              = 0
+            NrCampos             = linha
+            tarefa_id_atual      = tarefa_id
+            nrcarat              = len(tarefa_id_atual)
+            entry_descricao      = tarefa_ds
+            entry_responsavel    = responsavel
+            entry_dependencia    = dependencia
+            entry_tempo_espera   = tempo_espera
+            entry_tempo_previsto = tempo_previsto
+            per_conclusao_atual  = per_conclusao
+
+            data_inicial_prevista              = self.parse_date(dta_inicial_prevista)
+            data_inicial_realizada             = self.parse_date(dta_inicial_realizada)
+            data_conclusao_prevista            = self.parse_date(dta_conclusao_prevista)
+            data_conclusao_realizada           = self.parse_date(dta_conclusao_realizada)
+            dta_provisoria_inicial_prevista    = ''
+            dta_provisoria_inicial_realizada   = ''
+            dta_provisoria_conclusao_prevista  = ''
+            dta_provisoria_conclusao_realizada = ''
+            nr_tarefas = 0
+            nr_tarefas_concluidas = 0
+            for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers_check:
+                nr_caracteres = len(tarefa_id)
+                if tarefa_id[:nrcarat] == tarefa_id_atual and nr_caracteres > nrcarat:
+                    nr_tarefas += 1
+                    per_conclusao_items = per_conclusao
+                    data_inicial_prevista_items = self.parse_date(dta_inicial_prevista)
+                    data_inicial_realizada_items = self.parse_date(dta_inicial_realizada)
+                    data_conclusao_prevista_items = self.parse_date(dta_conclusao_prevista)
+                    data_conclusao_realizada_items = self.parse_date(dta_conclusao_realizada)
+                        
                     if data_inicial_prevista_items is not None:
                         if dta_provisoria_inicial_prevista == '':
                             dta_provisoria_inicial_prevista = data_inicial_prevista_items
@@ -1969,72 +2241,58 @@ class TreeviewEdit(ttk.Treeview):
                         else:
                             data_conclusao_realizada = max(self.parse_date(data_conclusao_realizada_items), self.parse_date(dta_provisoria_conclusao_realizada))
                             dta_provisoria_conclusao_realizada = data_conclusao_realizada
-                    
+                        
                     # Count completed tasks
                     
                     if per_conclusao_items == 100.0:
                         nr_tarefas_concluidas += 1
-
-                    nrcarat_seguinte += 1
-                        
-                Lin_proxima += 1
-                if Lin_proxima <= len(self.get_children()):
-                    dep_task_id = tasks_ids[Lin_proxima]
-                    dep_sub_items = self.item(dep_task_id, 'values')
-                    tarefa_id_reg_seg = dep_sub_items[1].zfill(2)
-                    nrregistros = int(len(tarefa_id_reg_seg))
-
-                linha += 1
             
-                # Calcular o Percentual de Execução
-                per_conclusao = (nr_tarefas_concluidas / nrcarat_seguinte) * 100 if nr_tarefas_concluidas > 0 else 0
-            
-            # per_conclusao = percentual_execucao
-            
-            
-            if NrCaraceteres_Reg_Seg > nrcarat:
+            # Calcular o Percentual de Execução
+            if nr_tarefas > 0:
+                per_conclusao = (nr_tarefas_concluidas / nr_tarefas) * 100 
                 if data_inicial_realizada and data_conclusao_realizada and per_conclusao >= 1:
                     entry_tempo_previsto = data_conclusao_realizada - data_inicial_realizada
                     entry_tempo_previsto = entry_tempo_previsto.days
                 elif data_inicial_prevista and data_conclusao_prevista:
                     entry_tempo_previsto = data_conclusao_prevista - data_inicial_prevista
                     entry_tempo_previsto = entry_tempo_previsto.days
-            
-            # Lin += 1
-            if data_inicial_prevista != '' and data_inicial_prevista is not None:
-                data_inicial_prevista = data_inicial_prevista.strftime("%d/%m/%Y")
-            else:
-                data_inicial_prevista = ''
+                
+                if data_inicial_prevista != '' and data_inicial_prevista is not None:
+                    data_inicial_prevista = data_inicial_prevista.strftime("%d/%m/%Y")
+                else:
+                    data_inicial_prevista = ''
 
-            if data_inicial_realizada != '' and data_inicial_realizada is not None:
-                data_inicial_realizada = data_inicial_realizada.strftime("%d/%m/%Y")
-            else:
-                data_inicial_realizada = ''
+                if data_inicial_realizada != '' and data_inicial_realizada is not None:
+                    data_inicial_realizada = data_inicial_realizada.strftime("%d/%m/%Y")
+                else:
+                    data_inicial_realizada = ''
 
-            if data_conclusao_prevista != '' and data_conclusao_prevista is not None:    
-                data_conclusao_prevista = data_conclusao_prevista.strftime("%d/%m/%Y")
-            else:
-                data_conclusao_prevista = ''
+                if data_conclusao_prevista != '' and data_conclusao_prevista is not None:    
+                    data_conclusao_prevista = data_conclusao_prevista.strftime("%d/%m/%Y")
+                else:
+                    data_conclusao_prevista = ''
 
-            if data_conclusao_realizada != '' and data_conclusao_realizada is not None:    
-                data_conclusao_realizada = data_conclusao_realizada.strftime("%d/%m/%Y")
+                if data_conclusao_realizada != '' and data_conclusao_realizada is not None:    
+                    data_conclusao_realizada = data_conclusao_realizada.strftime("%d/%m/%Y")
+                else:
+                    data_conclusao_realizada = ''
+
+                current_values = self.item(item_idx).get('values')
+                current_values[0] = NrCampos
+                current_values[1] = tarefa_id_atual.zfill(2)
+                current_values[2] = entry_descricao
+                current_values[3] = entry_responsavel
+                current_values[4] = entry_dependencia
+                current_values[5] = int(entry_tempo_espera)
+                current_values[6] = int(entry_tempo_previsto)
+                current_values[7] = f'{float(per_conclusao)/100:.2%}'
+                current_values[8] = data_inicial_prevista
+                current_values[9] = data_inicial_realizada
+                current_values[10] = data_conclusao_prevista
+                current_values[11] = data_conclusao_realizada
+                self.item(item_idx, values=current_values)
             else:
-                data_conclusao_realizada = ''
-            
-            current_values = self.item(item_id).get('values')
-            current_values[0] = NrCampos
-            current_values[1] = tarefa_id.zfill(2)
-            current_values[2] = entry_descricao
-            current_values[3] = entry_responsavel
-            current_values[4] = entry_dependencia
-            current_values[5] = int(entry_tempo_espera)
-            current_values[6] = int(entry_tempo_previsto)
-            current_values[7] = f'{float(per_conclusao)/100:.2%}'
-            current_values[8] = data_inicial_prevista
-            current_values[9] = data_inicial_realizada
-            current_values[10] = data_conclusao_prevista
-            current_values[11] = data_conclusao_realizada
-            self.item(item_id, values=current_values)
+                per_conclusao = per_conclusao_atual
     
     def gravar_cronograma_tarefa(self, selected_iid):
         try:

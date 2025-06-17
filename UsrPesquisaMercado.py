@@ -156,6 +156,7 @@ class Pesquisa_Mercado(Widgets):
         self.entry_area_unidade = customtkinter.CTkEntry(self.fr_informacoes, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_area_unidade.place(relx=0.26, rely=0.30, relwidth=0.08, relheight=0.6)
 
+        self.entry_area_unidade.bind("<Return>", lambda event: self.format_preco_m2_unidade(event))
         self.entry_area_unidade.bind("<Return>", lambda event: self.format_m2(event, self.entry_area_unidade))
         self.entry_area_unidade.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_preco_unidade))
 
@@ -165,6 +166,7 @@ class Pesquisa_Mercado(Widgets):
         self.entry_preco_unidade = customtkinter.CTkEntry(self.fr_informacoes, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_preco_unidade.place(relx=0.345, rely=0.30, relwidth=0.08, relheight=0.6)
 
+        self.entry_preco_unidade.bind("<Return>", lambda event: self.format_preco_m2_unidade(event))
         self.entry_preco_unidade.bind("<Return>", lambda event: self.format_valor(event, self.entry_preco_unidade))
         self.entry_preco_unidade.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_preco_m2_unidade))
         
@@ -410,6 +412,11 @@ class Pesquisa_Mercado(Widgets):
         # Carregar Lista
         icon_image = self.base64_to_photoimage('lupa')
         for row in results:
+            area_unidade  = float(row['pesquisa_area_lote'].replace(' m²', '').replace('.', '').replace(',', '.')[:15])
+            preco_unidade = float(row['pesquisa_preco_venda'].replace('.', '').replace(',', '.')[:15])
+            preco_m2_unidade = preco_unidade / area_unidade
+            
+            preco_m2_unidade = self.format_valor_fx(preco_m2_unidade)
             self.LPesquisa_Mercado.insert('', 'end', 
                                values=(
                                     row['UF'],
@@ -420,7 +427,7 @@ class Pesquisa_Mercado(Widgets):
                                     row['pesquisa_empreendimento'],
                                     row['pesquisa_area_lote'],
                                     row['pesquisa_preco_venda'],
-                                    row['pesquisa_preco_m2'],
+                                   preco_m2_unidade,
                                     row['pesquisa_url']
                                     )
                                 )

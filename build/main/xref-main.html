@@ -21,6 +21,7 @@ imports:
     <a href="#LancFinanceiro">LancFinanceiro</a>
  &#8226;   <a href="#Lx.UsrSimulador">Lx.UsrSimulador</a>
  &#8226;   <a href="#Usr">Usr</a>
+ &#8226;   <a href="#UsrAlterar_Senha">UsrAlterar_Senha</a>
  &#8226;   <a href="#UsrAnexos">UsrAnexos</a>
  &#8226;   <a href="#UsrAprovacaoLctos">UsrAprovacaoLctos</a>
  &#8226;   <a href="#UsrBaixasFinanceiras">UsrBaixasFinanceiras</a>
@@ -28,9 +29,13 @@ imports:
  &#8226;   <a href="#UsrCadastro_Curvas_Negocio">UsrCadastro_Curvas_Negocio</a>
  &#8226;   <a href="#UsrCadastros">UsrCadastros</a>
  &#8226;   <a href="#UsrCalcular_Orcamento">UsrCalcular_Orcamento</a>
+ &#8226;   <a href="#UsrContas_Pagar">UsrContas_Pagar</a>
  &#8226;   <a href="#UsrCronograma">UsrCronograma</a>
+ &#8226;   <a href="#UsrCronograma_Hierarquico">UsrCronograma_Hierarquico</a>
  &#8226;   <a href="#UsrExtratoBancario">UsrExtratoBancario</a>
  &#8226;   <a href="#UsrExtratosClientes_Fornecedores">UsrExtratosClientes_Fornecedores</a>
+ &#8226;   <a href="#UsrModulos_Sistema">UsrModulos_Sistema</a>
+ &#8226;   <a href="#UsrPermissoes_Sistema">UsrPermissoes_Sistema</a>
  &#8226;   <a href="#UsrPesquisaMercado">UsrPesquisaMercado</a>
  &#8226;   <a href="#UsrPremissas">UsrPremissas</a>
  &#8226;   <a href="#UsrRelatorio_EstudosNegocio">UsrRelatorio_EstudosNegocio</a>
@@ -41,6 +46,7 @@ imports:
  &#8226;   <a href="#UsrSimulador_rel">UsrSimulador_rel</a>
  &#8226;   <a href="#UsrSites">UsrSites</a>
  &#8226;   <a href="#UsrTelaPrincipal">UsrTelaPrincipal</a>
+ &#8226;   <a href="#UsrUsuarios_Sistema">UsrUsuarios_Sistema</a>
  &#8226;   <a href="#_collections_abc">_collections_abc</a>
  &#8226;   <a href="#_weakrefset">_weakrefset</a>
  &#8226;   <a href="#abc">abc</a>
@@ -643,6 +649,7 @@ imported by:
  &#8226;   <a href="#PIL.features">PIL.features</a>
  &#8226;   <a href="#UsrCadastros">UsrCadastros</a>
  &#8226;   <a href="#UsrCronograma">UsrCronograma</a>
+ &#8226;   <a href="#UsrCronograma_Hierarquico">UsrCronograma_Hierarquico</a>
  &#8226;   <a href="#UsrSites">UsrSites</a>
  &#8226;   <a href="#customtkinter.windows.widgets.image.ctk_image">customtkinter.windows.widgets.image.ctk_image</a>
  &#8226;   <a href="#funcoes">funcoes</a>
@@ -1303,6 +1310,7 @@ imported by:
  &#8226;   <a href="#PIL.features">PIL.features</a>
  &#8226;   <a href="#UsrCadastros">UsrCadastros</a>
  &#8226;   <a href="#UsrCronograma">UsrCronograma</a>
+ &#8226;   <a href="#UsrCronograma_Hierarquico">UsrCronograma_Hierarquico</a>
  &#8226;   <a href="#UsrSites">UsrSites</a>
  &#8226;   <a href="#customtkinter.windows.widgets.image.ctk_image">customtkinter.windows.widgets.image.ctk_image</a>
  &#8226;   <a href="#funcoes">funcoes</a>
@@ -1704,6 +1712,7 @@ imported by:
  &#8226;   <a href="#PIL.SpiderImagePlugin">PIL.SpiderImagePlugin</a>
  &#8226;   <a href="#UsrCadastros">UsrCadastros</a>
  &#8226;   <a href="#UsrCronograma">UsrCronograma</a>
+ &#8226;   <a href="#UsrCronograma_Hierarquico">UsrCronograma_Hierarquico</a>
  &#8226;   <a href="#UsrSites">UsrSites</a>
  &#8226;   <a href="#customtkinter.windows.widgets.image.ctk_image">customtkinter.windows.widgets.image.ctk_image</a>
  &#8226;   <a href="#funcoes">funcoes</a>
@@ -2828,6 +2837,25 @@ imported by:
 </div>
 
 <div class="node">
+  <a name="UsrAlterar_Senha"></a>
+  <a target="code" href="///C:/Users/Clayton/OneDrive%20-%20URBANVIX%20URBANIZADORA%20E%20INCORPORADORA%20LTDA/Documentos/GitHub/fullhouse-Business/UsrAlterar_Senha.py" type="text/plain"><tt>UsrAlterar_Senha</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#UsrCadastros">UsrCadastros</a>
+ &#8226;   <a href="#db.db_conector">db.db_conector</a>
+ &#8226;   <a href="#hashlib">hashlib</a>
+ &#8226;   <a href="#widgets">widgets</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#main.py">main.py</a>
+
+  </div>
+
+</div>
+
+<div class="node">
   <a name="UsrAnexos"></a>
   <a target="code" href="///C:/Users/Clayton/OneDrive%20-%20URBANVIX%20URBANIZADORA%20E%20INCORPORADORA%20LTDA/Documentos/GitHub/fullhouse-Business/UsrAnexos.py" type="text/plain"><tt>UsrAnexos</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
@@ -2928,11 +2956,17 @@ imports:
   <div class="import">
 imported by:
     <a href="#LancFinanceiro">LancFinanceiro</a>
+ &#8226;   <a href="#UsrAlterar_Senha">UsrAlterar_Senha</a>
  &#8226;   <a href="#UsrAprovacaoLctos">UsrAprovacaoLctos</a>
  &#8226;   <a href="#UsrBaixasFinanceiras">UsrBaixasFinanceiras</a>
  &#8226;   <a href="#UsrBorderoBancario">UsrBorderoBancario</a>
+ &#8226;   <a href="#UsrContas_Pagar">UsrContas_Pagar</a>
  &#8226;   <a href="#UsrCronograma">UsrCronograma</a>
+ &#8226;   <a href="#UsrCronograma_Hierarquico">UsrCronograma_Hierarquico</a>
  &#8226;   <a href="#UsrExtratoBancario">UsrExtratoBancario</a>
+ &#8226;   <a href="#UsrModulos_Sistema">UsrModulos_Sistema</a>
+ &#8226;   <a href="#UsrPermissoes_Sistema">UsrPermissoes_Sistema</a>
+ &#8226;   <a href="#UsrUsuarios_Sistema">UsrUsuarios_Sistema</a>
  &#8226;   <a href="#main.py">main.py</a>
 
   </div>
@@ -2958,8 +2992,47 @@ imported by:
 </div>
 
 <div class="node">
+  <a name="UsrContas_Pagar"></a>
+  <a target="code" href="///C:/Users/Clayton/OneDrive%20-%20URBANVIX%20URBANIZADORA%20E%20INCORPORADORA%20LTDA/Documentos/GitHub/fullhouse-Business/UsrContas_Pagar.py" type="text/plain"><tt>UsrContas_Pagar</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#UsrCadastros">UsrCadastros</a>
+ &#8226;   <a href="#widgets">widgets</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#main.py">main.py</a>
+
+  </div>
+
+</div>
+
+<div class="node">
   <a name="UsrCronograma"></a>
   <a target="code" href="///C:/Users/Clayton/OneDrive%20-%20URBANVIX%20URBANIZADORA%20E%20INCORPORADORA%20LTDA/Documentos/GitHub/fullhouse-Business/UsrCronograma.py" type="text/plain"><tt>UsrCronograma</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#PIL">PIL</a>
+ &#8226;   <a href="#PIL.Image">PIL.Image</a>
+ &#8226;   <a href="#PIL.ImageTk">PIL.ImageTk</a>
+ &#8226;   <a href="#UsrCadastros">UsrCadastros</a>
+ &#8226;   <a href="#datetime">datetime</a>
+ &#8226;   <a href="#imports">imports</a>
+ &#8226;   <a href="#widgets">widgets</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#main.py">main.py</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="UsrCronograma_Hierarquico"></a>
+  <a target="code" href="///C:/Users/Clayton/OneDrive%20-%20URBANVIX%20URBANIZADORA%20E%20INCORPORADORA%20LTDA/Documentos/GitHub/fullhouse-Business/UsrCronograma_Hierarquico.py" type="text/plain"><tt>UsrCronograma_Hierarquico</tt></a>
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#PIL">PIL</a>
@@ -3004,6 +3077,40 @@ imported by:
 imports:
     <a href="#datetime">datetime</a>
  &#8226;   <a href="#imports">imports</a>
+ &#8226;   <a href="#widgets">widgets</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#main.py">main.py</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="UsrModulos_Sistema"></a>
+  <a target="code" href="///C:/Users/Clayton/OneDrive%20-%20URBANVIX%20URBANIZADORA%20E%20INCORPORADORA%20LTDA/Documentos/GitHub/fullhouse-Business/UsrModulos_Sistema.py" type="text/plain"><tt>UsrModulos_Sistema</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#UsrCadastros">UsrCadastros</a>
+ &#8226;   <a href="#widgets">widgets</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#main.py">main.py</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="UsrPermissoes_Sistema"></a>
+  <a target="code" href="///C:/Users/Clayton/OneDrive%20-%20URBANVIX%20URBANIZADORA%20E%20INCORPORADORA%20LTDA/Documentos/GitHub/fullhouse-Business/UsrPermissoes_Sistema.py" type="text/plain"><tt>UsrPermissoes_Sistema</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#UsrCadastros">UsrCadastros</a>
  &#8226;   <a href="#widgets">widgets</a>
 
   </div>
@@ -3183,6 +3290,23 @@ imported by:
 <span class="moduletype">SourceModule</span>  <div class="import">
 imports:
     <a href="#imports">imports</a>
+
+  </div>
+  <div class="import">
+imported by:
+    <a href="#main.py">main.py</a>
+
+  </div>
+
+</div>
+
+<div class="node">
+  <a name="UsrUsuarios_Sistema"></a>
+  <a target="code" href="///C:/Users/Clayton/OneDrive%20-%20URBANVIX%20URBANIZADORA%20E%20INCORPORADORA%20LTDA/Documentos/GitHub/fullhouse-Business/UsrUsuarios_Sistema.py" type="text/plain"><tt>UsrUsuarios_Sistema</tt></a>
+<span class="moduletype">SourceModule</span>  <div class="import">
+imports:
+    <a href="#UsrCadastros">UsrCadastros</a>
+ &#8226;   <a href="#widgets">widgets</a>
 
   </div>
   <div class="import">
@@ -8606,6 +8730,7 @@ imported by:
     <a href="#UsrAnexos">UsrAnexos</a>
  &#8226;   <a href="#UsrCalcular_Orcamento">UsrCalcular_Orcamento</a>
  &#8226;   <a href="#UsrCronograma">UsrCronograma</a>
+ &#8226;   <a href="#UsrCronograma_Hierarquico">UsrCronograma_Hierarquico</a>
  &#8226;   <a href="#UsrExtratoBancario">UsrExtratoBancario</a>
  &#8226;   <a href="#UsrExtratosClientes_Fornecedores">UsrExtratosClientes_Fornecedores</a>
  &#8226;   <a href="#UsrPesquisaMercado">UsrPesquisaMercado</a>
@@ -8746,7 +8871,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#funcoes">funcoes</a>
+    <a href="#UsrAlterar_Senha">UsrAlterar_Senha</a>
+ &#8226;   <a href="#funcoes">funcoes</a>
  &#8226;   <a href="#imports">imports</a>
 
   </div>
@@ -12539,7 +12665,8 @@ imports:
   </div>
   <div class="import">
 imported by:
-    <a href="#charset_normalizer.models">charset_normalizer.models</a>
+    <a href="#UsrAlterar_Senha">UsrAlterar_Senha</a>
+ &#8226;   <a href="#charset_normalizer.models">charset_normalizer.models</a>
  &#8226;   <a href="#hmac">hmac</a>
  &#8226;   <a href="#imports">imports</a>
  &#8226;   <a href="#pymysql._auth">pymysql._auth</a>
@@ -13687,6 +13814,7 @@ imports:
  &#8226;   <a href="#funcoes">funcoes</a>
  &#8226;   <a href="#hashlib">hashlib</a>
  &#8226;   <a href="#io">io</a>
+ &#8226;   <a href="#logging">logging</a>
  &#8226;   <a href="#markupsafe">markupsafe</a>
  &#8226;   <a href="#numpy">numpy</a>
  &#8226;   <a href="#os">os</a>
@@ -13715,6 +13843,7 @@ imported by:
  &#8226;   <a href="#UsrCadastros">UsrCadastros</a>
  &#8226;   <a href="#UsrCalcular_Orcamento">UsrCalcular_Orcamento</a>
  &#8226;   <a href="#UsrCronograma">UsrCronograma</a>
+ &#8226;   <a href="#UsrCronograma_Hierarquico">UsrCronograma_Hierarquico</a>
  &#8226;   <a href="#UsrExtratosClientes_Fornecedores">UsrExtratosClientes_Fornecedores</a>
  &#8226;   <a href="#UsrPesquisaMercado">UsrPesquisaMercado</a>
  &#8226;   <a href="#UsrPremissas">UsrPremissas</a>
@@ -14341,6 +14470,7 @@ imported by:
  &#8226;   <a href="#concurrent.futures._base">concurrent.futures._base</a>
  &#8226;   <a href="#hashlib">hashlib</a>
  &#8226;   <a href="#http.cookiejar">http.cookiejar</a>
+ &#8226;   <a href="#imports">imports</a>
  &#8226;   <a href="#multiprocessing.util">multiprocessing.util</a>
  &#8226;   <a href="#packaging.tags">packaging.tags</a>
  &#8226;   <a href="#requests">requests</a>
@@ -33916,15 +34046,20 @@ imports:
 imported by:
     <a href="#LancFinanceiro">LancFinanceiro</a>
  &#8226;   <a href="#Lx.UsrSimulador">Lx.UsrSimulador</a>
+ &#8226;   <a href="#UsrAlterar_Senha">UsrAlterar_Senha</a>
  &#8226;   <a href="#UsrAnexos">UsrAnexos</a>
  &#8226;   <a href="#UsrAprovacaoLctos">UsrAprovacaoLctos</a>
  &#8226;   <a href="#UsrBaixasFinanceiras">UsrBaixasFinanceiras</a>
  &#8226;   <a href="#UsrBorderoBancario">UsrBorderoBancario</a>
  &#8226;   <a href="#UsrCadastro_Curvas_Negocio">UsrCadastro_Curvas_Negocio</a>
  &#8226;   <a href="#UsrCalcular_Orcamento">UsrCalcular_Orcamento</a>
+ &#8226;   <a href="#UsrContas_Pagar">UsrContas_Pagar</a>
  &#8226;   <a href="#UsrCronograma">UsrCronograma</a>
+ &#8226;   <a href="#UsrCronograma_Hierarquico">UsrCronograma_Hierarquico</a>
  &#8226;   <a href="#UsrExtratoBancario">UsrExtratoBancario</a>
  &#8226;   <a href="#UsrExtratosClientes_Fornecedores">UsrExtratosClientes_Fornecedores</a>
+ &#8226;   <a href="#UsrModulos_Sistema">UsrModulos_Sistema</a>
+ &#8226;   <a href="#UsrPermissoes_Sistema">UsrPermissoes_Sistema</a>
  &#8226;   <a href="#UsrPesquisaMercado">UsrPesquisaMercado</a>
  &#8226;   <a href="#UsrPremissas">UsrPremissas</a>
  &#8226;   <a href="#UsrRelatorio_EstudosNegocio">UsrRelatorio_EstudosNegocio</a>
@@ -33934,6 +34069,7 @@ imported by:
  &#8226;   <a href="#UsrSimulador_Maps">UsrSimulador_Maps</a>
  &#8226;   <a href="#UsrSimulador_rel">UsrSimulador_rel</a>
  &#8226;   <a href="#UsrSites">UsrSites</a>
+ &#8226;   <a href="#UsrUsuarios_Sistema">UsrUsuarios_Sistema</a>
 
   </div>
 

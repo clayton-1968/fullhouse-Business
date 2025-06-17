@@ -4412,7 +4412,16 @@ class Formatos():
             tickt_medio = self.format_valor_fx(tickt_medio)
             self.entry_vendas_lote_medio.delete(0, "end")
             self.entry_vendas_lote_medio.insert(0, tickt_medio)
-            
+    
+    def format_preco_m2_unidade(self, event):
+        area_unidade  = float(self.entry_area_unidade.get().replace(' m²', '').replace('.', '').replace(',', '.')[:15])
+        preco_unidade = float(self.entry_preco_unidade.get().replace('.', '').replace(',', '.')[:15])
+        preco_m2_unidade = preco_unidade / area_unidade
+        
+        preco_m2_unidade = self.format_valor_fx(preco_m2_unidade)
+        self.entry_preco_m2_unidade.delete(0, "end")
+        self.entry_preco_m2_unidade.insert(0, preco_m2_unidade)
+        
     def format_area_aproveitada(self, event):
         text = float(self.entry_area_aproveitamento.get().replace("%", "").replace(",", ".")[:7]) / 100
         parti = text
