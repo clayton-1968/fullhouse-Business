@@ -30,8 +30,8 @@ from UsrUsuarios_Sistema              import UsuariosSistema
 from UsrPermissoes_Sistema            import PermissoesSistema
 from UsrContas_Pagar                  import ContasPagar
 from UsrModulos_Sistema               import ModuloSistema
-
-
+from UsrSistema_Amortizacao           import SistemaAmortizacao
+from UsrClientes_Sistema              import ClientesSistema
 
 
 class PrimaryWindow(
@@ -65,6 +65,8 @@ class PrimaryWindow(
                     PermissoesSistema,
                     ContasPagar,
                     ModuloSistema,
+                    SistemaAmortizacao,
+                    ClientesSistema,
                     ):
 
     def __init__(self):
@@ -125,7 +127,10 @@ class PrimaryWindow(
                 self.contas_pagar(self.principal_frame)
             elif modulo == 'Modulos_Sistema': 
                 self.consultar_modulo(self.principal_frame)
-                
+            elif modulo == 'Sistema_Amortizacao':
+                self.consultar_amortizacao(self.principal_frame)
+            elif modulo == 'Clientes_Sistema':
+                self.consultar_clientes_sistema(self.principal_frame)
 
     def login_screen(self):
         # Configura a janela principal
@@ -375,8 +380,8 @@ class PrimaryWindow(
         filemenu7.add_command(label="Usuários Sistema", command=lambda: self.menu_conectar('Usuarios_Sistema'))
         filemenu7.add_command(label="Permissões", command=lambda: self.menu_conectar('Permissoes_Sistema'))
         filemenu7.add_command(label="Modulos", command=lambda: self.menu_conectar('Modulos_Sistema'))  # , command=modo_escuro)
-        filemenu7.add_command(label="Clientes do Sistema")
-        filemenu7.add_command(label="Sistema Amortização")
+        filemenu7.add_command(label="Clientes do Sistema", command=lambda: self.menu_conectar('Clientes_Sistema'))
+        filemenu7.add_command(label="Sistema Amortização", command=lambda: self.menu_conectar('Sistema_Amortizacao'))
         filemenu7.add_command(label="Atualizações - Versão Sistema", command=lambda: self.menu_conectar('Versoes'))
 
         filemenu8.add_command(label="Manual de uso do sistema", command=manual)
