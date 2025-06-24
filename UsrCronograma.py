@@ -552,8 +552,7 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
         for i in range(len(self.LCronograma.get_children())):
             item = self.LCronograma.get_children()[i]
             values = self.LCronograma.item(item, 'values')
-            self.LCronograma.item(
-                item, text='', values=(nr_campos,) + values[1:])
+            self.LCronograma.item(item, text='', values=(nr_campos,) + values[1:])
             if values[1] == tarefa_id_nova:  # Supondo que o segundo subitem é o que procuramos
                 linha_base_predessessora = nr_campos
 
@@ -987,7 +986,7 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
 
             if nivel_inclusao == nivel_secundario:
                 nivel_ultimo = values[1]
-
+        
         # Verifica se Nivel_Ultimo está vazio
         if nivel_ultimo == '':
             # Incrementa os últimos dois dígitos
@@ -1007,7 +1006,7 @@ class Cronograma_Atividades(Widgets, Projetos, Cronograma_Atividades_Copiar):
                     nrcampo = self.LCronograma.index(item) + 2
                     Linha_Incluir = self.LCronograma.index(item) + 1
                     nivel_ultimo = values[1]
-
+            
             # Define Nivel_Ultimo baseado no resultado do segundo loop
             def calcular_nivel_ultimo(tarefa_id, nivel_inclusao, nivel_ultimo):
                 # Extrai a parte inicial do tarefa_id
