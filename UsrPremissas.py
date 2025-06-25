@@ -668,8 +668,8 @@ class Premissas_Orcamento(Widgets):
         Dta_Reajuste = datetime.strptime(self.entry_dt_reajuste.get(), "%d/%m/%Y")
         Dta_Reajuste = Dta_Reajuste.strftime("%Y-%m-%d")
         
-        Dta_Inicio = datetime.strptime(self.entry_dt_inicio.get(), "%d/%m/%Y")
-        Dta_Fim = datetime.strptime(self.entry_dt_fim.get(), "%d/%m/%Y")
+        Dta_Inicio = self.ult_dia_mes(datetime.strptime(self.entry_dt_inicio.get(), "%d/%m/%Y"))
+        Dta_Fim = self.ult_dia_mes(datetime.strptime(self.entry_dt_fim.get(), "%d/%m/%Y"))
 
         Dedutivel = self.entry_despesa_dedutivel.get()
         if Dedutivel == 'Sim':

@@ -138,6 +138,7 @@ class Processar_Premissas_Orcamento(Widgets):
                     INNER JOIN orc_precos pr on pr.Preco_ID=pp.Preco_ID and pr.Orc_ID=pp.Orc_ID and pr.Empresa_ID=pp.Pri_ID
                     WHERE {' AND '.join(conditions)}
                 """
+            
             premissas = db.executar_consulta(vsSQL, params)
             
             if not premissas:
@@ -182,8 +183,7 @@ class Processar_Premissas_Orcamento(Widgets):
             self.current_index = 0
             
             for index, premissa in enumerate(premissas, start=1):
-                self.process_records()  # Começa a processar os registros        
-                
+                self.process_records()  # Começa a processar os registros 
                 dta_inicio = premissa['DtaInicio']
                 if isinstance(dta_inicio, datetime):
                     dta_ref_calculo = self.ult_dia_mes(dta_inicio) 
@@ -204,6 +204,7 @@ class Processar_Premissas_Orcamento(Widgets):
                     dta_fim = datetime.combine(dta_fim, datetime.min.time())
 
                 dta_ref_calculo = datetime.strptime(dta_ref_calculo, '%Y-%m-%d')         
+                
                 while dta_ref_calculo <= dta_fim:
                     str_registros = ''
                     Idx_ID = premissa['Idx_ID']
@@ -216,7 +217,6 @@ class Processar_Premissas_Orcamento(Widgets):
                     elif isinstance(Idx_Data, str):
                         Idx_Data = datetime.strptime(Idx_Data, '%Y-%m-%d')
                         Idx_Data = self.ult_dia_mes(datetime.combine(Idx_Data, datetime.min.time()))  # Combines 
-                        # Idx_Data = self.ult_dia_mes(Idx_Data) 
                     else:
                         print('Erro: Dta Reajuste não é um objeto datetime válido.')
                         continue  

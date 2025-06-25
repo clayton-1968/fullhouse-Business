@@ -704,11 +704,10 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
 
     def atualizar_cronograma_interacao_hierarquico(self, nr_interacao):
         all_numbers     = self.get_all_items_numbers()
-        all_dependentes = self.get_all_items_numbers()
         nr_interacao = int(len(all_numbers))
         for _ in range(nr_interacao):
             for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
-                self.predessessora_hierarquico(child, all_dependentes)
+                self.predessessora_hierarquico(child)
             
             self.dta_tarefa_mae_hierarquico
         
@@ -749,9 +748,10 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
 
         return None  # Retorna None se não conseguiu analisar
 
-    def predessessora_hierarquico(self, item_id, all_dependentes):
+    def predessessora_hierarquico(self, item_id):
         
         try:
+            all_dependentes = self.get_all_items_numbers()
             selected_iid = item_id
             current_values = self.LCronograma.item(item_id).get('values')
             tasks_ids = self.LCronograma.get_children()
@@ -1883,11 +1883,10 @@ class TreeviewEdit(ttk.Treeview):
 
     def atualiza_cronograma_interacao(self, nr_interacao):
         all_numbers     = self.get_all_items_numbers()
-        all_dependentes = self.get_all_items_numbers()
         nr_interacao = int(len(all_numbers))
         for _ in range(nr_interacao):
             for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
-                self.predessessora(child, all_dependentes)
+                self.predessessora(child)
 
             self.dta_tarefa_mae()
 
@@ -2049,8 +2048,9 @@ class TreeviewEdit(ttk.Treeview):
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
 
-    def predessessora(self, item_id, all_dependentes):
+    def predessessora(self, item_id):
         try:
+            all_dependentes = self.get_all_items_numbers()
             selected_iid = item_id
             current_values = self.item(item_id).get('values')
             tasks_ids = self.get_children()
@@ -2085,7 +2085,7 @@ class TreeviewEdit(ttk.Treeview):
                         lin_dependente += char
                     
                     
-                    if char == ';' or viContador == nr_caracteres - 1:
+                    if char == ';' or viContador == (nr_caracteres - 1):
                         
                         for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_dependentes:
                             nr_items = len(all_dependentes)
@@ -2098,6 +2098,7 @@ class TreeviewEdit(ttk.Treeview):
                                 data_conclusao_prevista = self.parse_date(dta_conclusao_prevista)
                                 data_conclusao_realizada = self.parse_date(dta_conclusao_realizada)
                                 
+                        
                         if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
                             
                             if data_conclusao_realizada and self.is_valid_date(data_conclusao_realizada):
