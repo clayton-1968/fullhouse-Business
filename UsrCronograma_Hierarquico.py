@@ -82,6 +82,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         self.btn_sair_projeto.place(relx=0.955, rely=0.02, relwidth=0.04, relheight=0.05)
         # Adicionar o tooltip
         ToolTip(self.btn_sair_projeto, "Sair do Cronograma")
+
     def sair_cronograma_atividades_hierarquico(self, janela):
         if messagebox.askyesno("Confirmar", "Salvar o Programa de Atividades antes de Sair?"):
             try:
@@ -524,7 +525,10 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
             if tarefa_id == tarefa_id_nova:  
                 linha_base_predessessora = nr_campos
-            
+            nr_campos += 1    
+        
+        nr_campos = 1
+        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
             tarefa_id_atual      = str(tarefa_id.zfill(2))
             nrcarat              = len(tarefa_id_atual)
             entry_descricao      = tarefa_ds
@@ -566,7 +570,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
 
             elif nr_caracteres != 0:
                 dependente_num = int(str_endereco.replace("'", ""))
-                if dependente_num >= linha_base_predessessora:
+                if dependente_num >= int(linha_base_predessessora):
                     tarefa_dependencia = dependente_num + 1
                 else:
                     tarefa_dependencia = dependente_num
@@ -704,7 +708,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
 
     def atualizar_cronograma_interacao_hierarquico(self, nr_interacao):
         all_numbers     = self.get_all_items_numbers()
-        nr_interacao = int(len(all_numbers))
+        nr_interacao = int(int(len(all_numbers)) / 10)
         for _ in range(nr_interacao):
             for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
                 self.predessessora_hierarquico(child)
@@ -1838,7 +1842,7 @@ class TreeviewEdit(ttk.Treeview):
             
             self.item(selected_iid, values=current_values)
 
-            self.atualiza_cronograma_interacao(100)
+            self.atualiza_cronograma_interacao(10)
             self.ajustar_list()
 
         event.widget.destroy()
@@ -1883,7 +1887,7 @@ class TreeviewEdit(ttk.Treeview):
 
     def atualiza_cronograma_interacao(self, nr_interacao):
         all_numbers     = self.get_all_items_numbers()
-        nr_interacao = int(len(all_numbers))
+        nr_interacao = int(int(len(all_numbers)) / 10)
         for _ in range(nr_interacao):
             for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
                 self.predessessora(child)
@@ -2094,7 +2098,7 @@ class TreeviewEdit(ttk.Treeview):
                                 return
                             
                             if int(lin_dependente) == int(linha):
-                                data_inicial_realizada = self.parse_date( dta_inicial_realizada)
+                                data_inicial_realizada = self.parse_date(dta_inicial_realizada)
                                 data_conclusao_prevista = self.parse_date(dta_conclusao_prevista)
                                 data_conclusao_realizada = self.parse_date(dta_conclusao_realizada)
                                 

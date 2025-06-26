@@ -317,7 +317,7 @@ class PrimaryWindow(
         filemenu5.add_command(label="Cronograma", command=lambda: self.menu_conectar('Cronograma_Barra_Projetos'))
         filemenu5.add_command(label="Cronograma (Beta)", command=lambda: self.menu_conectar('Cronograma_Barra_Projetos_Hierarquico'))
         filemenu5.add_command(label="Reuniões")
-        filemenu5.add_command(label="Cad. Projetos") 
+        # filemenu5.add_command(label="Cad. Projetos") 
         filemenu5.add_command(label="Envios de SMS")
         filemenu5.add_command(label="Envios de Whatsapp")
         # Criação de submenu Planejamento

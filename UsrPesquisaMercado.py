@@ -414,7 +414,11 @@ class Pesquisa_Mercado(Widgets):
         for row in results:
             area_unidade  = float(row['pesquisa_area_lote'].replace(' m²', '').replace('.', '').replace(',', '.')[:15])
             preco_unidade = float(row['pesquisa_preco_venda'].replace('.', '').replace(',', '.')[:15])
-            preco_m2_unidade = preco_unidade / area_unidade
+            if preco_unidade != 0:
+                preco_m2_unidade = preco_unidade / area_unidade
+            else:
+                preco_m2_unidade = 0.00
+            
             
             preco_m2_unidade = self.format_valor_fx(preco_m2_unidade)
             self.LPesquisa_Mercado.insert('', 'end', 
