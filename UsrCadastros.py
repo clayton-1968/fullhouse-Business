@@ -1,6 +1,7 @@
 from imports import *
 from PIL import ImageTk, Image
 
+
 ################# criando janela ###############
 # Cadastro de Fornecedores e Clientes
 class Pessoas(Icons, Functions):
@@ -543,6 +544,7 @@ class Produtos(Icons, Functions):
 
 Produtos()
 
+# Cadastro de Versões
 class Versoes(Icons, Functions):
 
     def cad_versoes(self):
@@ -1437,6 +1439,7 @@ class Projetos(Icons, Functions):
 
 Projetos()
 
+# Copiar Cronograma de Atividades
 class Cronograma_Atividades_Copiar(Icons, Functions):
     def cad_cronograma_atividades_copiar(self):
         self.janela_cronograma_copia = customtkinter.CTkToplevel(self.window_one)

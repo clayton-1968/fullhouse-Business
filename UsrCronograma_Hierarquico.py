@@ -2,6 +2,17 @@ from imports      import *
 from widgets      import Widgets
 from datetime     import datetime
 from PIL          import ImageTk, Image
+
+import plotly.figure_factory as ff
+import plotly.graph_objects  as go
+import webbrowser
+import http.server
+import socketserver
+import threading
+import pandas       as pd
+from datetime       import datetime, timedelta
+from plotly.offline import plot
+
 from UsrCadastros import Projetos
 from UsrCadastros import Cronograma_Atividades_Copiar
 
@@ -74,7 +85,16 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         self.btn_novo_projeto.place(relx=0.765, rely=0.02, relwidth=0.08, relheight=0.05)
         # Adicionar o tooltip
         ToolTip(self.btn_novo_projeto, "Incluir Novo Programa Atividades")
-         
+
+        # Botão Gráfico Gantt
+        # icon_image = self.base64_to_photoimage('gantt')
+        icon_image = self.base64_to_photoimage('open_book')
+        self.btn_gantt_projeto = customtkinter.CTkButton(janela, text='Gantt', image=icon_image, fg_color='transparent', command=lambda: self.gerar_gantt())
+        self.btn_gantt_projeto.pack(pady=10)
+        self.btn_gantt_projeto.place(relx=0.855, rely=0.02, relwidth=0.08, relheight=0.05)
+        # # Adicionar o tooltip
+        ToolTip(self.btn_gantt_projeto, "Gerar Gráfico Gantt")
+        
         # Botão Sair Cronograma
         icon_image = self.base64_to_photoimage('sair')
         self.btn_sair_projeto = customtkinter.CTkButton(janela, text='Sair', image=icon_image, fg_color='transparent', command=lambda: self.sair_cronograma_atividades_hierarquico(janela))
@@ -388,20 +408,22 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                     return
                 
                 values = self.LCronograma.item(selected_item, 'values')
-                lin = self.LCronograma.index(selected_item)
+                # lin = self.LCronograma.index(selected_item)
+                lin = int(values[0])
                 tarefa_id = str(values[1]).zfill(2)
                 
                 if messagebox.askyesno("Confirmar", "Tem certeza que deseja excluir esta tarefa?"):
-                    try:
+                    # try:
                         self.excluir_tarefas_hierarquico(projeto_id, tarefa_id)
                         self.LCronograma.delete(selected_item)
-                        self.atualizar_dependencias_exclusao_hierarquico(lin)
+                        tpo_movto='excluir'
+                        self.atualizar_dependencias_hierarquico(tpo_movto, lin, tarefa_id)
                         self.atualizar_cronograma_interacao_hierarquico(10)
                         self.ajustar_list_hierarquico()
 
                         messagebox.showinfo("Sucesso", "Tarefa excluída com sucesso!")
-                    except Exception as e:
-                        messagebox.showerror("Erro", f"Não foi possível excluir a tarefa: {str(e)}")
+                    # except Exception as e:
+                    #     messagebox.showerror("Erro", f"Não foi possível excluir a tarefa: {str(e)}")
             else:
                 messagebox.showinfo("Erro", "Selecione a posição para Exclusão da Tarefa!")
 
@@ -428,98 +450,14 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         self.LCronograma.bind('<Control-u>', lambda event: selected_anexar() if self.LCronograma.selection() else None)
         self.LCronograma.bind('<Control-p>', lambda event: selected_pesquisar() if self.LCronograma.selection() else None)
 
-    def atualizar_dependencias_exclusao_hierarquico(self, linha_base_predessessora):
-        # Reassigning the numbers
-
+    def atualizar_dependencias_hierarquico(self, tpo_movto, lin, tarefa_id_nova):
         nr_campos = 1
-        for i in range(len(self.LCronograma.get_children())):
-            item = self.LCronograma.get_children()[i]
-            values = self.LCronograma.item(item, 'values')
-            self.LCronograma.item(
-                item, text='', values=(nr_campos,) + values[1:])
-            nr_campos += 1
-
-        # Reassign dependencies based on remaining items
-        for ii in range(len(self.LCronograma.get_children())):
-            item = self.LCronograma.get_children()[ii]
-            values = self.LCronograma.item(item, 'values')
-            # Supondo que o 5º item é o subitem 4
-            str_endereco = self.LCronograma.item(item, 'values')[4]
-            nr_caracteres = len(str_endereco)
-            str_espera = self.LCronograma.item(item, 'values')[5]
-            # Supondo que o 5º item é o subitem 4
-            str_prazo = self.LCronograma.item(item, 'values')[6]
-            str_per_conclusao = self.LCronograma.item(
-                item, 'values')[7]  # Supondo que o 5º item é o subitem 4
-            # Supondo que o 5º item é o subitem 4
-            str_ini_prev = self.LCronograma.item(item, 'values')[8]
-            # Supondo que o 5º item é o subitem 4
-            str_ini_real = self.LCronograma.item(item, 'values')[9]
-            # Supondo que o 5º item é o subitem 4
-            str_fim_prev = self.LCronograma.item(item, 'values')[10]
-            # Supondo que o 5º item é o subitem 4
-            str_fim_real = self.LCronograma.item(item, 'values')[11]
-            str_obs = self.LCronograma.item(item, 'values')[12]
-
-            if nr_caracteres != 0 and nr_caracteres > 2:
-                lin_dependente = ""
-                tarefa_dependencia = ""
-
-                for vi_contador in range(nr_caracteres):
-                    char = str_endereco[vi_contador]
-
-                    if char != ";":
-                        lin_dependente += char
-                    if char == ";" or vi_contador == nr_caracteres - 1:
-                        linha_tarefa = int(lin_dependente) - 1 if int(
-                            lin_dependente) > linha_base_predessessora else int(lin_dependente)
-                        tarefa_dependencia += str(linha_tarefa) + ";"
-                        lin_dependente = ""
-
-                # Remove the last semicolon if it exists
-                tarefa_dependencia = tarefa_dependencia.rstrip(';')
-
-                # Update the task dependency
-                self.LCronograma.item(
-                    item,
-                    text='',
-                    values=values[:4] + (
-                        tarefa_dependencia,
-                        str_espera,
-                        str_prazo,
-                        str_per_conclusao,
-                        str_ini_prev,
-                        str_ini_real,
-                        str_fim_prev,
-                        str_fim_real,
-                        str_obs,
-                    )
-                )
-
-            elif nr_caracteres != 0:
-                linha_tarefa = int(
-                    str_endereco) - 1 if int(str_endereco) > linha_base_predessessora else int(str_endereco)
-                self.LCronograma.item(
-                    item,
-                    text='',
-                    values=values[:4] + (
-                        linha_tarefa,
-                        str_espera,
-                        str_prazo,
-                        str_per_conclusao,
-                        str_ini_prev,
-                        str_ini_real,
-                        str_fim_prev,
-                        str_fim_real,
-                        str_obs,
-                    )
-                )
-            else:
-                tarefa_dependencia = ""
-
-    def atualizar_dependencias_hierarquico(self, tarefa_id_nova):
-        nr_campos = 1
-        linha_base_predessessora = None
+        linha_base_predessessora = lin
+        if tpo_movto == 'incluir':
+            movto = 1
+        else:
+            movto = -1
+        # linha_base_predessessora = None
         all_numbers       = self.get_all_items_numbers()
         # Primeiro loop para atualizar os números dos campos
         for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
@@ -558,7 +496,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                     if char_atual == ";" or vi_contador == nr_caracteres - 1:
                         dependente_num = int(lin_dependente)
                         if dependente_num > linha_base_predessessora:
-                            linha_tarefa = dependente_num + 1
+                            linha_tarefa = dependente_num + movto
                         else:
                             linha_tarefa = dependente_num
                         tarefa_dependencia += str(linha_tarefa)
@@ -571,7 +509,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             elif nr_caracteres != 0:
                 dependente_num = int(str_endereco.replace("'", ""))
                 if dependente_num >= int(linha_base_predessessora):
-                    tarefa_dependencia = dependente_num + 1
+                    tarefa_dependencia = dependente_num + movto
                 else:
                     tarefa_dependencia = dependente_num
 
@@ -603,109 +541,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                 )
             )
             nr_campos += 1
-
-        # Primeiro loop para atualizar os números dos campos
-        # for i in range(len(self.LCronograma.get_children())):
-        #     item = self.LCronograma.get_children()[i]
-        #     values = self.LCronograma.item(item, 'values')
-        #     self.LCronograma.item(item, text='', values=(nr_campos,) + values[1:])
-        #     if values[1] == tarefa_id_nova:  # Supondo que o segundo subitem é o que procuramos
-        #         linha_base_predessessora = nr_campos
-
-        #     nr_campos += 1
-
-        # # Segundo loop para processar as dependências
-        # for ii in range(len(self.LCronograma.get_children())):
-        #     item = self.LCronograma.get_children()[ii]
-        #     values = self.LCronograma.item(item, 'values')
-        #     # Supondo que o 5º item é o subitem 4
-        #     str_endereco = self.LCronograma.item(item, 'values')[4]
-        #     nr_caracteres = len(str_endereco)
-
-        #     str_espera = self.LCronograma.item(item, 'values')[5]
-        #     # Supondo que o 5º item é o subitem 4
-        #     str_prazo = self.LCronograma.item(item, 'values')[6]
-        #     str_per_conclusao = self.LCronograma.item(
-        #         item, 'values')[7]  # Supondo que o 5º item é o subitem 4
-        #     # Supondo que o 5º item é o subitem 4
-        #     str_ini_prev = self.LCronograma.item(item, 'values')[8]
-        #     # Supondo que o 5º item é o subitem 4
-        #     str_ini_real = self.LCronograma.item(item, 'values')[9]
-        #     # Supondo que o 5º item é o subitem 4
-        #     str_fim_prev = self.LCronograma.item(item, 'values')[10]
-        #     # Supondo que o 5º item é o subitem 4
-        #     str_fim_real = self.LCronograma.item(item, 'values')[11]
-        #     # Supondo que o 5º item é o subitem 4
-        #     str_obs = self.LCronograma.item(item, 'values')[12]
-
-        #     if nr_caracteres > 2:
-        #         linha_tarefa = ""
-        #         tarefa_dependencia = ""
-        #         lin_dependente = ""
-
-        #         for vi_contador in range(nr_caracteres):
-        #             char_atual = str_endereco[vi_contador]
-
-        #             if char_atual != ";":
-        #                 lin_dependente += char_atual  # Accumula caracteres
-        #             if char_atual == ";" or vi_contador == nr_caracteres - 1:
-        #                 # processa a dependência acumulada
-        #                 dependente_num = int(lin_dependente)
-        #                 if dependente_num > linha_base_predessessora:
-        #                     linha_tarefa = dependente_num + 1
-        #                 else:
-        #                     linha_tarefa = dependente_num
-        #                 tarefa_dependencia += str(linha_tarefa)
-        #                 lin_dependente = ""
-
-        #                 # Adiciona o delimitador se não for o último
-        #                 if vi_contador < nr_caracteres - 1:
-        #                     tarefa_dependencia += ";"
-
-        #         # Atualiza o subitem de dependência
-        #         self.LCronograma.item(
-        #             item,
-        #             text='',
-        #             values=values[:4] + (
-        #                 tarefa_dependencia,
-        #                 str_espera,
-        #                 str_prazo,
-        #                 str_per_conclusao,
-        #                 str_ini_prev,
-        #                 str_ini_real,
-        #                 str_fim_prev,
-        #                 str_fim_real,
-        #                 str_obs,
-        #             )
-        #         )
-        #     elif nr_caracteres != 0:
-        #         dependente_num = int(str_endereco.replace("'", ""))
-        #         if dependente_num >= linha_base_predessessora:
-        #             tarefa_dependencia = dependente_num + 1
-        #         else:
-        #             tarefa_dependencia = dependente_num
-
-        #         tarefa_dependencia = str(tarefa_dependencia)
-
-        #         # Atualiza o subitem de dependência
-        #         self.LCronograma.item(
-        #             item,
-        #             text='',
-        #             values=values[:4] + (
-        #                 tarefa_dependencia,
-        #                 str_espera,
-        #                 str_prazo,
-        #                 str_per_conclusao,
-        #                 str_ini_prev,
-        #                 str_ini_real,
-        #                 str_fim_prev,
-        #                 str_fim_real,
-        #                 str_obs,
-        #             )
-        #         )
-        #     else:
-        #         tarefa_dependencia = ""
-
+        
     def atualizar_cronograma_interacao_hierarquico(self, nr_interacao):
         all_numbers     = self.get_all_items_numbers()
         nr_interacao = int(int(len(all_numbers)) / 10)
@@ -1108,7 +944,8 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                                     tarefa_ds_nova, tarefa_mae_id, data_inicial_prevista, data_conclusao_prevista)
         
         # Atualizar os indices
-        self.atualizar_dependencias_hierarquico(tarefa_id_nova)
+        tpo_movto='incluir'
+        self.atualizar_dependencias_hierarquico(tpo_movto, Linha_Incluir, tarefa_id_nova)
         self.atualizar_cronograma_interacao_hierarquico(10)
         self.ajustar_list_hierarquico()
 
@@ -1656,6 +1493,131 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             messagebox.showerror("Gestor de Negócios", f"Erro - ocorrência: {str(e)}", parent=self.principal_frame)
         finally:
             pass
+    
+    def gerar_gantt(self):
+        if self.entry_projeto.get() != '':
+            projeto_id = self.obter_Projeto_ID(self.entry_projeto.get(), self.principal_frame)
+        else:
+            messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto!!")
+            return
+        
+        # Função para criar dados de exemplo
+        def create_sample_data():
+            sql_query = """
+                            SELECT 
+                                pa.tarefa_ID                AS tarefa_ID, 
+                                pa.tarefa_DS                AS tarefa_DS, 
+                                pa.percentual_execucao      AS percentual_execucao,
+                                pa.data_Inicial_Prevista    AS data_Inicial_Prevista, 
+                                pa.data_Inicial_Realizada   AS data_Inicial_Realizada, 
+                                pa.dias_diferenca_inicio    AS dias_diferenca_inicio,
+                                pa.data_conclusao_prevista  AS data_conclusao_prevista, 
+                                pa.data_conclusao_realizada AS data_conclusao_realizada
+                            FROM programas_atividades pa
+                            INNER JOIN projetos_cronograma pc ON pc.projeto_id=pa.projeto_id 
+                            WHERE pa.projeto_ID = %s
+                            ORDER BY tarefa_ID
+                        """
+            
+            list_tarefas = []
+            list_tarefas = db.executar_consulta(sql_query, projeto_id)
+            tasks = list_tarefas
+            return pd.DataFrame(tasks)
+
+        # Criar dados de exemplo
+        df = create_sample_data()
+        df.rename(columns={
+            'tarefa_ID': 'Task_ID',
+            'tarefa_DS': 'Task',
+            'data_Inicial_Prevista': 'Start',
+            'data_conclusao_prevista': 'Finish',
+            'percentual_execucao': 'Complete'
+        }, inplace=True)
+
+        # Converter datas para datetime
+        df['Start'] = pd.to_datetime(df['Start'])
+        df['Finish'] = pd.to_datetime(df['Finish'])
+        
+        # Criar o gráfico de Gantt
+        fig = ff.create_gantt(df, show_colorbar=True, group_tasks=True)
+
+        # Adicionar barras para o progresso realizado
+        nr = 1
+        for task in df.itertuples():
+            start = task.Start
+            finish = task.Finish
+            duration = (task.Finish.date() - task.Start.date()).days
+            completed_duration = (duration * task.Complete) / 100
+            if task.Complete > 0:
+                now_date = datetime.now().date()
+                diferenca = (now_date - task.Start.date()).days
+                if diferenca > duration:
+                    diferenca = duration
+
+                if duration > 0:
+                    per_diferenca = (diferenca / duration)
+                else:
+                    per_diferenca = 0
+
+                color = 'green' if task.Complete == 1 else 'red' if duration > 0 and task.Complete < per_diferenca else 'green'
+                fig.add_trace(go.Bar(
+                    x=[start + timedelta(days=completed_duration)],
+                    y=[task.Task_ID + ' - ' + task.Task],
+                    orientation='h',
+                    marker=dict(color=color),
+                    width=0.5,
+                    base=start,
+                    hoverinfo='skip',
+                    showlegend=False
+                ))
+            nr += 1
+        
+        # Atualizar o layout
+        fig.update_layout(
+            title='Gráfico - ' + self.entry_projeto.get(),
+            xaxis_title='Data',
+            yaxis_title='Tarefas',
+            height=2000,
+            margin=dict(l=250, r=150, t=150, b=150),
+            xaxis=dict(
+                tickformat='%d-%m-%Y',
+                tickangle=45,
+            )
+        )
+
+        # Atualizar as cores das barras
+        fig.data[0].marker.color = 'rgb(0, 0, 255)'  # Azul para previsto
+
+        # Adicionar legenda
+        fig.add_trace(go.Bar(x=[None], y=[None], name='Previsto', marker_color='blue'))
+        fig.add_trace(go.Bar(x=[None], y=[None], name='Realizado', marker_color='green'))
+        fig.add_trace(go.Bar(x=[None], y=[None], name='Atrasado', marker_color='red'))
+
+        # Mostrar o gráfico
+        fig.show()
+        # plot(fig, auto_open=True)
+
+        # Gerar o arquivo HTML
+        # plot(fig, filename='gantt_chart.html', auto_open=False)
+
+        # Configurar e iniciar o servidor
+        PORT = 9001
+        Handler = http.server.SimpleHTTPRequestHandler
+
+        def start_server():
+            with socketserver.TCPServer(("", PORT), Handler) as httpd:
+                print(f"Serving at port {PORT}")
+                httpd.serve_forever()
+
+        # Iniciar o servidor em uma thread separada
+        server_thread = threading.Thread(target=start_server)
+        server_thread.start()
+
+        # Abrir o navegador
+        # webbrowser.open(f'http://localhost:{PORT}/gantt_chart.html')
+
+        # Manter o script rodando
+        input("Pressione Enter para encerrar o servidor...")
 
 Cronograma_Atividades_Hierarquico()
 

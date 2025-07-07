@@ -1,16 +1,49 @@
 import plotly.figure_factory as ff
-import plotly.graph_objects as go
+import plotly.graph_objects  as go
 import webbrowser
-from plotly.offline import plot
+
 import http.server
 import socketserver
 import threading
+import pandas       as pd
 
-import pandas as pd
-from datetime import datetime, timedelta
+from datetime       import datetime, timedelta
+from imports        import *
+from plotly.offline import plot
 
 # Função para criar dados de exemplo
 def create_sample_data():
+    sql_query = """
+                    SELECT 
+                        pc.projeto_empresa          AS projeto_empresa,
+                        pa.projeto_ID               AS projeto_ID, 
+                        pa.projeto_DS               AS projeto_DS, 
+                        pa.tarefa_ID                AS tarefa_ID, 
+                        pa.tarefa_DS                AS tarefa_DS, 
+                        pa.parent_id                AS parent_id,
+                        pa.responsavel_nome         AS responsavel_nome,
+                        pa.tarefa_dependencia       AS tarefa_dependencia, 
+                        pa.tempo_espera             AS tempo_espera, 
+                        pa.tempo_previsto           AS tempo_previsto, 
+                        pa.percentual_execucao      AS percentual_execucao,
+                        pa.data_Inicial_Prevista    AS data_Inicial_Prevista, 
+                        pa.data_Inicial_Realizada   AS data_Inicial_Realizada, 
+                        pa.dias_diferenca_inicio    AS dias_diferenca_inicio,
+                        pa.data_conclusao_prevista  AS data_conclusao_prevista, 
+                        pa.data_conclusao_realizada AS data_conclusao_realizada, 
+                        pa.prazo_fatal_dias         AS prazo_fatal_dias,
+                        pa.dias_diferenca           AS dias_diferenca, 
+                        pa.status                   AS status, 
+                        pa.observacao               AS observacao
+                    FROM programas_atividades pa
+                    INNER JOIN projetos_cronograma pc ON pc.projeto_id=pa.projeto_id 
+                    WHERE pa.projeto_ID = %s
+                    ORDER BY tarefa_ID
+                """
+
+    list_tarefas = []
+    list_tarefas = db.executar_consulta(sql_query, projeto_id)
+    
     today = datetime.now().date()
     tasks = [
         dict(Task="Tarefa 1", Start=today, Finish=today + timedelta(days=5), Complete=100),
@@ -48,7 +81,7 @@ for task in df.itertuples():
 
 # Atualizar o layout
 fig.update_layout(
-    title='Gráfico de Gantt',
+    title='Gráfico de Gantt-----',
     xaxis_title='Data',
     yaxis_title='Tarefas',
     height=400,

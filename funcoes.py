@@ -5951,7 +5951,6 @@ class Functions():
         except Exception as e:
             messagebox.showinfo('Gestor Negócios', f"Erro: {e}")
             return False
-
 class ToolTip(object):
     def __init__(self, widget, text):
         self.widget = widget
