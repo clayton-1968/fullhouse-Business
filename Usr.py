@@ -6,7 +6,7 @@ db = MySqlDatabase()
 
 """Função de Autenticação do Usuário"""
 
-versao = '1.00.00.026'
+versao = '1.00.00.027'
 
 CREDENTIALS_FILE = 'credentials.txt'
 
