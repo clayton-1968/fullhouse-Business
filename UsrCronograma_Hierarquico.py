@@ -3,15 +3,15 @@ from widgets      import Widgets
 from datetime     import datetime
 from PIL          import ImageTk, Image
 
-import plotly.figure_factory as ff
-import plotly.graph_objects  as go
-import webbrowser
-import http.server
-import socketserver
-import threading
-import pandas       as pd
-from datetime       import datetime, timedelta
-from plotly.offline import plot
+# import plotly.figure_factory as ff
+# import plotly.graph_objects  as go
+# import webbrowser
+# import http.server
+# import socketserver
+# import threading
+# import pandas       as pd
+# from datetime       import datetime, timedelta
+# from plotly.offline import plot
 
 from UsrCadastros import Projetos
 from UsrCadastros import Cronograma_Atividades_Copiar
@@ -20,6 +20,8 @@ from UsrCadastros import Cronograma_Atividades_Copiar
 class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades_Copiar):
     def cronograma_atividades_hierarquico(self):
         self.window_one.title('Cronograma Atividades - (beta)')
+        self.gerou_cronograma = False
+        self.gerou_gantt = False
         self.images = {}
         self.clearFrame_principal()
         self.frame_cabecalho_cronograma_atividades_hierarquico(self.principal_frame)
@@ -86,14 +88,13 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         # Adicionar o tooltip
         ToolTip(self.btn_novo_projeto, "Incluir Novo Programa Atividades")
 
-        # Botão Gráfico Gantt
-        # icon_image = self.base64_to_photoimage('gantt')
-        icon_image = self.base64_to_photoimage('open_book')
-        self.btn_gantt_projeto = customtkinter.CTkButton(janela, text='Gantt', image=icon_image, fg_color='transparent', command=lambda: self.gerar_gantt())
-        self.btn_gantt_projeto.pack(pady=10)
-        self.btn_gantt_projeto.place(relx=0.855, rely=0.02, relwidth=0.08, relheight=0.05)
-        # # Adicionar o tooltip
-        ToolTip(self.btn_gantt_projeto, "Gerar Gráfico Gantt")
+        # # Botão Gráfico Gantt
+        # icon_image = self.base64_to_photoimage('olho')
+        # self.btn_gantt_projeto = customtkinter.CTkButton(janela, text='Gantt', image=icon_image, fg_color='transparent', command=lambda: self.gerar_gantt())
+        # self.btn_gantt_projeto.pack(pady=10)
+        # self.btn_gantt_projeto.place(relx=0.855, rely=0.02, relwidth=0.08, relheight=0.05)
+        # # # Adicionar o tooltip
+        # ToolTip(self.btn_gantt_projeto, "Gerar Gráfico Gantt")
         
         # Botão Sair Cronograma
         icon_image = self.base64_to_photoimage('sair')
@@ -104,21 +105,36 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         ToolTip(self.btn_sair_projeto, "Sair do Cronograma")
 
     def sair_cronograma_atividades_hierarquico(self, janela):
-        if messagebox.askyesno("Confirmar", "Salvar o Programa de Atividades antes de Sair?"):
-            try:
-                if self.entry_projeto.get() != '' or len(self.LCronograma.get_children()) == 0:
-                    self.gravar_cronograma_total_hierarquico(janela)
-                    self.tela_principal()
-                else:
-                    messagebox.showinfo("Gestor de Negócios", "Carregar o Programa de Atividades!!", parent=janela)
+        if self.gerou_cronograma == True:
+            if messagebox.askyesno("Confirmar", "Salvar o Programa de Atividades antes de Sair?"):
+                try:
+                    if self.entry_projeto.get() != '' or len(self.LCronograma.get_children()) == 0:
+                        if self.gerou_gantt == True:
+                            self.stop_event.set()
+                            self.server_thread.join()
+                            self.gerou_gantt = False
+                        
+                        self.gravar_cronograma_total_hierarquico(janela)
+                        self.gerou_cronograma = False
+                        self.tela_principal()
+                    else:
+                        messagebox.showinfo("Gestor de Negócios", "Carregar o Programa de Atividades!!", parent=janela)
+                        return
+                except Exception as e:
+                    messagebox.showinfo("Gestor de Negócios", "Carregar um Programa de Atividades!!", parent=janela)
                     return
-            except Exception as e:
-                messagebox.showinfo("Gestor de Negócios", "Carregar um Programa de Atividades!!", parent=janela)
-                return
-                # messagebox.showerror("Erro", f"Não foi possível Salvar o Programa de Atividades: {str(e)}")
+            else:
+                if self.gerou_gantt == True:
+                    self.stop_event.set()
+                    self.server_thread.join()
+                self.tela_principal()
         else:
+            if self.gerou_gantt == True:
+                self.stop_event.set()
+                self.server_thread.join()
+                self.gerou_gantt = False
             self.tela_principal()
-          
+
     def consulta_cronograma_atividades_hierarquico(self, janela):
         projeto_ds = self.entry_projeto.get()
         if self.entry_projeto.get() != '':
@@ -126,7 +142,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto!!")
             return
-
+        self.gerou_cronograma = True
         # Listbox _ Cronograma de Atividades
         # Definindo cores
         treestyle = ttk.Style()
@@ -460,7 +476,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         # linha_base_predessessora = None
         all_numbers       = self.get_all_items_numbers()
         # Primeiro loop para atualizar os números dos campos
-        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
+        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, str_observacao, level in all_numbers:
             if tarefa_id == tarefa_id_nova:  
                 linha_base_predessessora = nr_campos
             nr_campos += 1    
@@ -481,7 +497,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             str_ini_real = dta_inicial_realizada
             str_fim_prev =  dta_conclusao_prevista
             str_fim_real = dta_conclusao_realizada
-            str_obs = ''
+            str_obs = str_observacao
 
             if nr_caracteres > 2:
                 linha_tarefa = ""
@@ -845,7 +861,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         selected_item_id = selected_item if isinstance(selected_item, tuple) else selected_item
         selected_index = next((index for index, item in enumerate(todos_itens) if item[0] == selected_item_id[0]), None)
         for item_data in todos_itens[selected_index:]:
-            child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level = item_data
+            child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, str_observacao, level = item_data
             
             nivel_secundario = len(tarefa_id.replace(".", ""))
             if nivel_inclusao == nivel_secundario and tarefa_id_origem != tarefa_id.replace(".", ""):
@@ -865,7 +881,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             
             # Segundo loop
             for item_data in todos_itens[selected_index:]:
-                child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level = item_data
+                child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, str_observacao, level = item_data
                 
                 nivel_secundario = len(tarefa_id.replace(".", ""))
                 if nivel_inclusao == nivel_secundario and tarefa_id.replace(".", "")[:nivel_inclusao_mae] == tarefa_id_origem.replace(".", ""):
@@ -892,7 +908,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         selected_index = next((index for index, item in enumerate(todos_itens) if item[0] == selected_item_id), None)
         if selected_index is not None:
             for item_data in todos_itens[selected_index:]:
-                child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level = item_data
+                child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, str_observacao, level = item_data
                 if child == selected_item_id:
                     Linha_Incluir = int(linha)
                     break
@@ -1111,6 +1127,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                     dta_inicial_realizada = values[9]
                     dta_conclusao_prevista = values[10]
                     dta_conclusao_realizada = values[11]
+                    str_observacao = values[12] 
                     numbers.append((
                                     child, 
                                     linha, 
@@ -1125,7 +1142,8 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                                     dta_inicial_realizada, 
                                     dta_conclusao_prevista, 
                                     dta_conclusao_realizada, 
-                                    item_id, 
+                                    item_id,
+                                    str_observacao, 
                                     level))  
                 numbers.extend(traverse(child, level + 1))
             return numbers
@@ -1494,130 +1512,140 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         finally:
             pass
     
-    def gerar_gantt(self):
-        if self.entry_projeto.get() != '':
-            projeto_id = self.obter_Projeto_ID(self.entry_projeto.get(), self.principal_frame)
-        else:
-            messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto!!")
-            return
-        
-        # Função para criar dados de exemplo
-        def create_sample_data():
-            sql_query = """
-                            SELECT 
-                                pa.tarefa_ID                AS tarefa_ID, 
-                                pa.tarefa_DS                AS tarefa_DS, 
-                                pa.percentual_execucao      AS percentual_execucao,
-                                pa.data_Inicial_Prevista    AS data_Inicial_Prevista, 
-                                pa.data_Inicial_Realizada   AS data_Inicial_Realizada, 
-                                pa.dias_diferenca_inicio    AS dias_diferenca_inicio,
-                                pa.data_conclusao_prevista  AS data_conclusao_prevista, 
-                                pa.data_conclusao_realizada AS data_conclusao_realizada
-                            FROM programas_atividades pa
-                            INNER JOIN projetos_cronograma pc ON pc.projeto_id=pa.projeto_id 
-                            WHERE pa.projeto_ID = %s
-                            ORDER BY tarefa_ID
-                        """
+    # def gerar_gantt(self):
+        # if self.entry_projeto.get() != '':
+        #     projeto_id = self.obter_Projeto_ID(self.entry_projeto.get(), self.principal_frame)
+        # else:
+        #     messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto!!")
+        #     return
+        # self.gerou_gantt = True
+        # # Função para criar dados de exemplo
+        # def create_sample_data():
+        #     sql_query = """
+        #                     SELECT 
+        #                         pa.tarefa_ID                AS tarefa_ID, 
+        #                         pa.tarefa_DS                AS tarefa_DS, 
+        #                         pa.percentual_execucao      AS percentual_execucao,
+        #                         pa.data_Inicial_Prevista    AS data_Inicial_Prevista, 
+        #                         pa.data_Inicial_Realizada   AS data_Inicial_Realizada, 
+        #                         pa.dias_diferenca_inicio    AS dias_diferenca_inicio,
+        #                         pa.data_conclusao_prevista  AS data_conclusao_prevista, 
+        #                         pa.data_conclusao_realizada AS data_conclusao_realizada
+        #                     FROM programas_atividades pa
+        #                     INNER JOIN projetos_cronograma pc ON pc.projeto_id=pa.projeto_id 
+        #                     WHERE pa.projeto_ID = %s
+        #                     ORDER BY tarefa_ID
+        #                 """
             
-            list_tarefas = []
-            list_tarefas = db.executar_consulta(sql_query, projeto_id)
-            tasks = list_tarefas
-            return pd.DataFrame(tasks)
+        #     list_tarefas = []
+        #     list_tarefas = db.executar_consulta(sql_query, projeto_id)
+        #     tasks = list_tarefas
+        #     return pd.DataFrame(tasks)
 
-        # Criar dados de exemplo
-        df = create_sample_data()
-        df.rename(columns={
-            'tarefa_ID': 'Task_ID',
-            'tarefa_DS': 'Task',
-            'data_Inicial_Prevista': 'Start',
-            'data_conclusao_prevista': 'Finish',
-            'percentual_execucao': 'Complete'
-        }, inplace=True)
+        # # Criar dados de exemplo
+        # df = create_sample_data()
+        # df.rename(columns={
+        #     'tarefa_ID': 'Task_ID',
+        #     'tarefa_DS': 'Task',
+        #     'data_Inicial_Prevista': 'Start',
+        #     'data_conclusao_prevista': 'Finish',
+        #     'percentual_execucao': 'Complete'
+        # }, inplace=True)
 
-        # Converter datas para datetime
-        df['Start'] = pd.to_datetime(df['Start'])
-        df['Finish'] = pd.to_datetime(df['Finish'])
+        # # Converter datas para datetime
+        # df['Start'] = pd.to_datetime(df['Start'])
+        # df['Finish'] = pd.to_datetime(df['Finish'])
         
-        # Criar o gráfico de Gantt
-        fig = ff.create_gantt(df, show_colorbar=True, group_tasks=True)
+        # # Criar o gráfico de Gantt
+        # fig = ff.create_gantt(df, show_colorbar=True, group_tasks=True)
 
-        # Adicionar barras para o progresso realizado
-        nr = 1
-        for task in df.itertuples():
-            start = task.Start
-            finish = task.Finish
-            duration = (task.Finish.date() - task.Start.date()).days
-            completed_duration = (duration * task.Complete) / 100
-            if task.Complete > 0:
-                now_date = datetime.now().date()
-                diferenca = (now_date - task.Start.date()).days
-                if diferenca > duration:
-                    diferenca = duration
+        # # Adicionar barras para o progresso realizado
+        # nr = 1
+        # for task in df.itertuples():
+        #     start = task.Start
+        #     finish = task.Finish
+        #     duration = (task.Finish.date() - task.Start.date()).days
+        #     completed_duration = (duration * task.Complete) / 100
+        #     if task.Complete > 0:
+        #         now_date = datetime.now().date()
+        #         diferenca = (now_date - task.Start.date()).days
+        #         if diferenca > duration:
+        #             diferenca = duration
 
-                if duration > 0:
-                    per_diferenca = (diferenca / duration)
-                else:
-                    per_diferenca = 0
+        #         if duration > 0:
+        #             per_diferenca = (diferenca / duration)
+        #         else:
+        #             per_diferenca = 0
 
-                color = 'green' if task.Complete == 1 else 'red' if duration > 0 and task.Complete < per_diferenca else 'green'
-                fig.add_trace(go.Bar(
-                    x=[start + timedelta(days=completed_duration)],
-                    y=[task.Task_ID + ' - ' + task.Task],
-                    orientation='h',
-                    marker=dict(color=color),
-                    width=0.5,
-                    base=start,
-                    hoverinfo='skip',
-                    showlegend=False
-                ))
-            nr += 1
+        #         color = 'green' if task.Complete == 1 else 'red' if duration > 0 and task.Complete < per_diferenca else 'green'
+        #         fig.add_trace(go.Bar(
+        #             x=[start + timedelta(days=completed_duration)],
+        #             y=[task.Task_ID + ' - ' + task.Task],
+        #             orientation='h',
+        #             marker=dict(color=color),
+        #             width=0.5,
+        #             base=start,
+        #             hoverinfo='skip',
+        #             showlegend=False
+        #         ))
+        #     nr += 1
         
-        # Atualizar o layout
-        fig.update_layout(
-            title='Gráfico - ' + self.entry_projeto.get(),
-            xaxis_title='Data',
-            yaxis_title='Tarefas',
-            height=2000,
-            margin=dict(l=250, r=150, t=150, b=150),
-            xaxis=dict(
-                tickformat='%d-%m-%Y',
-                tickangle=45,
-            )
-        )
+        # # Atualizar o layout
+        # fig.update_layout(
+        #     title='Gráfico - ' + self.entry_projeto.get(),
+        #     xaxis_title='Data',
+        #     yaxis_title='Tarefas',
+        #     height=2000,
+        #     margin=dict(l=250, r=150, t=150, b=150),
+        #     xaxis=dict(
+        #         tickformat='%d-%m-%Y',
+        #         tickangle=45,
+        #     )
+        # )
 
-        # Atualizar as cores das barras
-        fig.data[0].marker.color = 'rgb(0, 0, 255)'  # Azul para previsto
+        # # Atualizar as cores das barras
+        # fig.data[0].marker.color = 'rgb(0, 0, 255)'  # Azul para previsto
 
-        # Adicionar legenda
-        fig.add_trace(go.Bar(x=[None], y=[None], name='Previsto', marker_color='blue'))
-        fig.add_trace(go.Bar(x=[None], y=[None], name='Realizado', marker_color='green'))
-        fig.add_trace(go.Bar(x=[None], y=[None], name='Atrasado', marker_color='red'))
+        # # Adicionar legenda
+        # fig.add_trace(go.Bar(x=[None], y=[None], name='Previsto', marker_color='blue'))
+        # fig.add_trace(go.Bar(x=[None], y=[None], name='Realizado', marker_color='green'))
+        # fig.add_trace(go.Bar(x=[None], y=[None], name='Atrasado', marker_color='red'))
 
-        # Mostrar o gráfico
-        fig.show()
-        # plot(fig, auto_open=True)
+        # # Mostrar o gráfico
+        # # fig.show()
+        # # plot(fig, auto_open=True)
 
-        # Gerar o arquivo HTML
-        # plot(fig, filename='gantt_chart.html', auto_open=False)
+        # # Gerar o arquivo HTML
+        # # plot(fig, filename='gantt_chart.html', auto_open=False)
 
-        # Configurar e iniciar o servidor
-        PORT = 9001
-        Handler = http.server.SimpleHTTPRequestHandler
+        # # Configurar e iniciar o servidor
+        # PORT = 9001
+        # Handler = http.server.SimpleHTTPRequestHandler
+        
+        # # Variável de controle
+        # self.stop_event = threading.Event()
 
-        def start_server():
-            with socketserver.TCPServer(("", PORT), Handler) as httpd:
-                print(f"Serving at port {PORT}")
-                httpd.serve_forever()
+        # def start_server():
+        #     with socketserver.TCPServer(("", PORT), Handler) as httpd:
+        #         while not self.stop_event.is_set():
+        #             # httpd.handle_request()
+        #             httpd.serve_forever()
+            
+        #     # with socketserver.TCPServer(("", PORT), Handler) as httpd:
+        #     #     print(f"Serving at port {PORT}")
+        #     #     httpd.serve_forever()
+    
+        # # Iniciar o servidor em uma thread separada
+        # self.server_thread = threading.Thread(target=start_server)
+        # self.server_thread.start()
 
-        # Iniciar o servidor em uma thread separada
-        server_thread = threading.Thread(target=start_server)
-        server_thread.start()
-
-        # Abrir o navegador
+        # # Abrir o navegador
         # webbrowser.open(f'http://localhost:{PORT}/gantt_chart.html')
 
-        # Manter o script rodando
-        input("Pressione Enter para encerrar o servidor...")
+        # # Manter o script rodando
+        # input("Pressione Enter para encerrar o servidor...")
+        
+
 
 Cronograma_Atividades_Hierarquico()
 
