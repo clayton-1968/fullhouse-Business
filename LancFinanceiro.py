@@ -29,7 +29,7 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
     def linha1_lanc(self, janela_lanc):
         # Tipo lançamento
         fr_tipo_lcto = customtkinter.CTkFrame(janela_lanc, border_color="gray75", border_width=1)
-        fr_tipo_lcto.place(relx=0, rely=0.02, relwidth=0.07, relheight=0.09)
+        fr_tipo_lcto.place(relx=0, rely=0, relwidth=0.07, relheight=0.07)
 
         lb_tipo_lcto = customtkinter.CTkLabel(fr_tipo_lcto, text="Tipo Lçto")
         lb_tipo_lcto.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
@@ -40,18 +40,18 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.entry_tipo_lcto_descr.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_empresa))
         
         # Empresa
-        coordenadas_relx = 0.08
-        coordenadas_rely = 0.02
+        coordenadas_relx = 0.075
+        coordenadas_rely = 0
         coordenadas_relwidth = 0.38
-        coordenadas_relheight = 0.09
+        coordenadas_relheight = 0.07
         self.frame_empresa(janela_lanc, coordenadas_relx, coordenadas_rely, coordenadas_relwidth, coordenadas_relheight)
         self.combo_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_pessoa))
 
         # Cliente
-        coordenadas_relx = 0.47
-        coordenadas_rely = 0.02
+        coordenadas_relx = 0.46
+        coordenadas_rely = 0
         coordenadas_relwidth = 0.35
-        coordenadas_relheight = 0.09
+        coordenadas_relheight = 0.07
         self.frame_pessoa(janela_lanc, coordenadas_relx, coordenadas_rely, coordenadas_relwidth, coordenadas_relheight)
         self.combo_pessoa.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_unidade_negocio))
 
@@ -61,33 +61,33 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         bt_cadastro_pessoas.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_unidade_negocio))
 
         # Unidade Negocios
-        coordenadas_relx = 0.83
-        coordenadas_rely = 0.02
-        coordenadas_relwidth = 0.17
-        coordenadas_relheight = 0.09
+        coordenadas_relx = 0.815
+        coordenadas_rely = 0
+        coordenadas_relwidth = 0.18
+        coordenadas_relheight = 0.07
         self.frame_Unidade_Negocio(janela_lanc, coordenadas_relx, coordenadas_rely, coordenadas_relwidth, coordenadas_relheight)
         self.combo_unidade_negocio.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_uf))
                           
     def linha2_lanc(self, janela_lanc):
         # Estado
         coordenadas_relx = 0
-        coordenadas_rely = 0.115
+        coordenadas_rely = 0.075
         coordenadas_relwidth = 0.06
-        coordenadas_relheight = 0.09
+        coordenadas_relheight = 0.07
         self.frame_uf(janela_lanc, coordenadas_relx, coordenadas_rely,coordenadas_relwidth, coordenadas_relheight)
         self.combo_uf.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_frete))
 
         # Frete
-        coordenadas_relx = 0.07
-        coordenadas_rely = 0.115
+        coordenadas_relx = 0.065
+        coordenadas_rely = 0.075
         coordenadas_relwidth = 0.32
-        coordenadas_relheight = 0.09
+        coordenadas_relheight = 0.07
         self.fram_frete(janela_lanc, coordenadas_relx, coordenadas_rely,coordenadas_relwidth, coordenadas_relheight)
         self.combo_frete.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_doc_num))
 
         # Documentos
         fr_doc = customtkinter.CTkFrame(janela_lanc, border_color="gray75", border_width=1)
-        fr_doc.place(relx=0.4, rely=0.115, relwidth=0.6, relheight=0.09)
+        fr_doc.place(relx=0.39, rely=0.075, relwidth=0.6, relheight=0.09)
         lb_doc = customtkinter.CTkLabel(fr_doc, text="Documento")
         lb_doc.place(relx=0.01, rely=0, relheight=0.25, relwidth=0.15)
 
@@ -148,7 +148,7 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
     def linha3_lanc(self, janela_lanc):
         # Informações de Pagamento
         fr_info_pag = customtkinter.CTkFrame(janela_lanc, border_color="gray75", border_width=1)
-        fr_info_pag.place(relx=0, rely=0.21, relwidth=0.22, relheight=0.18)
+        fr_info_pag.place(relx=0, rely=0.17, relwidth=0.22, relheight=0.18)
         lb_info_pag = customtkinter.CTkLabel(fr_info_pag, text="Informações de Pagamento")
         lb_info_pag.place(relx=0.02, rely=0, relheight=0.125, relwidth=0.6)
 
@@ -203,15 +203,15 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.LParcelasFinanceiras.heading('Forma_Pagto', text='Forma de Liquidação')
         self.LParcelasFinanceiras.column('Forma_Pagto', width=100, anchor='w')
         
-        self.LParcelasFinanceiras.place(relx=0.23, rely=0.22, relwidth=0.4, relheight=0.16)
+        self.LParcelasFinanceiras.place(relx=0.23, rely=0.17, relwidth=0.4, relheight=0.16)
         #sself.LParcelasFinanceiras.bind("<Double-1>", self.OnDoubleClick)
 
         # Historico
         fr_historico = customtkinter.CTkFrame(janela_lanc, border_color="gray75", border_width=1)
-        fr_historico.place(relx=0.64, rely=0.21, relwidth=0.31, relheight=0.18)
+        fr_historico.place(relx=0.64, rely=0.17, relwidth=0.31, relheight=0.18)
 
         lb_historico = customtkinter.CTkLabel(fr_historico, text="Histórico")
-        lb_historico.place(relx=0.02, rely=0, relwidth=0.4, relheight=0.125)
+        lb_historico.place(relx=0.2, rely=0, relwidth=0.6, relheight=0.125)
 
         self.text_historico = customtkinter.CTkTextbox(fr_historico, fg_color="white", text_color="black", width=300, height=100)
         self.text_historico.place(relx=0.02, rely=0.125, relwidth=0.96, relheight=0.825)
@@ -223,20 +223,20 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Botão Incluir Itens da Nota
         bt_incluir_itens = customtkinter.CTkButton(janela_lanc, image=self.btsavedown_img, text='', command=self.incluir_itens_click)
-        bt_incluir_itens.place(relx=0.955, rely=0.35, relwidth=0.03, relheight=0.04)
+        bt_incluir_itens.place(relx=0.955, rely=0.28, relwidth=0.03, relheight=0.04)
 
     def linha4_lanc(self, janela_lanc):
         fr_itens_nota = customtkinter.CTkFrame(janela_lanc, border_color="gray75", border_width=1)
-        fr_itens_nota.place(relx=0, rely=0.395, relwidth=1, relheight=0.12)
+        fr_itens_nota.place(relx=0, rely=0.355, relwidth=1, relheight=0.10)
         lb_itens_nota = customtkinter.CTkLabel(fr_itens_nota, text="Itens da Nota")
-        lb_itens_nota.place(relx=0.09, rely=0, relwidth=0.1, relheight=0.12)
+        lb_itens_nota.place(relx=0.02, rely=0, relwidth=0.1, relheight=0.12)
 
         # Produto
         fr_itens_nota_prod = customtkinter.CTkFrame(fr_itens_nota, border_color="gray75", border_width=1)
-        fr_itens_nota_prod.place(relx=0.005, rely=0.15, relwidth=0.18, relheight=0.8)
+        fr_itens_nota_prod.place(relx=0.005, rely=0.15, relwidth=0.18, relheight=0.7)
 
         lb_itens_nota_prod = customtkinter.CTkLabel(fr_itens_nota_prod, text="Produto")
-        lb_itens_nota_prod.place(relx=0.05, rely=0, relwidth=0.4, relheight=0.25)
+        lb_itens_nota_prod.place(relx=0.2, rely=0, relwidth=0.4, relheight=0.6)
 
         self.produtos = []
         self.entry_itens_nota_prod_descr = AutocompleteCombobox(fr_itens_nota_prod, width=30, font=('Times', 11), completevalues=self.produtos)
@@ -252,10 +252,10 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Centro de Resultado
         fr_itens_nota_centro_result = customtkinter.CTkFrame(fr_itens_nota, border_color="gray75", border_width=1)
-        fr_itens_nota_centro_result.place(relx=0.19, rely=0.15, relwidth=0.18, relheight=0.8)
+        fr_itens_nota_centro_result.place(relx=0.19, rely=0.15, relwidth=0.18, relheight=0.7)
 
         lb_itens_nota_centro = customtkinter.CTkLabel(fr_itens_nota_centro_result, text='Centro de Resultado')
-        lb_itens_nota_centro.place(relx=0.05, rely=0, relwidth=0.6, relheight=0.25)
+        lb_itens_nota_centro.place(relx=0.2, rely=0, relwidth=0.6, relheight=0.6)
 
         self.centro_resultado = []
         self.entry_itens_nota_centro = AutocompleteCombobox(fr_itens_nota_centro_result, width=30, font=('Times', 11), completevalues=self.centro_resultado)
@@ -266,10 +266,10 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Natureza Financeira
         fr_itens_nota_natureza = customtkinter.CTkFrame(fr_itens_nota, border_color="gray75", border_width=1)
-        fr_itens_nota_natureza.place(relx=0.375, rely=0.15, relwidth=0.18, relheight=0.8)
+        fr_itens_nota_natureza.place(relx=0.375, rely=0.15, relwidth=0.18, relheight=0.7)
 
         lb_itens_nota_natureza = customtkinter.CTkLabel(fr_itens_nota_natureza, text="Natureza Financeira")
-        lb_itens_nota_natureza.place(relx=0.05, rely=0, relwidth=0.6, relheight=0.25)
+        lb_itens_nota_natureza.place(relx=0.2, rely=0, relwidth=0.6, relheight=0.6)
 
         self.natureza_financeira = []
         self.entry_itens_nota_natureza = AutocompleteCombobox(fr_itens_nota_natureza, width=30, font=('Times', 11), completevalues=self.natureza_financeira)
@@ -280,10 +280,10 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Peso
         fr_itens_nota_peso = customtkinter.CTkFrame(fr_itens_nota, border_color="gray75", border_width=1)
-        fr_itens_nota_peso.place(relx=0.56, rely=0.15, relwidth=0.10, relheight=0.8)
+        fr_itens_nota_peso.place(relx=0.56, rely=0.15, relwidth=0.10, relheight=0.7)
 
         lb_itens_nota_peso = customtkinter.CTkLabel(fr_itens_nota_peso, text="Peso")
-        lb_itens_nota_peso.place(relx=0.05, rely=0, relwidth=0.70, relheight=0.25)
+        lb_itens_nota_peso.place(relx=0.15, rely=0, relwidth=0.70, relheight=0.6)
 
         self.entry_itens_nota_peso = customtkinter.CTkEntry(fr_itens_nota_peso, fg_color="white", text_color="black", justify=tk.RIGHT)
         self.entry_itens_nota_peso.place(relx=0.04, rely=0.5, relwidth=0.92, relheight=0.4)
@@ -292,10 +292,10 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Quant/Valores
         fr_itens_nota_quant = customtkinter.CTkFrame(fr_itens_nota, border_color="gray75", border_width=1)
-        fr_itens_nota_quant.place(relx=0.665, rely=0.15, relwidth=0.33, relheight=0.8)
+        fr_itens_nota_quant.place(relx=0.665, rely=0.1, relwidth=0.33, relheight=0.7)
 
         lb_itens_nota_quant = customtkinter.CTkLabel(fr_itens_nota_quant, text="Quant./Valores")
-        lb_itens_nota_quant.place(relx=0.05, rely=0, relwidth=0.4, relheight=0.25)
+        lb_itens_nota_quant.place(relx=0.2, rely=0, relwidth=0.6, relheight=0.25)
 
         lb_itens_nota_quant2 = customtkinter.CTkLabel(fr_itens_nota_quant, text="Quant.")
         lb_itens_nota_quant2.place(relx=0.03, rely=0.25, relwidth=0.29, relheight=0.25)
@@ -323,7 +323,7 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         # Widgets - Listar Itens
         self.LItens = ttk.Treeview(janela_lanc, height=12, column=('Item', 'Produto', 'Centro', 'Natureza', 'Peso', 'Quantidade', 'vlr_unitario', 'vlr_total'), show='headings')
         self.LItens.heading('Item', text="Item")
-        self.LItens.column('Item', width=10, anchor='e')
+        self.LItens.column('Item', width=15, anchor='e')
         self.LItens.heading('Produto', text="Produto")
         self.LItens.column('Produto', width=300, anchor='w')
         self.LItens.heading('Centro', text="Centro Resultado")
@@ -339,7 +339,7 @@ class Lanc_fin(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.LItens.heading('vlr_total', text="Valor Total")
         self.LItens.column('vlr_total', width=100, anchor='e')
 
-        self.LItens.place(relx=0, rely=0.52, relwidth=1, relheight=0.47)
+        self.LItens.place(relx=0, rely=0.46, relwidth=1, relheight=0.47)
         # self.LItens.bind("<Double-1>", self.OnDoubleClick)
         self.entry_tipo_lcto_descr.focus()
         self.limpar_campos_lcto()

@@ -17,12 +17,12 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
     def create_widgets(self):
         # CNPJ (Empresa)
-        self.frame_empresa(self.frame_principal, 0, 0, 0.30, 0.09)
+        self.frame_empresa(self.frame_principal, 0, 0, 0.30, 0.07)
         self.combo_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_banco))
 
         # Banco
         self.fr_banco = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_banco.place(relx=0.305, rely=0, relwidth=0.20, relheight=0.09)
+        self.fr_banco.place(relx=0.305, rely=0, relwidth=0.20, relheight=0.07)
 
         self.lb_banco = customtkinter.CTkLabel(self.fr_banco, text="Banco")
         self.lb_banco.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
@@ -36,7 +36,7 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Agência
         self.fr_agencia = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_agencia.place(relx=0.51, rely=0, relwidth=0.14, relheight=0.09)
+        self.fr_agencia.place(relx=0.51, rely=0, relwidth=0.14, relheight=0.07)
 
         self.lb_agencia = customtkinter.CTkLabel(self.fr_agencia, text="Agência")
         self.lb_agencia.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
@@ -57,7 +57,7 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Conta
         self.fr_contacorrente = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_contacorrente.place(relx=0.655, rely=0, relwidth=0.14, relheight=0.09)
+        self.fr_contacorrente.place(relx=0.655, rely=0, relwidth=0.14, relheight=0.07)
 
         self.lb_contacorrente = customtkinter.CTkLabel(self.fr_contacorrente, text="Conta")
         self.lb_contacorrente.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
@@ -80,11 +80,11 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.fr_periodo = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
         self.fr_periodo.place(relx=0.80, rely=0, relwidth=0.14, relheight=0.09)
         self.lb_periodo = customtkinter.CTkLabel(self.fr_periodo, text="Período")
-        self.lb_periodo.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
+        self.lb_periodo.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.6)
 
         # Data inicio
         self.lb_dt_inicio = customtkinter.CTkLabel(self.fr_periodo, text="Data Início")
-        self.lb_dt_inicio.place(relx=0.1, rely=0.25, relheight=0.125, relwidth=0.35)
+        self.lb_dt_inicio.place(relx=0.1, rely=0.28, relheight=0.15, relwidth=0.35)
 
         self.entry_dt_inicio = customtkinter.CTkEntry(self.fr_periodo, fg_color="white", text_color="black",
                                                       justify=tk.CENTER)
@@ -97,7 +97,7 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Data fim
         self.lb_dt_fim = customtkinter.CTkLabel(self.fr_periodo, text="Data Fim")
-        self.lb_dt_fim.place(relx=0.6, rely=0.25, relheight=0.125, relwidth=0.35)
+        self.lb_dt_fim.place(relx=0.55, rely=0.28, relheight=0.15, relwidth=0.35)
 
         self.entry_dt_fim = customtkinter.CTkEntry(self.fr_periodo, fg_color="white", text_color="black",
                                                    justify=tk.CENTER)
@@ -117,7 +117,7 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Resultado
         self.fr_extrato_result = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_extrato_result.place(relx=0.001, rely=0.105, relwidth=0.995, relheight=.87)
+        self.fr_extrato_result.place(relx=0, rely=0.095, relwidth=1, relheight=1)
 
         # Definindo cores
         bg_color = '#FFFFFF'  # Fundo branco

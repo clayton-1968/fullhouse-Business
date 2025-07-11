@@ -11,7 +11,7 @@ class Widgets(Consultas, Limpeza, Formatos, Formularios, Functions, Gravar, Atua
         self.fr_empresa = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         self.fr_empresa.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
         self.lb_empresa = customtkinter.CTkLabel(self.fr_empresa, text="Empresa")
-        self.lb_empresa.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+        self.lb_empresa.place(relx=0.225, rely=0, relheight=0.25, relwidth=0.55)
 
         self.empresas = []
         self.empresas = [empresa[1] for empresa in self.empresas]
@@ -27,7 +27,7 @@ class Widgets(Consultas, Limpeza, Formatos, Formularios, Functions, Gravar, Atua
         self.fr_unidade_negocio = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         self.fr_unidade_negocio.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
         self.lb_unidade_negocio = customtkinter.CTkLabel(self.fr_unidade_negocio, text="Unidade Negócios")
-        self.lb_unidade_negocio.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+        self.lb_unidade_negocio.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.6)
 
         self.unidade_negocios = []
         self.combo_unidade_negocio = AutocompleteCombobox(self.fr_unidade_negocio, width=30, font=('Times', 11), completevalues=self.unidade_negocios)
@@ -41,7 +41,7 @@ class Widgets(Consultas, Limpeza, Formatos, Formularios, Functions, Gravar, Atua
         self.fr_pessoa = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         self.fr_pessoa.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
         self.lb_pessoa = customtkinter.CTkLabel(self.fr_pessoa, text="Cliente/Fornecedor/Prestador Serviços")
-        self.lb_pessoa.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+        self.lb_pessoa.place(relx=0.225, rely=0, relheight=0.25, relwidth=0.55)
 
         self.pessoas = []
         self.combo_pessoa = AutocompleteCombobox(self.fr_pessoa, width=30, font=('Times', 11), completevalues=self.pessoas)
@@ -55,7 +55,7 @@ class Widgets(Consultas, Limpeza, Formatos, Formularios, Functions, Gravar, Atua
         self.fr_uf = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         self.fr_uf.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
         self.lb_estado = customtkinter.CTkLabel(self.fr_uf, text="UF")
-        self.lb_estado.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+        self.lb_estado.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.6)
 
         self.uf = self.get_uf()
         self.combo_uf = AutocompleteCombobox(self.fr_uf, width=30, font=('Times', 11), completevalues=self.uf)
@@ -139,7 +139,7 @@ class Widgets(Consultas, Limpeza, Formatos, Formularios, Functions, Gravar, Atua
         self.fr_frete = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         self.fr_frete.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
         self.lb_frete_fr = customtkinter.CTkLabel(self.fr_frete, text="Frete")
-        self.lb_frete_fr.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+        self.lb_frete_fr.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.6)
 
         self.frete = []
         self.frete = self.get_frete() 

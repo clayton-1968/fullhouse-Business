@@ -101,13 +101,13 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
         # Período
         self.fr_periodo = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_periodo.place(relx=0.31, rely=0.075, relwidth=0.14, relheight=0.07)
+        self.fr_periodo.place(relx=0.31, rely=0.075, relwidth=0.14, relheight=0.09)
         self.lb_periodo = customtkinter.CTkLabel(self.fr_periodo, text="Período")
         self.lb_periodo.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
         # Data inicio
         self.lb_dt_inicio = customtkinter.CTkLabel(self.fr_periodo, text="Data Início")
-        self.lb_dt_inicio.place(relx=0.1, rely=0.25, relheight=0.125, relwidth=0.35)
+        self.lb_dt_inicio.place(relx=0.1, rely=0.25, relheight=0.15, relwidth=0.35)
 
         self.entry_dt_inicio = customtkinter.CTkEntry(self.fr_periodo, fg_color="white", text_color="black", justify=tk.CENTER)
         self.entry_dt_inicio.delete(0, 'end')
@@ -118,7 +118,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
         # Data fim
         self.lb_dt_fim = customtkinter.CTkLabel(self.fr_periodo, text="Data Fim")
-        self.lb_dt_fim.place(relx=0.6, rely=0.25, relheight=0.125, relwidth=0.35)
+        self.lb_dt_fim.place(relx=0.55, rely=0.25, relheight=0.15, relwidth=0.35)
 
         self.entry_dt_fim = customtkinter.CTkEntry(self.fr_periodo, fg_color="white", text_color="black", justify=tk.CENTER)
         self.entry_dt_fim.delete(0, 'end')
@@ -191,7 +191,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
         # Data Baixa
         self.fr_dt_baixa = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_dt_baixa.place(relx=0, rely=0.15, relwidth=0.07, relheight=0.07)
+        self.fr_dt_baixa.place(relx=0, rely=0.17, relwidth=0.07, relheight=0.07)
         self.lb_dt_baixa = customtkinter.CTkLabel(self.fr_dt_baixa, text="Data Baixa")
         self.lb_dt_baixa.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
@@ -204,7 +204,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
         # CPF/CNPJ
         self.fr_cpf_cnpj = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_cpf_cnpj.place(relx=0.075, rely=0.15, relwidth=0.15, relheight=0.07)
+        self.fr_cpf_cnpj.place(relx=0.075, rely=0.17, relwidth=0.15, relheight=0.07)
 
         self.lb_cpf_cnpj = customtkinter.CTkLabel(self.fr_cpf_cnpj, text="CPF/CNPJ")
         self.lb_cpf_cnpj.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.55)
@@ -215,7 +215,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
         # Descrição
         self.fr_descricao = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_descricao.place(relx=0.23, rely=0.15, relwidth=0.3, relheight=0.07)
+        self.fr_descricao.place(relx=0.23, rely=0.17, relwidth=0.3, relheight=0.07)
 
         self.lb_descricao = customtkinter.CTkLabel(self.fr_descricao, text="Descrição")
         self.lb_descricao.place(relx=0.22, rely=0, relheight=0.25, relwidth=0.55)
@@ -226,7 +226,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
         # Nr. Documento
         self.fr_nr_documento = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_nr_documento.place(relx=0.535, rely=0.15, relwidth=0.13, relheight=0.07)
+        self.fr_nr_documento.place(relx=0.535, rely=0.17, relwidth=0.13, relheight=0.07)
 
         self.lb_nr_documento = customtkinter.CTkLabel(self.fr_nr_documento, text="Nr. Documento")
         self.lb_nr_documento.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.55)
@@ -237,7 +237,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
         # Valor
         self.fr_valor = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_valor.place(relx=0.67, rely=0.15, relwidth=0.15, relheight=0.07)
+        self.fr_valor.place(relx=0.67, rely=0.17, relwidth=0.15, relheight=0.07)
 
         self.lb_valor = customtkinter.CTkLabel(self.fr_valor, text="Valor")
         self.lb_valor.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.55)
@@ -248,7 +248,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
         # Nr. Parc.
         self.fr_nr_parc = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_nr_parc.place(relx=0.825, rely=0.15, relwidth=0.10, relheight=0.07)
+        self.fr_nr_parc.place(relx=0.825, rely=0.17, relwidth=0.10, relheight=0.07)
 
         self.lb_nr_parc = customtkinter.CTkLabel(self.fr_nr_parc, text="Nr. Parc")
         self.lb_nr_parc.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.55)
@@ -259,7 +259,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
         # Data Doc.
         self.fr_dt_doc = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_dt_doc.place(relx=0, rely=0.225, relwidth=0.07, relheight=0.07)
+        self.fr_dt_doc.place(relx=0, rely=0.245, relwidth=0.07, relheight=0.07)
         self.lb_dt_doc = customtkinter.CTkLabel(self.fr_dt_doc, text="Data Doc.")
         self.lb_dt_doc.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
@@ -272,7 +272,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
         # Situação
         self.fr_situacao = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_situacao.place(relx=0.075, rely=0.225, relwidth=0.07, relheight=0.07)
+        self.fr_situacao.place(relx=0.075, rely=0.245, relwidth=0.07, relheight=0.07)
 
         self.lb_situacao = customtkinter.CTkLabel(self.fr_situacao, text="Situação")
         self.lb_situacao.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
@@ -283,7 +283,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
         # Unidade
         self.fr_unidade = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_unidade.place(relx=0.15, rely=0.225, relwidth=0.07, relheight=0.07)
+        self.fr_unidade.place(relx=0.15, rely=0.245, relwidth=0.07, relheight=0.07)
 
         self.lb_unidade = customtkinter.CTkLabel(self.fr_unidade, text="Unidade")
         self.lb_unidade.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
@@ -293,7 +293,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
         # Valor Liquidado
         self.fr_valor_liquidado = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_valor_liquidado.place(relx=0.225, rely=0.225, relwidth=0.15, relheight=0.07)
+        self.fr_valor_liquidado.place(relx=0.225, rely=0.245, relwidth=0.15, relheight=0.07)
 
         self.lb_valor_liquidado = customtkinter.CTkLabel(self.fr_valor_liquidado, text="Valor Liquidado")
         self.lb_valor_liquidado.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.55)
@@ -304,7 +304,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
 
         # Resultado
         self.fr_tree = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_tree.place(relx=0, rely=0.30, relwidth=1, relheight=1)
+        self.fr_tree.place(relx=0, rely=0.32, relwidth=1, relheight=1)
 
         self.tree = ttk.Treeview(self.fr_tree, columns=(
             "Data Pagto", "CpF/CnPj", "Beneficiário", "Nr. Documento",
@@ -324,7 +324,7 @@ class BaixasFinanceiras(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons)
         treestyle.configure("Treeview", background=bg_color,foreground=text_color, fieldbackground=bg_color, borderwidth=0)
         treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
 
-        col_widths = [10, 20, 800, 10, 10, 10, 10, 10, 10, 10, 10]
+        col_widths = [10, 20, 800, 10, 10, 10, 10, 10, 8, 8, 8]
         headers = ["Data Pagto", "CpF/CnPj", "Beneficiário", "Nr. Documento", "Valor", "Nr. Parc.", "Data Doc.",
                    "Situação", "Unidade", "Valor Efetivo"]
 
