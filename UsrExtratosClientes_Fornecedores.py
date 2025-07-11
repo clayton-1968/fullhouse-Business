@@ -14,7 +14,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
     ################# dividindo a janela ###############
     def frame_cabecalho_extrato_clientes_fornecedores(self, janela):
         # Empresa
-        coordenadas_relx = 0.005
+        coordenadas_relx = 0
         coordenadas_rely = 0
         coordenadas_relwidth = 0.25
         coordenadas_relheight = 0.07
@@ -22,7 +22,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
         fr_empresa.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
                          relheight=coordenadas_relheight)
         lb_empresa = customtkinter.CTkLabel(fr_empresa, text="Empresa")
-        lb_empresa.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.55)
+        lb_empresa.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.6)
 
         empresas = []
 
@@ -35,7 +35,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
         self.entry_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_uf))
 
         # Unidade de Negócio
-        coordenadas_relx = 0.26
+        coordenadas_relx = 0.255
         coordenadas_rely = 0
         coordenadas_relwidth = 0.17
         coordenadas_relheight = 0.07
@@ -43,7 +43,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
         fr_unidade_negocio.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
                                  relheight=coordenadas_relheight)
         lb_unidade_negocio = customtkinter.CTkLabel(fr_unidade_negocio, text="Unidade Negócios")
-        lb_unidade_negocio.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.55)
+        lb_unidade_negocio.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.6)
 
         unidade_negocios = []
 
@@ -62,18 +62,18 @@ class Extrato_Clientes_Fornecedores(Widgets):
         TDta_Inicio = datetime.strptime("01/01/2000", "%d/%m/%Y")
         TDta_Fim = datetime.now()
 
-        coordenadas_relx = 0.435
+        coordenadas_relx = 0.43
         coordenadas_rely = 0
         coordenadas_relwidth = 0.17
-        coordenadas_relheight = 0.07
+        coordenadas_relheight = 0.09
         fr_periodo = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         fr_periodo.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
                          relheight=coordenadas_relheight)
         lb_periodo = customtkinter.CTkLabel(fr_periodo, text="Período Vencimento")
-        lb_periodo.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.55)
+        lb_periodo.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.6)
 
         lb_dt_venc_inicio = customtkinter.CTkLabel(fr_periodo, text="Data Início")
-        lb_dt_venc_inicio.place(relx=0.18, rely=0.30, relheight=0.125, relwidth=0.20)
+        lb_dt_venc_inicio.place(relx=0.10, rely=0.28, relheight=0.15, relwidth=0.35)
         self.entry_dt_venc_inicio = customtkinter.CTkEntry(fr_periodo, fg_color="white", text_color="black",
                                                            justify=tk.CENTER)
         self.entry_dt_venc_inicio.delete(0, 'end')
@@ -85,7 +85,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
                                                                             self.entry_dt_venc_fim))
 
         lb_dt_venc_fim = customtkinter.CTkLabel(fr_periodo, text="Data Fim")
-        lb_dt_venc_fim.place(relx=0.55, rely=0.30, relheight=0.125, relwidth=0.35)
+        lb_dt_venc_fim.place(relx=0.55, rely=0.28, relheight=0.15, relwidth=0.35)
         self.entry_dt_venc_fim = customtkinter.CTkEntry(fr_periodo, fg_color="white", text_color="black",
                                                         justify=tk.CENTER)
         self.entry_dt_venc_fim.delete(0, 'end')
@@ -96,7 +96,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
                                                                                      self.entry_info_pag_valor_parc))
 
         # Pessoa
-        coordenadas_relx = 0.61
+        coordenadas_relx = 0.605
         coordenadas_rely = 0
         coordenadas_relwidth = 0.34
         coordenadas_relheight = 0.07
@@ -104,7 +104,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
         fr_pessoa.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
                         relheight=coordenadas_relheight)
         lb_pessoa = customtkinter.CTkLabel(fr_pessoa, text="Cliente/Fornecedor/Prestador Serviços")
-        lb_pessoa.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.55)
+        lb_pessoa.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.6)
 
         pessoas = []
 
@@ -129,7 +129,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
         treestyle.configure("Treeview", background="white", foreground="black", fieldbackground="white", borderwidth=0)
 
         self.fr_list = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        self.fr_list.place(relx=0.005, rely=0.085, relwidth=0.99, relheight=0.91)
+        self.fr_list.place(relx=0, rely=0.095, relwidth=1, relheight=1)
 
         self.scrollbar = ttk.Scrollbar(self.fr_list, orient='vertical')
         self.scrollbar.pack(side='right', fill='y')
@@ -160,10 +160,10 @@ class Extrato_Clientes_Fornecedores(Widgets):
 
         Col = 30
 
-        self.LExtrato.column('#0', width=2, anchor='w')
+        self.LExtrato.column('#0', width=0, anchor='w')
         self.LExtrato.column('ID', width=15, anchor='e')
-        self.LExtrato.column('Descricao', width=800, anchor='w')
-        self.LExtrato.column('Dta_Vencto_Liquidacao', width=5, anchor='c')
+        self.LExtrato.column('Descricao', width=50, anchor='w')
+        self.LExtrato.column('Dta_Vencto_Liquidacao', width=10, anchor='c')
         self.LExtrato.column('Tipo', width=Col, anchor='c')
         self.LExtrato.column('Banco', width=Col, anchor='c')
         self.LExtrato.column('Referencia', width=Col, anchor='c')
@@ -172,7 +172,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
         self.LExtrato.column('Saldo', width=Col, anchor='e')
 
         self.LExtrato.pack(expand=True, fill='both')
-        self.LExtrato.place(relx=0.005, rely=0.01, relwidth=0.985, relheight=0.985)
+        self.LExtrato.place(relx=0, rely=0, relwidth=1, relheight=1)
 
     def consulta_extrato(self):
         if self.entry_empresa.get() != '':
