@@ -3,19 +3,13 @@ from widgets      import Widgets
 from datetime     import datetime
 from PIL          import ImageTk, Image
 
-# import plotly.figure_factory as ff
-# import plotly.graph_objects  as go
-# import webbrowser
-# import http.server
-# import socketserver
-# import threading
-# import pandas       as pd
-# from datetime       import datetime, timedelta
-# from plotly.offline import plot
+import matplotlib.pyplot as plt
+import matplotlib.dates  as mdates
+import matplotlib.ticker as mticker
+import networkx          as nx
 
 from UsrCadastros import Projetos
 from UsrCadastros import Cronograma_Atividades_Copiar
-
 
 class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades_Copiar):
     def cronograma_atividades_hierarquico(self):
@@ -89,12 +83,12 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         ToolTip(self.btn_novo_projeto, "Incluir Novo Programa Atividades")
 
         # # Botão Gráfico Gantt
-        # icon_image = self.base64_to_photoimage('olho')
-        # self.btn_gantt_projeto = customtkinter.CTkButton(janela, text='Gantt', image=icon_image, fg_color='transparent', command=lambda: self.gerar_gantt())
-        # self.btn_gantt_projeto.pack(pady=10)
-        # self.btn_gantt_projeto.place(relx=0.855, rely=0.02, relwidth=0.08, relheight=0.05)
-        # # # Adicionar o tooltip
-        # ToolTip(self.btn_gantt_projeto, "Gerar Gráfico Gantt")
+        icon_image = self.base64_to_photoimage('olho')
+        self.btn_gantt_projeto = customtkinter.CTkButton(janela, text='Gantt', image=icon_image, fg_color='transparent', command=lambda: self.gerar_gantt())
+        self.btn_gantt_projeto.pack(pady=10)
+        self.btn_gantt_projeto.place(relx=0.855, rely=0.02, relwidth=0.08, relheight=0.05)
+        # # Adicionar o tooltip
+        ToolTip(self.btn_gantt_projeto, "Gerar Gráfico Gantt")
         
         # Botão Sair Cronograma
         icon_image = self.base64_to_photoimage('sair')
@@ -476,13 +470,13 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         # linha_base_predessessora = None
         all_numbers       = self.get_all_items_numbers()
         # Primeiro loop para atualizar os números dos campos
-        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, str_observacao, level in all_numbers:
+        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, str_observacao, level in all_numbers:
             if tarefa_id == tarefa_id_nova:  
                 linha_base_predessessora = nr_campos
             nr_campos += 1    
         
         nr_campos = 1
-        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
+        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level in all_numbers:
             tarefa_id_atual      = str(tarefa_id.zfill(2))
             nrcarat              = len(tarefa_id_atual)
             entry_descricao      = tarefa_ds
@@ -495,7 +489,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             str_per_conclusao = per_conclusao
             str_ini_prev = dta_inicial_prevista
             str_ini_real = dta_inicial_realizada
-            str_fim_prev =  dta_conclusao_prevista
+            str_fim_prev =  fimista
             str_fim_real = dta_conclusao_realizada
             str_obs = str_observacao
 
@@ -562,7 +556,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         all_numbers     = self.get_all_items_numbers()
         nr_interacao = int(int(len(all_numbers)) / 10)
         for _ in range(nr_interacao):
-            for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
+            for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level in all_numbers:
                 self.predessessora_hierarquico(child)
             
             self.dta_tarefa_mae_hierarquico
@@ -653,7 +647,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                     
                     if char == ';' or viContador == nr_caracteres - 1:
                         
-                        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_dependentes:
+                        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level in all_dependentes:
                             nr_items = len(all_dependentes)
                             if int(lin_dependente) > int(nr_items):
                                 messagebox.showinfo("Gestor de Negócios", f"Linha Dependência Inválida - {tarefa_id} - {tarefa_ds}", parent=self.master)
@@ -661,7 +655,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                             
                             if int(lin_dependente) == int(linha):
                                 data_inicial_realizada = self.parse_date( dta_inicial_realizada)
-                                data_conclusao_prevista = self.parse_date(dta_conclusao_prevista)
+                                data_conclusao_prevista = self.parse_date(fimista)
                                 data_conclusao_realizada = self.parse_date(dta_conclusao_realizada)
                                 
                         if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
@@ -753,7 +747,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         except Exception as e:
             messagebox.showerror("Erro!", f"Erro: {str(e)}") 
 
-    def status_on_hierarquico(self, selected_iid, dta_inicio_prev, dta_inicio_real, dta_conclusao_prev, dta_conclusao_real, per_conclusao):
+    def status_on_hierarquico(self, selected_iid, dta_inicio_prev, data_realizada, fim, dta_conclusao_real, per_conclusao):
         
         try:
             # Carrega os farois
@@ -766,20 +760,20 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             if isinstance(dta_inicio_prev, datetime):
                 dta_inicio_prev = dta_inicio_prev.date()  # Converte para date
 
-            if isinstance(dta_inicio_real, datetime):
-                dta_inicio_real = dta_inicio_real.date()  # Converte para date
+            if isinstance(data_realizada, datetime):
+                data_realizada = data_realizada.date()  # Converte para date
 
-            if isinstance(dta_conclusao_prev, datetime):
-                dta_conclusao_prev = dta_conclusao_prev.date()  # Converte para date
+            if isinstance(fim, datetime):
+                fim = fim.date()  # Converte para date
 
             if isinstance(dta_conclusao_real, datetime):
                 dta_conclusao_real = dta_conclusao_real.date()  # Converte para date
 
-            if isinstance(dta_inicio_real, str):
+            if isinstance(data_realizada, str):
                 try:
-                    dta_inicio_real = datetime.strptime(dta_inicio_real, "%d/%m/%Y").date()
+                    data_realizada = datetime.strptime(data_realizada, "%d/%m/%Y").date()
                 except ValueError:
-                    dta_inicio_real = None  # ou use uma data padrão, como datetime.now().date()
+                    data_realizada = None  # ou use uma data padrão, como datetime.now().date()
 
             if isinstance(dta_inicio_prev, str):
                 try:
@@ -787,11 +781,11 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                 except ValueError:
                     dta_inicio_prev = None  # ou use uma data padrão, como datetime.now().date()
 
-            if isinstance(dta_conclusao_prev, str):
+            if isinstance(fim, str):
                 try:
-                    dta_conclusao_prev = datetime.strptime(dta_conclusao_prev, "%d/%m/%Y").date()
+                    fim = datetime.strptime(fim, "%d/%m/%Y").date()
                 except ValueError:
-                    dta_conclusao_prev = None  # ou use uma data padrão, como datetime.now().date()
+                    fim = None  # ou use uma data padrão, como datetime.now().date()
 
             if isinstance(dta_conclusao_real, str):
                 try:
@@ -799,10 +793,10 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                 except ValueError:
                     dta_conclusao_real = None  # ou use uma data padrão, como datetime.now().date()
 
-            today = datetime.now().date()
+            hoje = datetime.now().date()
 
-            if dta_inicio_real == '' or dta_inicio_real is None:
-                if dta_inicio_prev < today:
+            if data_realizada == '' or data_realizada is None:
+                if dta_inicio_prev < hoje:
                     icon_image = icon_image_vermelho
                     # Armazenar referência
                     self.images[selected_iid] = icon_image
@@ -812,7 +806,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                     self.images[selected_iid] = icon_image
             else:
                 if dta_conclusao_real == '' or dta_conclusao_real is None:
-                    if (dta_inicio_real != '' or dta_inicio_real is not None) and dta_conclusao_prev < today:
+                    if (data_realizada != '' or data_realizada is not None) and fim < hoje:
                         icon_image = icon_image_vermelho
                         # Armazenar referência
                         self.images[selected_iid] = icon_image
@@ -824,11 +818,11 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                     icon_image = icon_image_verde
                     # Armazenar referência
                     self.images[selected_iid] = icon_image
-                elif dta_conclusao_prev >= today:
+                elif fim >= hoje:
                     icon_image = icon_image_azul
                     # Armazenar referência
                     self.images[selected_iid] = icon_image
-                elif dta_conclusao_prev < today:
+                elif fim < hoje:
                     icon_image = icon_image_vermelho
                     # Armazenar referência
                     self.images[selected_iid] = icon_image
@@ -861,7 +855,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         selected_item_id = selected_item if isinstance(selected_item, tuple) else selected_item
         selected_index = next((index for index, item in enumerate(todos_itens) if item[0] == selected_item_id[0]), None)
         for item_data in todos_itens[selected_index:]:
-            child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, str_observacao, level = item_data
+            child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, str_observacao, level = item_data
             
             nivel_secundario = len(tarefa_id.replace(".", ""))
             if nivel_inclusao == nivel_secundario and tarefa_id_origem != tarefa_id.replace(".", ""):
@@ -881,7 +875,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             
             # Segundo loop
             for item_data in todos_itens[selected_index:]:
-                child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, str_observacao, level = item_data
+                child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, str_observacao, level = item_data
                 
                 nivel_secundario = len(tarefa_id.replace(".", ""))
                 if nivel_inclusao == nivel_secundario and tarefa_id.replace(".", "")[:nivel_inclusao_mae] == tarefa_id_origem.replace(".", ""):
@@ -908,7 +902,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         selected_index = next((index for index, item in enumerate(todos_itens) if item[0] == selected_item_id), None)
         if selected_index is not None:
             for item_data in todos_itens[selected_index:]:
-                child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, str_observacao, level = item_data
+                child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, str_observacao, level = item_data
                 if child == selected_item_id:
                     Linha_Incluir = int(linha)
                     break
@@ -1036,7 +1030,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         selected_item_id = item_selecionado if isinstance(item_selecionado, tuple) else item_selecionado
         selected_index = next((index for index, item in enumerate(todos_itens) if item[0] == selected_item_id), None)
         for item_data in todos_itens[selected_index:]:
-            child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level = item_data
+            child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level = item_data
             nivel_secundario = len(tarefa_id.replace(".", ""))
 
             if nivel_inclusao == nivel_secundario:
@@ -1051,7 +1045,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             nivel_ultimo = ""
             # Segundo Loop
             for item_data in todos_itens[selected_index:]:
-                child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level = item_data
+                child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level = item_data
                 nivel_secundario = len(tarefa_id.replace(".", ""))
 
                 if nivel_inclusao == nivel_secundario and tarefa_id.replace(".", "")[:nivel_inclusao_mae] == tarefa_id.replace(".", ""):
@@ -1125,7 +1119,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                     per_conclusao = float(values[7].replace("%", ""))
                     dta_inicial_prevista = values[8]
                     dta_inicial_realizada = values[9]
-                    dta_conclusao_prevista = values[10]
+                    fimista = values[10]
                     dta_conclusao_realizada = values[11]
                     str_observacao = values[12] 
                     numbers.append((
@@ -1140,7 +1134,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                                     per_conclusao, 
                                     dta_inicial_prevista, 
                                     dta_inicial_realizada, 
-                                    dta_conclusao_prevista, 
+                                    fimista, 
                                     dta_conclusao_realizada, 
                                     item_id,
                                     str_observacao, 
@@ -1512,140 +1506,325 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         finally:
             pass
     
-    # def gerar_gantt(self):
-        # if self.entry_projeto.get() != '':
-        #     projeto_id = self.obter_Projeto_ID(self.entry_projeto.get(), self.principal_frame)
-        # else:
-        #     messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto!!")
-        #     return
-        # self.gerou_gantt = True
-        # # Função para criar dados de exemplo
-        # def create_sample_data():
-        #     sql_query = """
-        #                     SELECT 
-        #                         pa.tarefa_ID                AS tarefa_ID, 
-        #                         pa.tarefa_DS                AS tarefa_DS, 
-        #                         pa.percentual_execucao      AS percentual_execucao,
-        #                         pa.data_Inicial_Prevista    AS data_Inicial_Prevista, 
-        #                         pa.data_Inicial_Realizada   AS data_Inicial_Realizada, 
-        #                         pa.dias_diferenca_inicio    AS dias_diferenca_inicio,
-        #                         pa.data_conclusao_prevista  AS data_conclusao_prevista, 
-        #                         pa.data_conclusao_realizada AS data_conclusao_realizada
-        #                     FROM programas_atividades pa
-        #                     INNER JOIN projetos_cronograma pc ON pc.projeto_id=pa.projeto_id 
-        #                     WHERE pa.projeto_ID = %s
-        #                     ORDER BY tarefa_ID
-        #                 """
+    def gerar_gantt(self):
+        if self.entry_projeto.get() != '':
+            projeto_id = self.obter_Projeto_ID(self.entry_projeto.get(), self.principal_frame)
+        else:
+            messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto!!")
+            return
+        
+        sql_query = """
+                        SELECT 
+                            pa.tarefa_ID                AS id, 
+                            pa.tarefa_DS                AS nome, 
+                            pa.percentual_execucao      AS percentual_execucao,
+                            pa.tarefa_dependencia       AS dependencia,
+                            pa.tempo_previsto           AS duracao,
+                            pa.data_Inicial_Prevista    AS inicio, 
+                            pa.data_Inicial_Realizada   AS data_Inicial_Realizada, 
+                            pa.data_conclusao_prevista  AS data_conclusao_prevista, 
+                            pa.data_conclusao_realizada AS data_conclusao_realizada
+                        FROM programas_atividades pa
+                        INNER JOIN projetos_cronograma pc ON pc.projeto_id=pa.projeto_id 
+                        WHERE pa.projeto_ID = %s
+                        ORDER BY tarefa_ID
+                    """
             
-        #     list_tarefas = []
-        #     list_tarefas = db.executar_consulta(sql_query, projeto_id)
-        #     tasks = list_tarefas
-        #     return pd.DataFrame(tasks)
+        list_tarefas = db.executar_consulta(sql_query, projeto_id)
+        tarefas = list_tarefas
 
-        # # Criar dados de exemplo
-        # df = create_sample_data()
-        # df.rename(columns={
-        #     'tarefa_ID': 'Task_ID',
-        #     'tarefa_DS': 'Task',
-        #     'data_Inicial_Prevista': 'Start',
-        #     'data_conclusao_prevista': 'Finish',
-        #     'percentual_execucao': 'Complete'
-        # }, inplace=True)
+        # Mapeia id -> número da linha e linha -> id
+        id_para_linha = {tarefa['id']: idx for idx, tarefa in enumerate(tarefas, start=1)}
+        linha_para_id = {v: k for k, v in id_para_linha.items()}
 
-        # # Converter datas para datetime
-        # df['Start'] = pd.to_datetime(df['Start'])
-        # df['Finish'] = pd.to_datetime(df['Finish'])
+        # Dependências usando os IDs das tarefas
+        dependencias = []
+        datas_inicio = {}
+        datas_fim = {}
+        for idx, tarefa in enumerate(tarefas, start=1):
+            datas_inicio[tarefa.get('id')] = tarefa.get('inicio')
+            datas_fim[tarefa.get('id')] = tarefa.get('data_conclusao_prevista')
+            if str(tarefa.get('dependencia')) not in ('0', '', None):
+                for dep in str(tarefa['dependencia']).split(';'):
+                    dep = dep.strip()
+                    if dep and dep.isdigit() and int(dep) in linha_para_id:
+                        dependencias.append((linha_para_id[int(dep)], tarefa['id']))
+
+        # Criando o grafo
+        G = nx.DiGraph()
+        for tarefa in tarefas:
+            duracao = tarefa.get('duracao')
+            if duracao is None or duracao == '':
+                duracao = tarefa.get('tempo_previsto ')
+            if duracao is None or duracao == '':
+                duracao = 1  # valor padrão
+            try:
+                duracao = int(duracao)
+            except Exception:
+                duracao = 1
+            G.add_node(tarefa['id'], duracao=duracao, nome=tarefa['nome'])
         
-        # # Criar o gráfico de Gantt
-        # fig = ff.create_gantt(df, show_colorbar=True, group_tasks=True)
+        G.add_edges_from(dependencias)
 
-        # # Adicionar barras para o progresso realizado
-        # nr = 1
-        # for task in df.itertuples():
-        #     start = task.Start
-        #     finish = task.Finish
-        #     duration = (task.Finish.date() - task.Start.date()).days
-        #     completed_duration = (duration * task.Complete) / 100
-        #     if task.Complete > 0:
-        #         now_date = datetime.now().date()
-        #         diferenca = (now_date - task.Start.date()).days
-        #         if diferenca > duration:
-        #             diferenca = duration
+        # Encontrar caminho crítico
+        caminho_critico = nx.dag_longest_path(G, weight='duracao')
 
-        #         if duration > 0:
-        #             per_diferenca = (diferenca / duration)
-        #         else:
-        #             per_diferenca = 0
+        # Preparar dados para o Gantt
+        dados = []
+        for tarefa in tarefas:
+            id = tarefa['id']
+            # Converter datas para datetime.date
+            inicio = tarefa.get('inicio')
+            fim = tarefa.get('data_conclusao_prevista')
+            if isinstance(inicio, str):
+                try:
+                    inicio = datetime.strptime(inicio, "%Y-%m-%d").date()
+                except Exception:
+                    inicio = None
+            if isinstance(fim, str):
+                try:
+                    fim = datetime.strptime(fim, "%Y-%m-%d").date()
+                except Exception:
+                    fim = None
+            duracao = (fim - inicio).days if inicio and fim else 1
 
-        #         color = 'green' if task.Complete == 1 else 'red' if duration > 0 and task.Complete < per_diferenca else 'green'
-        #         fig.add_trace(go.Bar(
-        #             x=[start + timedelta(days=completed_duration)],
-        #             y=[task.Task_ID + ' - ' + task.Task],
-        #             orientation='h',
-        #             marker=dict(color=color),
-        #             width=0.5,
-        #             base=start,
-        #             hoverinfo='skip',
-        #             showlegend=False
-        #         ))
-        #     nr += 1
-        
-        # # Atualizar o layout
-        # fig.update_layout(
-        #     title='Gráfico - ' + self.entry_projeto.get(),
-        #     xaxis_title='Data',
-        #     yaxis_title='Tarefas',
-        #     height=2000,
-        #     margin=dict(l=250, r=150, t=150, b=150),
-        #     xaxis=dict(
-        #         tickformat='%d-%m-%Y',
-        #         tickangle=45,
-        #     )
-        # )
+            # Determinar status para cor
+            hoje = datetime.now().date()
+            data_realizada = tarefa.get('data_Inicial_Realizada')
+            data_conclusao_realizada = tarefa.get('data_conclusao_realizada')
+            percentual_execucao = tarefa.get('percentual_execucao')
+            if isinstance(data_realizada, str):
+                try:
+                    data_realizada = datetime.strptime(data_realizada, "%Y-%m-%d").date()
+                except Exception:
+                    data_realizada = None
+            if isinstance(data_conclusao_realizada, str):
+                try:
+                    data_conclusao_realizada = datetime.strptime(data_conclusao_realizada, "%Y-%m-%d").date()
+                except Exception:
+                    data_conclusao_realizada = None
 
-        # # Atualizar as cores das barras
-        # fig.data[0].marker.color = 'rgb(0, 0, 255)'  # Azul para previsto
-
-        # # Adicionar legenda
-        # fig.add_trace(go.Bar(x=[None], y=[None], name='Previsto', marker_color='blue'))
-        # fig.add_trace(go.Bar(x=[None], y=[None], name='Realizado', marker_color='green'))
-        # fig.add_trace(go.Bar(x=[None], y=[None], name='Atrasado', marker_color='red'))
-
-        # # Mostrar o gráfico
-        # # fig.show()
-        # # plot(fig, auto_open=True)
-
-        # # Gerar o arquivo HTML
-        # # plot(fig, filename='gantt_chart.html', auto_open=False)
-
-        # # Configurar e iniciar o servidor
-        # PORT = 9001
-        # Handler = http.server.SimpleHTTPRequestHandler
-        
-        # # Variável de controle
-        # self.stop_event = threading.Event()
-
-        # def start_server():
-        #     with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        #         while not self.stop_event.is_set():
-        #             # httpd.handle_request()
-        #             httpd.serve_forever()
+            # Lógica de cor:
+            # Azul: programada (não iniciada, início no futuro ou hoje)
+            # Verde: iniciada (tem data_realizada, não concluída e não atrasada)
+            # Vermelho: atrasada no início (não iniciada e início previsto já passou)
+            # Vermelho: atrasada no término (iniciada, mas fim previsto já passou e não concluída)
             
-        #     # with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        #     #     print(f"Serving at port {PORT}")
-        #     #     httpd.serve_forever()
+            if data_realizada == '' or data_realizada is None:
+                if inicio < hoje:
+                    cor = 'red'    
+                else:
+                    cor = 'blue'   
+            else:
+                if data_conclusao_realizada == '' or data_conclusao_realizada is None:
+                    if (data_realizada != '' or data_realizada is not None) and fim < hoje:
+                        cor = 'red'
+                    else:
+                        cor = 'green'  
+                elif float(percentual_execucao) == 1:
+                    cor = 'green'  
+                elif fim >= hoje:
+                     cor = 'blue'
+                    #  cor = 'red'
+                elif fim < hoje:
+                    cor = 'red'
+                else:
+                    cor = 'blue'
+            
+            dados.append({
+                'Tarefa_ID': id,
+                'Tarefa': G.nodes[id]['nome'],
+                'Início': inicio,
+                'DataRealizada': data_realizada,
+                'Fim': fim,
+                'DataConclusaoRealizada': data_conclusao_realizada,
+                'PercentualExecução': percentual_execucao,
+                'CaminhoCrítico': id in caminho_critico,
+                'Duração': duracao,
+                'Cor': cor
+            })
+        
+        fig, ax = plt.subplots(figsize=(20, 15))
+        nr_digitos_tarefa = 0
+        for item in dados:
+            inicio = item['Início']
+            fim = item['Fim']
+            
+            if nr_digitos_tarefa < len(item['Tarefa_ID']):
+                nr_digitos_tarefa = len(item['Tarefa_ID'])
+
+            tarefa_id = item['Tarefa_ID']
+            tarefa = item['Tarefa']
+            duracao = item['Duração']
+            data_realizada = item.get('DataRealizada')
+            data_conclusao_realizada = item.get('DataConclusaoRealizada')
+            percentual_execucao = item.get('PercentualExecução')
+            hoje = datetime.now().date()
+
+            # Segmentos de barra
+            segmentos = []
+            
+            # 1. Azul: período programado antes do início real (ou até hoje se não iniciado)
+            dta_branco = str('1899-12-30')
+            
+            if str(data_realizada) == str(dta_branco):
+                # Não iniciado: azul até hoje ou até o fim, vermelho se atrasou
+                azul_dias = (fim - inicio).days
+                segmentos.append((inicio, azul_dias, 'blue'))
+                if inicio and fim:
+                    if inicio < hoje:
+                        vermelho_dias = (hoje - inicio).days
+                        segmentos.append((inicio, vermelho_dias, 'red'))
+
+            else:
+                # Verde: do início real até conclusão real ou fim previsto (se não concluído)
+                if data_realizada:
+                    azul_dias = (fim - inicio).days
+                    segmentos.append((inicio, azul_dias, 'blue'))
+                    
+                    if data_conclusao_realizada:
+                        if float(percentual_execucao) < 1.00:
+                            if fim < hoje:
+                                verde_dias = (fim - data_realizada).days
+                                if verde_dias > 0:
+                                    segmentos.append((data_realizada, verde_dias, 'green'))
+
+                                vermelho_dias = (hoje - fim).days
+                                if vermelho_dias > 0:
+                                    segmentos.append((fim, vermelho_dias, 'red'))  
+                            else:
+                                # azul_dias = (fim - inicio).days
+                                # segmentos.append((inicio, azul_dias, 'blue'))
+                                verde_dias = (data_conclusao_realizada - data_realizada).days
+                                if verde_dias > 0:
+                                    segmentos.append((data_realizada, verde_dias, 'green'))
+                        else:
+                            verde_fim = data_conclusao_realizada
+                            verde_dias = (verde_fim - data_realizada).days
+                            # print(f"Tarefa_ID: {tarefa_id} Tarefa_DS: {tarefa} verde_fim: {verde_fim} - data_realizada: {data_realizada} - verde_dias: {verde_dias}")
+                            if verde_dias > 0:
+                                cor_concluido = 'gold' if float(percentual_execucao) == 1.0 else 'green'
+                                segmentos.append((data_realizada, verde_dias, cor_concluido))
+                                # segmentos.append((data_realizada, verde_dias, 'green'))
+                            else:
+                                verde_dias = 1
+                                cor_concluido = 'gold' if float(percentual_execucao) == 1.0 else 'green'
+                                segmentos.append((data_realizada, verde_dias, cor_concluido))
+                                # segmentos.append((data_realizada, verde_dias, 'green'))
+                                
+                    else:
+                        if fim <= hoje:
+                            # Se já passou do fim previsto, vermelho
+                            verde_fim = min(fim, hoje) if fim else hoje
+                            verde_dias = (verde_fim - data_realizada).days
+                            if verde_dias > 0:
+                                segmentos.append((data_realizada, verde_dias, 'green'))
+                        else:
+                            verde_dias = (fim - data_realizada).days
+                            if verde_dias > 0:
+                                segmentos.append((data_realizada, verde_dias, 'green'))
+
+                            vermelho_dias = (hoje - fim).days
+                            if vermelho_dias > 0:
+                                segmentos.append((fim, vermelho_dias, 'red'))     
+                
+                # Vermelho: se passou do fim previsto e não concluiu
+                if (not data_conclusao_realizada) and fim and hoje > fim:
+                    vermelho_inicio = fim
+                    vermelho_dias = (hoje - fim).days
+                    segmentos.append((vermelho_inicio, vermelho_dias, 'red'))
+
+            # Desenhar segmentos
+            for idx, (seg_inicio, seg_duracao, cor) in enumerate(segmentos):
+                # Se for caminho crítico, pode destacar a borda
+                edgecolor = 'red' if item['CaminhoCrítico'] else None
+                
+                # Formata as datas para string (ou vazio se None)
+                def fmt(data):
+                    return data.strftime('%d/%m/%Y') if data else ''
+                espacos = " " * (nr_digitos_tarefa - len(str(tarefa_id)))
+                label = (
+                    f"{tarefa} | {tarefa_id} | "
+                    # f"{tarefa} | {espacos}{tarefa_id} | "
+                    # f"Ini.Prev: {fmt(inicio)} | "
+                    # f"Ini.Real: {fmt(data_realizada)} | "
+                    # f"Conc.Prev: {fmt(fim)} | "
+                    # f"Conc.Real: {fmt(data_conclusao_realizada)}"
+                )
+                ax.barh(label, seg_duracao, left=seg_inicio, color=cor, edgecolor=edgecolor, height=0.6)
+
+                # Adiciona um "✔" ao final da barra se a tarefa estiver concluída
+                # Só coloca o check no último segmento da tarefa concluída
+                if (
+                    float(percentual_execucao) == 1.0
+                    and idx == len(segmentos) - 1
+                ):
+                    y_pos = ax.get_yticklabels().index(ax.get_yticklabels()[[t.get_text() for t in ax.get_yticklabels()].index(label)])
+                    x_pos = seg_inicio + timedelta(days=seg_duracao)
+                    ax.text(x_pos, y_pos, "✔", fontsize=14, fontweight='bold', color='darkgreen', va='center', ha='center', zorder=21)
+
+        # Desenhar linhas conectando as barras do caminho crítico
+        if len(caminho_critico) > 1:
+            for i in range(len(caminho_critico) - 1):
+                id_atual = caminho_critico[i]
+                id_prox = caminho_critico[i + 1]
+                # Busca os dados das tarefas
+                tarefa_atual = next((d for d in dados if d['Tarefa_ID'] == id_atual), None)
+                tarefa_prox = next((d for d in dados if d['Tarefa_ID'] == id_prox), None)
+                if tarefa_atual and tarefa_prox:
+                    # Nome formatado igual ao label do eixo Y
+                    label_atual = f"{tarefa_atual['Tarefa']} | {tarefa_atual['Tarefa_ID']} | "
+                    label_prox = f"{tarefa_prox['Tarefa']} | {tarefa_prox['Tarefa_ID']} | "
+                    # Posição Y das barras
+                    y_atual = ax.get_yticklabels().index(ax.get_yticklabels()[[t.get_text() for t in ax.get_yticklabels()].index(label_atual)])
+                    y_prox = ax.get_yticklabels().index(ax.get_yticklabels()[[t.get_text() for t in ax.get_yticklabels()].index(label_prox)])
+                    # X final da tarefa atual e X inicial da próxima
+                    x_atual = tarefa_atual['Fim']
+                    x_prox = tarefa_prox['Início']
+                    # Desenha a linha
+                    ax.plot([x_atual, x_prox], [y_atual, y_prox], color='red', linewidth=2, linestyle='--', zorder=10)
+
+        # Ajusta o tamanho da fonte das tarefas no eixo Y
+        ax.set_yticklabels(ax.get_yticklabels(), fontsize=8)  # Altere o valor conforme desejado
+        
+
+        ax.set_xlabel('Data')
+        ax.set_ylabel('Tarefa')
+        ax.set_title('Gantt ' + self.entry_projeto.get())
+        ax.invert_yaxis()
+        
+        # Linha vertical para a data de hoje
+        hoje = datetime.now().date()
+        ax.axvline(hoje, color='orange', linestyle='--', linewidth=2, label='Hoje')
+        # Exibe apenas a legenda do "Hoje"
+        handles, labels = ax.get_legend_handles_labels()
+        if 'Hoje' in labels:
+            hoje_str = hoje.strftime('%d/%m/%Y')
+            ax.legend([handles[labels.index('Hoje')]], [f'Hoje ({hoje_str})'])
+        else:
+            ax.legend().set_visible(False)
+        # ax.legend()
+        
+        def week_formatter(x, pos=None):
+            dt = mdates.num2date(x)
+            return f"Sem {dt.isocalendar()[1]}\n{dt.strftime('%d/%m')}"
     
-        # # Iniciar o servidor em uma thread separada
-        # self.server_thread = threading.Thread(target=start_server)
-        # self.server_thread.start()
-
-        # # Abrir o navegador
-        # webbrowser.open(f'http://localhost:{PORT}/gantt_chart.html')
-
-        # # Manter o script rodando
-        # input("Pressione Enter para encerrar o servidor...")
+        def month_year_formatter(x, pos=None):
+            dt = mdates.num2date(x)
+            if dt.month == 1:
+                return dt.strftime('%b/%Y')  # Exibe "Jan/2025"
+            else:
+                return dt.strftime('%b')     # Exibe "Fev", "Mar", etc.
         
+        # Configura o eixo X para mostrar meses e semanas
+        ax.xaxis.set_major_locator(mdates.MonthLocator())
+        ax.xaxis.set_major_formatter(mticker.FuncFormatter(month_year_formatter))
+        
+        plt.setp(ax.get_xticklabels(), rotation=45, ha='right')  # Rotaciona os labels para melhor leitura
 
+        plt.tight_layout()
+        plt.show()
+        
 
 Cronograma_Atividades_Hierarquico()
 
@@ -1879,7 +2058,7 @@ class TreeviewEdit(ttk.Treeview):
         all_numbers     = self.get_all_items_numbers()
         nr_interacao = int(int(len(all_numbers)) / 10)
         for _ in range(nr_interacao):
-            for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
+            for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level in all_numbers:
                 self.predessessora(child)
 
             self.dta_tarefa_mae()
@@ -1903,7 +2082,7 @@ class TreeviewEdit(ttk.Treeview):
                     per_conclusao = float(values[7].replace("%", ""))
                     dta_inicial_prevista = values[8]
                     dta_inicial_realizada = values[9]
-                    dta_conclusao_prevista = values[10]
+                    fimista = values[10]
                     dta_conclusao_realizada = values[11]
                     numbers.append((
                                     child, 
@@ -1917,7 +2096,7 @@ class TreeviewEdit(ttk.Treeview):
                                     per_conclusao, 
                                     dta_inicial_prevista, 
                                     dta_inicial_realizada, 
-                                    dta_conclusao_prevista, 
+                                    fimista, 
                                     dta_conclusao_realizada, 
                                     item_id, 
                                     level))  
@@ -1963,7 +2142,7 @@ class TreeviewEdit(ttk.Treeview):
 
         return None  # Retorna None se não conseguiu analisar
 
-    def status_on(self, selected_iid, dta_inicio_prev, dta_inicio_real, dta_conclusao_prev, dta_conclusao_real, per_conclusao):
+    def status_on(self, selected_iid, dta_inicio_prev, data_realizada, fim, dta_conclusao_real, per_conclusao):
         try:
             # Carrega os farois
             icon_image_azul = self.base64_to_farois('semafaro_azul')
@@ -1975,34 +2154,34 @@ class TreeviewEdit(ttk.Treeview):
             if isinstance(dta_inicio_prev, datetime):
                 dta_inicio_prev = dta_inicio_prev.date()  # Converte para date
 
-            if isinstance(dta_inicio_real, datetime):
-                dta_inicio_real = dta_inicio_real.date()  # Converte para date
+            if isinstance(data_realizada, datetime):
+                data_realizada = data_realizada.date()  # Converte para date
 
-            if isinstance(dta_conclusao_prev, datetime):
-                dta_conclusao_prev = dta_conclusao_prev.date()  # Converte para date
+            if isinstance(fim, datetime):
+                fim = fim.date()  # Converte para date
 
             if isinstance(dta_conclusao_real, datetime):
                 dta_conclusao_real = dta_conclusao_real.date()  # Converte para date
 
-            if isinstance(dta_inicio_real, str):
-                dta_inicio_real = datetime.strptime(
-                    dta_inicio_real, "%d/%m/%Y").date()
+            if isinstance(data_realizada, str):
+                data_realizada = datetime.strptime(
+                    data_realizada, "%d/%m/%Y").date()
 
             if isinstance(dta_inicio_prev, str):
                 dta_inicio_prev = datetime.strptime(
                     dta_inicio_prev, "%d/%m/%Y").date()
 
-            if isinstance(dta_conclusao_prev, str):
-                dta_conclusao_prev = datetime.strptime(
-                    dta_conclusao_prev, "%d/%m/%Y").date()
+            if isinstance(fim, str):
+                fim = datetime.strptime(
+                    fim, "%d/%m/%Y").date()
             
             if isinstance(dta_conclusao_real, str):
                 dta_conclusao_real = datetime.strptime(
                     dta_conclusao_real, "%d/%m/%Y").date()
 
-            today = datetime.now().date()
-            if dta_inicio_real == '' or dta_inicio_real is None:
-                if dta_inicio_prev < today:
+            hoje = datetime.now().date()
+            if data_realizada == '' or data_realizada is None:
+                if dta_inicio_prev < hoje:
                     icon_image = icon_image_vermelho
                     # Armazenar referência
                     self.images[selected_iid] = icon_image
@@ -2012,7 +2191,7 @@ class TreeviewEdit(ttk.Treeview):
                     self.images[selected_iid] = icon_image
             else:
                 if dta_conclusao_real == '' or dta_conclusao_real is None:
-                    if (dta_inicio_real != '' or dta_inicio_real is not None) and dta_conclusao_prev < today:
+                    if (data_realizada != '' or data_realizada is not None) and fim < hoje:
                         icon_image = icon_image_vermelho
                         # Armazenar referência
                         self.images[selected_iid] = icon_image
@@ -2024,11 +2203,11 @@ class TreeviewEdit(ttk.Treeview):
                     icon_image = icon_image_verde
                     # Armazenar referência
                     self.images[selected_iid] = icon_image
-                elif dta_conclusao_prev >= today:
+                elif fim >= hoje:
                     icon_image = icon_image_azul
                     # Armazenar referência
                     self.images[selected_iid] = icon_image
-                elif dta_conclusao_prev < today:
+                elif fim < hoje:
                     icon_image = icon_image_vermelho
                     # Armazenar referência
                     self.images[selected_iid] = icon_image
@@ -2081,7 +2260,7 @@ class TreeviewEdit(ttk.Treeview):
                     
                     if char == ';' or viContador == (nr_caracteres - 1):
                         
-                        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_dependentes:
+                        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level in all_dependentes:
                             nr_items = len(all_dependentes)
                             if int(lin_dependente) > int(nr_items):
                                 messagebox.showinfo("Gestor de Negócios", f"Linha Dependência Inválida - {tarefa_id} - {tarefa_ds}", parent=self.master)
@@ -2089,7 +2268,7 @@ class TreeviewEdit(ttk.Treeview):
                             
                             if int(lin_dependente) == int(linha):
                                 data_inicial_realizada = self.parse_date(dta_inicial_realizada)
-                                data_conclusao_prevista = self.parse_date(dta_conclusao_prevista)
+                                data_conclusao_prevista = self.parse_date(fimista)
                                 data_conclusao_realizada = self.parse_date(dta_conclusao_realizada)
                                 
                         
@@ -2314,7 +2493,7 @@ class TreeviewEdit(ttk.Treeview):
     def dta_tarefa_mae(self):
         all_numbers       = self.get_all_items_numbers()
         all_numbers_check = self.get_all_items_numbers()
-        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
+        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level in all_numbers:
             item_idx = child
             nrcarat              = 0
             NrCampos             = linha
@@ -2329,7 +2508,7 @@ class TreeviewEdit(ttk.Treeview):
 
             data_inicial_prevista              = self.parse_date(dta_inicial_prevista)
             data_inicial_realizada             = self.parse_date(dta_inicial_realizada)
-            data_conclusao_prevista            = self.parse_date(dta_conclusao_prevista)
+            data_conclusao_prevista            = self.parse_date(fimista)
             data_conclusao_realizada           = self.parse_date(dta_conclusao_realizada)
             dta_provisoria_inicial_prevista    = ''
             dta_provisoria_inicial_realizada   = ''
@@ -2337,14 +2516,14 @@ class TreeviewEdit(ttk.Treeview):
             dta_provisoria_conclusao_realizada = ''
             nr_tarefas = 0
             nr_tarefas_concluidas = 0
-            for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers_check:
+            for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level in all_numbers_check:
                 nr_caracteres = len(tarefa_id)
                 if tarefa_id[:nrcarat] == tarefa_id_atual and nr_caracteres > nrcarat:
                     nr_tarefas += 1
                     per_conclusao_items = per_conclusao
                     data_inicial_prevista_items = self.parse_date(dta_inicial_prevista)
                     data_inicial_realizada_items = self.parse_date(dta_inicial_realizada)
-                    data_conclusao_prevista_items = self.parse_date(dta_conclusao_prevista)
+                    data_conclusao_prevista_items = self.parse_date(fimista)
                     data_conclusao_realizada_items = self.parse_date(dta_conclusao_realizada)
                         
                     if data_inicial_prevista_items is not None:
