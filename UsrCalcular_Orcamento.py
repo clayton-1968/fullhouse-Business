@@ -90,7 +90,6 @@ class Processar_Premissas_Orcamento(Widgets):
             orcamentos = db.executar_consulta(vsSQL, params)
             
             if orcamentos:
-                # first_record = orcamentos[0]  # Gets the first dictionary
                 if orcamentos[0]['Orc_Status'] == "F":
                     messagebox.showinfo("Gestor de Negócios", "ESTE ORÇAMENTO JÁ ESTÁ FINALIZADO!!")
                     return
@@ -139,6 +138,7 @@ class Processar_Premissas_Orcamento(Widgets):
                     INNER JOIN orc_precos pr on pr.Preco_ID=pp.Preco_ID and pr.Orc_ID=pp.Orc_ID and pr.Empresa_ID=pp.Pri_ID
                     WHERE {' AND '.join(conditions)}
                 """
+            
             premissas = db.executar_consulta(vsSQL, params)
             
             if not premissas:
@@ -164,7 +164,7 @@ class Processar_Premissas_Orcamento(Widgets):
             coordenadas_relheight = 0.20
             self.frm_barra_progresso = customtkinter.CTkFrame(janela, border_color="gray75", border_width=0, fg_color='transparent')
             self.frm_barra_progresso.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
-            lb_barra_progresso = customtkinter.CTkLabel(self.frm_barra_progesso, text="Aguarde Processando...", anchor='w')
+            lb_barra_progresso = customtkinter.CTkLabel(self.frm_barra_progresso, text="Aguarde Processando...", anchor='w')
             lb_barra_progresso.place(relx=0.001, rely=0.10, relheight=0.25, relwidth=0.55)
             
             # Cria a Barra de Progresso
@@ -183,8 +183,7 @@ class Processar_Premissas_Orcamento(Widgets):
             self.current_index = 0
             
             for index, premissa in enumerate(premissas, start=1):
-                self.process_records()  # Começa a processar os registros        
-                
+                self.process_records()  # Começa a processar os registros 
                 dta_inicio = premissa['DtaInicio']
                 if isinstance(dta_inicio, datetime):
                     dta_ref_calculo = self.ult_dia_mes(dta_inicio) 
@@ -205,6 +204,7 @@ class Processar_Premissas_Orcamento(Widgets):
                     dta_fim = datetime.combine(dta_fim, datetime.min.time())
 
                 dta_ref_calculo = datetime.strptime(dta_ref_calculo, '%Y-%m-%d')         
+                
                 while dta_ref_calculo <= dta_fim:
                     str_registros = ''
                     Idx_ID = premissa['Idx_ID']
@@ -217,7 +217,6 @@ class Processar_Premissas_Orcamento(Widgets):
                     elif isinstance(Idx_Data, str):
                         Idx_Data = datetime.strptime(Idx_Data, '%Y-%m-%d')
                         Idx_Data = self.ult_dia_mes(datetime.combine(Idx_Data, datetime.min.time()))  # Combines 
-                        # Idx_Data = self.ult_dia_mes(Idx_Data) 
                     else:
                         print('Erro: Dta Reajuste não é um objeto datetime válido.')
                         continue  
@@ -240,8 +239,7 @@ class Processar_Premissas_Orcamento(Widgets):
                                 
                             """
                     indice = db.executar_consulta(vsSQL, params)
-                    
-                    id_reajuste = 1 if not indice else indice['Idx_Valor']
+                    id_reajuste = float(indice[0]['Idx_Valor']) if indice else 1 
                     
                     # Logic for Data_Lancamento and other calculations
                     periodicidade = premissa['Periodi_ID']
@@ -452,7 +450,12 @@ class Processar_Premissas_Orcamento(Widgets):
         # Botão de Calcular
         icon_image = self.base64_to_photoimage('save')
         self.btn_processar_premissas = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=CalPremissas)
-        self.btn_processar_premissas.place(relx=0.955, rely=0.012, relwidth=0.04, relheight=0.05)
+        self.btn_processar_premissas.place(relx=0.91, rely=0.012, relwidth=0.04, relheight=0.05)
+
+        # Botão Sair 
+        icon_image = self.base64_to_photoimage('sair')
+        self.btn_sair_projeto = customtkinter.CTkButton(janela, text='Sair', image=icon_image, fg_color='transparent', command=self.tela_principal)
+        self.btn_sair_projeto.place(relx=0.955, rely=0.012, relwidth=0.04, relheight=0.05)
  
     def custos(self, preco_p0, quantidade, id_reajuste, periodicidade, dt_inicio: datetime, dt_fim: datetime, dt_lancamento: datetime, data_reajuste: datetime):
         """

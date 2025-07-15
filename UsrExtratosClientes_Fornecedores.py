@@ -47,16 +47,11 @@ class Extrato_Clientes_Fornecedores(Widgets):
 
         unidade_negocios = []
 
-        self.entry_unidade_negocio = AutocompleteCombobox(fr_unidade_negocio, width=30, font=('Times', 11),
-                                                          completevalues=unidade_negocios)
+        self.entry_unidade_negocio = AutocompleteCombobox(fr_unidade_negocio, width=30, font=('Times', 11), completevalues=unidade_negocios)
         self.entry_unidade_negocio.pack()
         self.entry_unidade_negocio.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
-        self.entry_unidade_negocio.bind("<Button-1>",
-                                        lambda event: self.atualizar_unidade_negocios(event, self.entry_empresa.get(),
-                                                                                      self.entry_unidade_negocio))
-        self.entry_unidade_negocio.bind('<Down>',
-                                        lambda event: self.atualizar_unidade_negocios(event, self.entry_empresa.get(),
-                                                                                      self.entry_unidade_negocio))
+        self.entry_unidade_negocio.bind("<Button-1>", lambda event: self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.entry_empresa.get(), self.window_one), self.entry_unidade_negocio))
+        self.entry_unidade_negocio.bind('<Down>', lambda event: self.atualizar_unidade_negocios(event, self.obter_Empresa_ID(self.entry_empresa.get(), self.window_one), self.entry_unidade_negocio))
 
         # Período Vencimento
         TDta_Inicio = datetime.strptime("01/01/2000", "%d/%m/%Y")
@@ -99,6 +94,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
         coordenadas_relx = 0.605
         coordenadas_rely = 0
         coordenadas_relwidth = 0.34
+
         coordenadas_relheight = 0.07
         fr_pessoa = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         fr_pessoa.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
@@ -111,16 +107,20 @@ class Extrato_Clientes_Fornecedores(Widgets):
         self.entry_pessoa = AutocompleteCombobox(fr_pessoa, width=30, font=('Times', 11), completevalues=pessoas)
         self.entry_pessoa.pack()
         self.entry_pessoa.place(relx=0.01, rely=0.5, relwidth=0.985, relheight=0.4)
-        self.entry_pessoa.bind("<Button-1>",
-                               lambda event: self.atualizar_pessoa(event, self.entry_empresa.get(), self.entry_pessoa))
-        self.entry_pessoa.bind('<Down>',
-                               lambda event: self.atualizar_pessoa(event, self.entry_empresa.get(), self.entry_pessoa))
+        self.entry_pessoa.bind("<Button-1>", lambda event: self.atualizar_pessoa(event, self.obter_Empresa_ID(self.entry_empresa.get(), self.window_one), self.entry_pessoa))
+        self.entry_pessoa.bind('<Down>', lambda event: self.atualizar_pessoa(event, self.obter_Empresa_ID(self.entry_empresa.get(), self.window_one), self.entry_pessoa))
 
         # Botão de Consultar
         icon_image = self.base64_to_photoimage('lupa')
         self.btn_consultar_extrato = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent',
                                                              command=self.consulta_extrato)
-        self.btn_consultar_extrato.place(relx=0.955, rely=0.012, relwidth=0.04, relheight=0.05)
+        self.btn_consultar_extrato.place(relx=0.91, rely=0.012, relwidth=0.04, relheight=0.05)
+
+        # Botão Sair Extrato
+        icon_image = self.base64_to_photoimage('sair')
+        self.btn_sair_bordero = customtkinter.CTkButton(janela, text='Sair', image=icon_image, fg_color='transparent', command=self.tela_principal)
+        self.btn_sair_bordero.pack(pady=10)
+        self.btn_sair_bordero.place(relx=0.955, rely=0.012, relwidth=0.04, relheight=0.05)
 
     def frame_list_extrato(self, janela):
         ## Listbox _ Informações Pesquisa
@@ -176,18 +176,21 @@ class Extrato_Clientes_Fornecedores(Widgets):
 
     def consulta_extrato(self):
         if self.entry_empresa.get() != '':
+
             ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get(), self.principal_frame)
+
         else:
-            messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!")
+            messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!", parent=self.window_one)
+            self.entry_empresa.focus()
             return
 
         if self.entry_pessoa.get() != '':
-            ID_Pessoa = self.obter_Pessoa_ID(self.entry_pessoa.get())
+            ID_Pessoa = self.obter_Pessoa_ID(self.entry_pessoa.get(), self.window_one)
         else:
             ID_Pessoa = self.entry_pessoa.get()
 
         if self.entry_unidade_negocio.get() != '':
-            ID_Unidade = self.obter_Unidade_ID(self.entry_unidade_negocio.get())
+            ID_Unidade = self.obter_Unidade_ID(self.entry_unidade_negocio.get(), self.window_one)
         else:
             ID_Unidade = self.entry_unidade_negocio.get()
 
@@ -405,7 +408,16 @@ class Extrato_Clientes_Fornecedores(Widgets):
                 for transaction in person_data["transactions"]:
                     # Formata a data do documento
                     Dta_Documento = transaction["Dta"]
-                    Dta_obj = datetime.strptime(Dta_Documento, "%Y-%m-%d")
+                    try:
+                        if len(Dta_Documento) == 4:  # If it's just a year
+                            Dta_obj = datetime(int(Dta_Documento), 1, 1)  # Set to January 1st of that year
+                        else:
+                            Dta_obj = datetime.strptime(Dta_Documento, "%Y-%m-%d")
+                        Dta_Documento = Dta_obj.strftime("%d/%m/%Y")
+                    except ValueError:
+                        Dta_Documento = "Data inválida"  
+
+                    # Dta_obj = datetime.strptime(Dta_Documento, "%Y-%m-%d")
                     # Dta_Documento = datetime.strptime(Dta_Documento, "%Y/%m/%d")
                     Dta_Documento = Dta_obj.strftime("%d/%m/%Y")
                     # Dta_Documento = transaction["Dta"]

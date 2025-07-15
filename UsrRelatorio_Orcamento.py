@@ -94,7 +94,7 @@ class Relatorio_Orcamento(Widgets):
         # Opções
         coordenadas_relx = 0.695
         coordenadas_rely = 0.01
-        coordenadas_relwidth = 0.255
+        coordenadas_relwidth = 0.21
         coordenadas_relheight = 0.07
         fr_opcoes = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         fr_opcoes.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
@@ -160,40 +160,38 @@ class Relatorio_Orcamento(Widgets):
             Dta_Inicio_str = datetime.strptime(Dta_Inicio, "%d/%m/%Y")
 
             dtaIni_obj = datetime.strptime(Dta_Inicio, "%d/%m/%Y")
-            dtaFim_obj = dtaIni_obj.replace(year=dtaIni_obj.year + 4)
+            dtaFim_obj = dtaIni_obj.replace(month=12, year=dtaIni_obj.year + 5)
+            dtaFim_obj = self.ult_dia_mes(dtaFim_obj)
+            dtaFim_obj = datetime.strptime(dtaFim_obj, "%Y-%m-%d")
             Dta_Fim = dtaFim_obj.strftime("%d/%m/%Y")
 
             Ano_Inicial = dtaIni_obj.year
-            Ano_Final = dtaFim_obj.year
-
+            
             Ano_1 = Ano_Inicial
             Ano_2 = Ano_1 + 1
             Ano_3 = Ano_2 + 1
             Ano_4 = Ano_3 + 1
             Ano_5 = Ano_4 + 1
             Ano_6 = Ano_5 + 1
-
-            lista = self.consulta_relatorio_orcamento(ID_Empresa, ID_Orcamento, ID_Centro_Resultado, Dta_Inicio_str, Dta_Fim, strClassificacao)
-            if lista == []:
-                # Limpa a lista atual antes de inserir novos resultados
-                self.LOrcamento.delete(*self.LOrcamento.get_children())
-                messagebox.showinfo("Informação", "Nenhum orçamento encontrado.", parent=janela)
-                return
             
-            ## Listbox _ Informações Pesquisa
-            bg_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkFrame"]["fg_color"])
-            text_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkLabel"]["text_color"])
-            selected_color = janela._apply_appearance_mode(customtkinter.ThemeManager.theme["CTkButton"]["fg_color"])
-            treestyle = ttk.Style()
-            treestyle.theme_use('default')
-            treestyle.configure("Treeview", background=bg_color, foreground=text_color, fieldbackground=bg_color, borderwidth=0)
-            treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
+            lista = self.consulta_relatorio_orcamento(ID_Empresa, ID_Orcamento, ID_Centro_Resultado, Dta_Inicio_str, Dta_Fim, strClassificacao)
+            
             
             self.fr_list = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
             self.fr_list.place(relx=0.005, rely=0.085, relwidth=0.99, relheight=0.91)
 
             self.scrollbar_orcamento = ttk.Scrollbar(self.fr_list, orient='vertical')
             self.scrollbar_orcamento.pack(side='right', fill='y')
+
+            # Definindo cores
+            bg_color = '#FFFFFF'  # Fundo branco
+            text_color = '#000000'  # Texto preto
+            selected_color = '#0078d7'  # Azul para selecionados
+
+            treestyle = ttk.Style()
+            treestyle.theme_use('default')
+            treestyle.configure("Treeview", background=bg_color,foreground=text_color, fieldbackground=bg_color, borderwidth=0)
+            treestyle.map('Treeview', background=[('selected', bg_color)], foreground=[('selected', selected_color)])
 
             # Widgets - Listar Valores
             self.LOrcamento = ttk.Treeview(self.fr_list, height=7, column=(
@@ -270,6 +268,12 @@ class Relatorio_Orcamento(Widgets):
             self.LOrcamento.place(relx=0.005, rely=0.01, relwidth=0.985, relheight=0.985)
             
             # Limpa a lista atual antes de inserir novos resultados
+            if lista == []:
+                # Limpa a lista atual antes de inserir novos resultados
+                self.LOrcamento.delete(*self.LOrcamento.get_children())
+                messagebox.showinfo("Informação", "Nenhum orçamento encontrado.", parent=janela)
+                return
+            # # Limpa a lista atual antes de inserir novos resultados
             self.LOrcamento.delete(*self.LOrcamento.get_children())
 
             ano_inicial = Dta_Inicio_str.year
@@ -471,19 +475,21 @@ class Relatorio_Orcamento(Widgets):
                     
                     ID_Lcto = ''
                     if Empresa_DS != '':
-                        ID_Empresa = self.obter_Empresa_ID(Empresa_DS)
+                        ID_Empresa = self.obter_Empresa_ID(Empresa_DS, self.window_one)
                     else:
                         messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!")
                         return
                     
                     if Orc_DS != '':
-                        ID_Orc = self.obter_Orc_ID(Orc_DS)
+                        ID_Orc = self.obter_Orc_ID(Orc_DS, self.window_one)
                     else:
                         messagebox.showinfo("Gestor de Negócios", "Preencher Orçamento!!")
                         return
                     
                     ID_Lcto = values[0]
-                    self.premissas_orcamento(ID_Empresa, Empresa_DS, ID_Orc, Orc_DS, ID_Lcto)
+                    messagebox.showinfo("Gestor de Negócios", "Em Manutenção!!")
+                    return
+                    # self.premissas_orcamento(ID_Empresa, Empresa_DS, ID_Orc, Orc_DS, ID_Lcto)
                 
             def postPopUpMenu(event):
                 row_id = self.LOrcamento.identify_row(event.y)
@@ -501,11 +507,16 @@ class Relatorio_Orcamento(Widgets):
             
         icon_image = self.base64_to_photoimage('lupa')
         self.btn_consultar_orcamento = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=consultar)
-        self.btn_consultar_orcamento.place(relx=0.955, rely=0.012, relwidth=0.04, relheight=0.05)
+        self.btn_consultar_orcamento.place(relx=0.91, rely=0.012, relwidth=0.04, relheight=0.05)
+
+        # Botão Sair 
+        icon_image = self.base64_to_photoimage('sair')
+        self.btn_sair_orcamento = customtkinter.CTkButton(janela, text='Sair', image=icon_image, fg_color='transparent', command=self.tela_principal)
+        self.btn_sair_orcamento.pack(pady=10)
+        self.btn_sair_orcamento.place(relx=0.95, rely=0.012, relwidth=0.04, relheight=0.05)
 
     def consulta_relatorio_orcamento(self, ID_Empresa, ID_Orcamento, ID_Centro_Resultado, Dta_Inicio, Dta_Fim, strClassificacao):
         # Lista para armazenar as condições
-        
         if isinstance(Dta_Inicio, str):
             Dta_Inicio = datetime.strptime(Dta_Inicio, "%d/%m/%Y")
         elif not isinstance(Dta_Inicio, datetime):

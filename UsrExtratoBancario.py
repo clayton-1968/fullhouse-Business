@@ -17,11 +17,14 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
     def create_widgets(self):
         # CNPJ (Empresa)
+
         self.frame_empresa(self.frame_principal, 0, 0, 0.30, 0.07)
+
         self.combo_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_banco))
 
         # Banco
         self.fr_banco = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
+
         self.fr_banco.place(relx=0.305, rely=0, relwidth=0.20, relheight=0.07)
 
         self.lb_banco = customtkinter.CTkLabel(self.fr_banco, text="Banco")
@@ -36,6 +39,7 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Agência
         self.fr_agencia = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
+
         self.fr_agencia.place(relx=0.51, rely=0, relwidth=0.14, relheight=0.07)
 
         self.lb_agencia = customtkinter.CTkLabel(self.fr_agencia, text="Agência")
@@ -57,6 +61,7 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Conta
         self.fr_contacorrente = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
+
         self.fr_contacorrente.place(relx=0.655, rely=0, relwidth=0.14, relheight=0.07)
 
         self.lb_contacorrente = customtkinter.CTkLabel(self.fr_contacorrente, text="Conta")
@@ -78,7 +83,9 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Período
         self.fr_periodo = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
+
         self.fr_periodo.place(relx=0.80, rely=0, relwidth=0.14, relheight=0.09)
+
         self.lb_periodo = customtkinter.CTkLabel(self.fr_periodo, text="Período")
         self.lb_periodo.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.6)
 
@@ -113,6 +120,7 @@ class ExtratoBancario(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.botao_consultar_extrato = customtkinter.CTkButton(self.frame_principal, text='', image=icon_image,
                                                                fg_color='transparent', command=self.consultar_extrato)
         self.botao_consultar_extrato.pack(pady=10)
+
         self.botao_consultar_extrato.place(relx=0.945, rely=0.01, relwidth=0.05, relheight=0.07)
 
         # Resultado

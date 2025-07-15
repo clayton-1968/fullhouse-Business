@@ -39,11 +39,11 @@ class Resumo_Estudos(Widgets):
         # Status
         coordenadas_relx = 0.62
         coordenadas_rely = 0.01
-        coordenadas_relwidth = 0.28
+        coordenadas_relwidth = 0.20
         coordenadas_relheight = 0.07
         self.fram_status(janela, coordenadas_relx, coordenadas_rely, coordenadas_relwidth, coordenadas_relheight)
 
-        def consultar():
+        def consultar(Tpo_Rel):
             if self.combo_empresa.get() != '':
                 ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), janela)
             else:
@@ -53,7 +53,7 @@ class Resumo_Estudos(Widgets):
             UF = self.combo_uf.get()
             Cidade = self.combo_municipio.get()
             Status = self.combo_status.get()
-            lista = self.Consulta_Negocios(ID_Empresa, UF, Cidade, Status)
+            lista = self.Consulta_Negocios(ID_Empresa, UF, Cidade, Status, Tpo_Rel)
             
             self.fr_list_estudosnegocios = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
             self.fr_list_estudosnegocios.place(relx=0.005, rely=0.09, relwidth=0.986, relheight=0.87)
@@ -243,7 +243,25 @@ class Resumo_Estudos(Widgets):
                     Tipo = values[3]
                     Nome_da_Area = values[4]
                     self.pesquisa_mercado(ID_Empresa, DS_Empresa, UF, Cidade, Tipo, Nome_da_Area)
-                
+
+            def selected_anexos():
+                selected_item = self.list_g.selection()
+                if selected_item:
+                    values = self.list_g.item(selected_item, 'values')
+                    
+                    ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), janela)
+                    DS_Empresa = self.combo_empresa.get()
+                    UF = values[6]
+                    Cidade = values[5]
+                    Tipo = values[3]
+                    Nome_da_Area = values[4]
+                    
+                    self.pesquisa_anexos_simulador(ID_Empresa, DS_Empresa, UF, Cidade, Tipo, Nome_da_Area)
+                    
+                else:
+                    messagebox.showinfo("Erro", "Selecione a posição para Pesquisar Existência de Anexos!", janela)
+                    return
+            
             def selected_enviar_email():
                 messagebox.showinfo("Informação", "Em Manutenção!!")
             
@@ -263,6 +281,7 @@ class Resumo_Estudos(Widgets):
                     postPopUpMenu.add_command(label='Fluxo Projetado', accelerator='Ctrl+F', command=selected_fluxo)
                     postPopUpMenu.add_command(label='Maps', accelerator='Ctrl+M', command=selected_maps)
                     postPopUpMenu.add_command(label='Pesquisas', accelerator='Ctrl+P', command=selected_pesquisa)
+                    postPopUpMenu.add_command(label='Anexos', accelerator='Ctrl+A', command=selected_anexos)
                     postPopUpMenu.add_separator()
                     postPopUpMenu.add_command(label='Enviar Maps Email', accelerator='Alt+E', command=selected_enviar_email)
                     postPopUpMenu.add_command(label='Enviar Maps WhatsApp', accelerator='Alt+W', command=selected_enviar_whatsapp)
@@ -276,15 +295,26 @@ class Resumo_Estudos(Widgets):
             self.list_g.bind('<Control-f>', lambda event: selected_fluxo() if self.list_g.selection() else None)
             self.list_g.bind('<Control-m>', lambda event: selected_maps() if self.list_g.selection() else None)
             self.list_g.bind('<Control-p>', lambda event: selected_pesquisa() if self.list_g.selection() else None)
+            self.list_g.bind('<Control-a>', lambda event: selected_anexos() if self.list_g.selection() else None)
             self.list_g.bind('<Alt-e>', lambda event: selected_enviar_email() if self.list_g.selection() else None)
             self.list_g.bind('<Alt-w>', lambda event: selected_enviar_whatsapp() if self.list_g.selection() else None)
             self.list_g.bind('<Delete>', lambda event: selected_excluir() if self.list_g.selection() else None)
 
         # Botão de Consultar
         icon_image = self.base64_to_photoimage('lupa')
-        self.btn_consultar = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=consultar)
+        self.btn_consultar = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=lambda: consultar(1))
         self.btn_consultar.pack(pady=10)
-        self.btn_consultar.place(relx=0.905, rely=0.02, relwidth=0.04, relheight=0.05)
+        self.btn_consultar.place(relx=0.825, rely=0.02, relwidth=0.04, relheight=0.05)
+        # Adicionar o tooltip
+        ToolTip(self.btn_consultar, "Consultar Estudos")
+
+        # Botão de Consultar Lixeira
+        icon_image = self.base64_to_photoimage('trash')
+        self.btn_lixeira = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=lambda: consultar(2))
+        self.btn_lixeira.pack(pady=10)
+        self.btn_lixeira.place(relx=0.87, rely=0.02, relwidth=0.04, relheight=0.05)
+        # Adicionar o tooltip
+        ToolTip(self.btn_lixeira, "Lixeira")
 
         # Botão Incluir Novo Estudo
         def novo_estudo():
@@ -306,6 +336,15 @@ class Resumo_Estudos(Widgets):
         icon_image = self.base64_to_photoimage('open_book')
         self.btn_novo_estudo = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=novo_estudo)
         self.btn_novo_estudo.pack(pady=10)
-        self.btn_novo_estudo.place(relx=0.95, rely=0.02, relwidth=0.04, relheight=0.05)
+        self.btn_novo_estudo.place(relx=0.915, rely=0.02, relwidth=0.04, relheight=0.05)
+        # Adicionar o tooltip
+        ToolTip(self.btn_novo_estudo, "Incluir Novo Estudo")
+        
+        # Botão Sair 
+        icon_image = self.base64_to_photoimage('sair')
+        self.btn_sair_projeto = customtkinter.CTkButton(janela, text='Sair', image=icon_image, fg_color='transparent', command=self.tela_principal)
+        self.btn_sair_projeto.pack(pady=10)
+        self.btn_sair_projeto.place(relx=0.95, rely=0.02, relwidth=0.04, relheight=0.05)
+        
 
 Resumo_Estudos()

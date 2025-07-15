@@ -15,15 +15,9 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         self.create_widgets_aprovacao_lctos()
 
-    # def preenche_cnpj(self, event):
-    #     if self.combo_empresa.get():
-    #         self.cnpj = self.obter_Empresa_ID(self.combo_empresa.get(), self.window_one)
-
-    #         self.entry_cnpj.delete(0, tk.END)
-    #         self.entry_cnpj.insert(0, self.cnpj)
-
     def create_widgets_aprovacao_lctos(self):
         # Empresa
+
         self.frame_empresa(self.frame_principal, 0, 0, 0.30, 0.07)
         self.combo_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.combo_pessoa))
         # self.combo_empresa.bind("<<ComboboxSelected>>", self.preenche_cnpj)
@@ -43,6 +37,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.fr_unidade_negocio = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
         self.fr_unidade_negocio.place(relx=0.305, rely=0, relwidth=0.17, relheight=0.07)
 
+
         self.lb_unidade_negocio = customtkinter.CTkLabel(self.fr_unidade_negocio, text="Unidade Negócios")
         self.lb_unidade_negocio.place(relx=0.225, rely=0, relheight=0.25, relwidth=0.55)
 
@@ -60,7 +55,9 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Centro de Resultado
         self.fr_centro = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
+
         self.fr_centro.place(relx=0, rely=0.075, relwidth=0.4925, relheight=0.07)
+
 
         self.lb_centro = customtkinter.CTkLabel(self.fr_centro, text="Centro de Resultado")
         self.lb_centro.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.6)
@@ -80,6 +77,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Natureza
         self.fr_natureza = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
+
         self.fr_natureza.place(relx=0.4975, rely=0.075, relwidth=0.4725, relheight=0.07)
         self.lb_natureza = customtkinter.CTkLabel(self.fr_natureza, text="Natureza Financeira")
         self.lb_natureza.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.6)
@@ -102,7 +100,9 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Data
         self.fr_data = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
+
         self.fr_data.place(relx=0.48, rely=0, relwidth=0.14, relheight=0.07)
+
         self.lb_data = customtkinter.CTkLabel(self.fr_data, text="Data")
         self.lb_data.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
@@ -115,6 +115,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
 
         # Frame botão consulta e aprovados
         self.fr_botao_box = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
+
         self.fr_botao_box.place(relx=0.625, rely=0, relwidth=0.24, relheight=0.07)
 
         # Box aprovados
@@ -131,8 +132,15 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.btn_consulta.pack(pady=10)
         self.btn_consulta.place(relx=0.5, rely=0.25, relwidth=0.3, relheight=0.5)
 
+        # Botão Sair da aprovação
+        icon_image = self.base64_to_photoimage('sair')
+        self.btn_sair_aprovacao = customtkinter.CTkButton(self.frame_principal, text='Sair', image=icon_image, fg_color='transparent', command=self.tela_principal)
+        self.btn_sair_aprovacao.pack(pady=10)
+        self.btn_sair_aprovacao.place(relx=0.955, rely=0.02, relwidth=0.04, relheight=0.05)
+
         # Resultado
         self.fr_tree = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
+
         self.fr_tree.place(relx=0.005, rely=0.15, relwidth=0.99, relheight=0.875)
 
         self.tree = ttk.Treeview(self.fr_tree, columns=(
@@ -199,6 +207,7 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
             try:
                 self.item = self.tree.item(self.selected_item)
 
+
                 self.doc_id = self.item['values'][5]
 
                 query = f"""
@@ -220,8 +229,6 @@ class AprovacaoLctos(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
     def consulta_aprovacoes(self):
         self.tree.delete(*self.tree.get_children())
 
-        # SELECT ID_Unidade, Unidade_Descricao, ID_CR, Cen_Descricao, ID_Natureza, Nat_Descricao, ID_Pessoa, Pessoas_Descricao,
-        #        Doc_Num_Documento, Vlr_Total, Doc_DS_Observacao, Doc_AprovacaoJose, Anexo
         query = """
                     SELECT DISTINCT ID_Unidade, ID_CR, ID_Natureza, ID_Pessoa, Pessoas_Descricao,
                     Doc_Num_Documento, Vlr_Total, Doc_AprovacaoJose

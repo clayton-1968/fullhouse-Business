@@ -322,8 +322,8 @@ class Premissas_Orcamento(Widgets):
         self.entry_dt_fim.delete(0, 'end')
         self.entry_dt_fim.insert(0, TDta_Fim.strftime("%d/%m/%Y"))
         self.entry_dt_fim.place(relx=0.50, rely=0.46, relwidth=0.485, relheight=0.50)
-        self.entry_dt_fim.bind("<Button-1>", lambda event: self.calendario(event, self.entry_dt_venc_inicio))
-        self.entry_dt_fim.bind("<Return>", lambda event: self.muda_barrinha_dta(event, self.entry_dt_inicio, self.entry_despesa_dedutivel))
+        self.entry_dt_fim.bind("<Button-1>", lambda event: self.calendario(event, self.entry_dt_fim))
+        self.entry_dt_fim.bind("<Return>", lambda event: self.muda_barrinha_dta(event, self.entry_dt_fim, self.entry_despesa_dedutivel))
 
         # Informações Financeiras e Fiscais
         fr_informacoes_financeiras_fiscais = customtkinter.CTkFrame(fr_lacto_periodos, border_color="gray75", border_width=1)
@@ -425,12 +425,14 @@ class Premissas_Orcamento(Widgets):
         self.text_historico.place(relx=0.005, rely=0.10, relwidth=0.99, relheight=0.88)
         # self.text_historico.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_taxa_desconto))
 
-    def frame_premissa_dados(self, ID_Empresa,
-                                    DS_Empresa, 
-                                    ID_Orc, 
-                                    DS_Orc,
-                                    ID_Lcto
-                                   ):
+    def frame_premissa_dados(       
+                                self,
+                                ID_Empresa,
+                                DS_Empresa, 
+                                ID_Orc, 
+                                DS_Orc,
+                                ID_Lcto
+                            ):
         def Consulta_Premissa(ID_Empresa, ID_Orc, ID_Lcto):
             conditions = []  # Lista para armazenar as condições
             # Condições iniciais
@@ -625,9 +627,20 @@ class Premissas_Orcamento(Widgets):
         else:
             self.entry_empresa.set(DS_Empresa)
             self.entry_orcamento.set(DS_Orc)
+    
+        self.atualizar_empresas(Event, self.entry_empresa)
+        self.atualizar_orcamentos(Event, self.obter_Empresa_ID(self.entry_empresa.get(), self.janela_premissas), self.entry_orcamento)
+        self.atualizar_centro_resultado(Event, self.obter_Empresa_ID(self.entry_empresa.get(), self.janela_premissas), self.entry_centro_debito)
+        self.atualizar_natureza_financeira(Event, self.obter_Empresa_ID(self.entry_empresa.get(), self.janela_premissas), self.entry_natureza_debito)
+        self.atualizar_centro_resultado(Event, self.obter_Empresa_ID(self.entry_empresa.get(), self.janela_premissas), self.entry_centro_credito)
+        self.atualizar_natureza_financeira(Event, self.obter_Empresa_ID(self.entry_empresa.get(), self.janela_premissas), self.entry_natureza_credito)
+        self.atualizar_item_precos_orcamentos(Event, self.obter_Empresa_ID(self.entry_empresa.get(), self.janela_premissas), self.obter_Orc_ID(self.entry_orcamento.get(), self.janela_premissas), self.entry_item_preco)
+        self.atualizar_natureza_gerencial(Event, self.entry_natureza_gerencial)
+        self.atualizar_periodicidade(Event, self.entry_periodicidade)
+        self.atualizar_idx(Event, self.entry_indices_reajuste)
 
     def gravar_premissas(self):
-         
+        
         Empresa_DS = self.entry_empresa.get()
         Orc_DS  = self.entry_orcamento.get()
         Orc_Tpo = self.entry_tipo_lcto_descr.get()
@@ -655,8 +668,8 @@ class Premissas_Orcamento(Widgets):
         Dta_Reajuste = datetime.strptime(self.entry_dt_reajuste.get(), "%d/%m/%Y")
         Dta_Reajuste = Dta_Reajuste.strftime("%Y-%m-%d")
         
-        Dta_Inicio = datetime.strptime(self.entry_dt_inicio.get(), "%d/%m/%Y")
-        Dta_Fim = datetime.strptime(self.entry_dt_fim.get(), "%d/%m/%Y")
+        Dta_Inicio = self.ult_dia_mes(datetime.strptime(self.entry_dt_inicio.get(), "%d/%m/%Y"))
+        Dta_Fim = self.ult_dia_mes(datetime.strptime(self.entry_dt_fim.get(), "%d/%m/%Y"))
 
         Dedutivel = self.entry_despesa_dedutivel.get()
         if Dedutivel == 'Sim':
@@ -688,7 +701,7 @@ class Premissas_Orcamento(Widgets):
             return
         
         if Orc_DS != '':
-            ID_Orc = self.obter_Orc_ID(Orc_DS)
+            ID_Orc = self.obter_Orc_ID(Orc_DS, self.janela_premissas)
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher Orçamento!!", parent=self.janela_premissas)
             return
