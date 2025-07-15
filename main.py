@@ -29,9 +29,8 @@ from UsrAlterar_Senha                 import AlterarSenha
 from UsrUsuarios_Sistema              import UsuariosSistema
 from UsrPermissoes_Sistema            import PermissoesSistema
 from UsrContas_Pagar                  import ContasPagar
+
 from UsrModulos_Sistema               import ModuloSistema
-
-
 
 
 class PrimaryWindow(
@@ -64,7 +63,6 @@ class PrimaryWindow(
                     UsuariosSistema,
                     PermissoesSistema,
                     ContasPagar,
-                    ModuloSistema,
                     ):
 
     def __init__(self):
@@ -117,15 +115,15 @@ class PrimaryWindow(
                 self.consultar_bordero(self.principal_frame)
             elif modulo == 'Alterar_Senha':
                 self.alterar_senha(self.principal_frame, self.username)
-            elif modulo == "Usuarios_Sistema":
+
+            elif modulo == 'Usuarios_Sistema':
+
                 self.usuarios_sistema(self.principal_frame)
             elif modulo == 'Permissoes_Sistema':
                 self.permissoes_sistema(self.principal_frame)
             elif modulo == 'Contas_Pagar':
                 self.contas_pagar(self.principal_frame)
-            elif modulo == 'Modulos_Sistema': 
-                self.consultar_modulo(self.principal_frame)
-                
+
 
     def login_screen(self):
         # Configura a janela principal
@@ -175,6 +173,8 @@ class PrimaryWindow(
         
         self.username = self.insert_user.get()
 
+        self.username = self.insert_user.get()
+
         # Botão de login
         self.btn_login = customtkinter.CTkButton(self.login_frame, text='Login',
                                                  command=lambda: self.loginauth(
@@ -186,6 +186,7 @@ class PrimaryWindow(
         # Link para cadastro
         customtkinter.CTkLabel(self.login_frame, text="Ainda não é cadastrado? ").pack(pady=10)
         customtkinter.CTkButton(self.login_frame, text='Cadastre-se', command=self.tela_cadastro).pack(pady=10)
+
 
     def tela_cadastro(self):
         self.clear_frame()
@@ -285,7 +286,7 @@ class PrimaryWindow(
         menubar.add_cascade(label="Ajuda", menu=filemenu8)
         menubar.add_cascade(label="Sair", command=quit)
 
-        filemenu.add_command(label="Pessoas")  # , command=self.cadaut)
+        filemenu.add_command(label="Pessoas")
         filemenu.add_command(label="Unidades de Negócio")
         filemenu.add_command(label="Centro Resultados")
         filemenu.add_command(label="Naturezas Financeira")
@@ -374,7 +375,9 @@ class PrimaryWindow(
 
         filemenu7.add_command(label="Usuários Sistema", command=lambda: self.menu_conectar('Usuarios_Sistema'))
         filemenu7.add_command(label="Permissões", command=lambda: self.menu_conectar('Permissoes_Sistema'))
-        filemenu7.add_command(label="Modulos", command=lambda: self.menu_conectar('Modulos_Sistema'))  # , command=modo_escuro)
+
+        filemenu7.add_command(label="Modulos")  # , command=modo_escuro)
+        
         filemenu7.add_command(label="Clientes do Sistema")
         filemenu7.add_command(label="Sistema Amortização")
         filemenu7.add_command(label="Atualizações - Versão Sistema", command=lambda: self.menu_conectar('Versoes'))
