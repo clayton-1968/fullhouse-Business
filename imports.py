@@ -2,6 +2,7 @@ import subprocess
 from funcoes import *
 import time
 from db.db_conector import MySqlDatabase
+import logging
 
 
 from datetime import *
@@ -30,7 +31,7 @@ import numpy as np
 # import matplotlib.pyplot as plt
 # from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # from matplotlib.patches import Circle
-# import threading
+import threading
 
 
 import base64

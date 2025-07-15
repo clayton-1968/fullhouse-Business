@@ -83,7 +83,7 @@ class Simulador_Estudos_Rel(Widgets):
         # Tipo do Projeto
         coordenadas_relx=0.60
         coordenadas_rely=0.01
-        coordenadas_relwidth=0.20
+        coordenadas_relwidth=0.15
         coordenadas_relheight=0.07
         fr_tpo_projeto = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         fr_tpo_projeto.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
@@ -91,8 +91,7 @@ class Simulador_Estudos_Rel(Widgets):
         lb_tpo_projeto.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
 
         tpo_projeto = []
-        # tpo_projeto = [(tpo_projeto['Tipo_Empreendimento']) for tpo_projeto in tpo_projeto]
-
+        
         self.entry_tpo_projeto = AutocompleteCombobox(fr_tpo_projeto, width=30, font=('Times', 11), completevalues=tpo_projeto)
         self.entry_tpo_projeto.pack()
         self.entry_tpo_projeto.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
@@ -102,7 +101,7 @@ class Simulador_Estudos_Rel(Widgets):
         
         
         # Nome do Projeto
-        coordenadas_relx=0.80
+        coordenadas_relx=0.75
         coordenadas_rely=0.01
         coordenadas_relwidth=0.15
         coordenadas_relheight=0.07
@@ -132,7 +131,7 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_nome_cenario.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_area_total))
 
         # Icon de Consulta
-        coordenadas_relx = 0.95
+        coordenadas_relx = 0.90
         coordenadas_rely = 0.01
         coordenadas_relwidth = 0.05
         coordenadas_relheight = 0.07
@@ -142,7 +141,14 @@ class Simulador_Estudos_Rel(Widgets):
                                                     text='',
                                                     image=icon_image, 
                                                     fg_color='transparent', 
-                                                    command=lambda: [self.consultar_simulacao(janela)]
+                                                    command=lambda: [self.consultar_simulacao(
+                                                                    janela,
+                                                                    self.obter_Empresa_ID(self.entry_empresa.get(), janela), 
+                                                                    self.entry_uf.get(), 
+                                                                    self.entry_municipio.get(), 
+                                                                    self.entry_tpo_projeto.get(), 
+                                                                    self.entry_nome_cenario
+                                                                    )]
                                                         )
         
         self.btn_consultar.pack()
@@ -412,7 +418,6 @@ class Simulador_Estudos_Rel(Widgets):
             
             self.text_observacoes.delete('1.0', 'end')
             self.entry_informacoes_status.delete(0, 'end')
-            self.entry_informacoes_anexos.delete(0, 'end')
             self.entry_informacoes_data.delete(0, 'end')
             self.entry_informacoes_unidade_negocio.delete(0, 'end')
             self.entry_informacoes_https.delete(0, 'end')
@@ -671,10 +676,7 @@ class Simulador_Estudos_Rel(Widgets):
                 self.entry_informacoes_status.insert(0, str(Status_Prospeccao))
             else:
                 self.entry_informacoes_status.insert(0, '')
-
-            if Anexos is not None:
-                self.entry_informacoes_anexos.insert(0, str(Anexos))
-
+            
             if Dta_Contrato is not None:
                 self.entry_informacoes_data.insert(0, str(Dta_Contrato.strftime('%d/%m/%Y')))
             else:
@@ -1635,12 +1637,26 @@ class Simulador_Estudos_Rel(Widgets):
         self.entry_informacoes_status.bind('<Down>', lambda event: self.atualizar_status(event, self.obter_Empresa_ID(self.entry_empresa.get(), janela), self.entry_informacoes_status))
         self.entry_informacoes_status.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_informacoes_anexos))
 
-        # Anexos
-        self.lb_informacoes_anexos = customtkinter.CTkLabel(self.fr_informacoes, text="Anexos", text_color="black", font=('Arial', 10), anchor=tk.W)
-        self.lb_informacoes_anexos.place(relx=0.315, rely=0.11, relheight=0.07, relwidth=0.70)
-        self.entry_informacoes_anexos = customtkinter.CTkEntry(self.fr_informacoes, fg_color="black", text_color="white", justify=tk.LEFT)
-        self.entry_informacoes_anexos.place(relx=0.315, rely=0.19, relwidth=0.465, relheight=0.25)
-        self.entry_informacoes_anexos.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_informacoes_data))
+        # Icon Adicionar Anexos
+        icon_image = self.base64_to_photoimage('savedown')
+        self.btn_gravar_anexo = customtkinter.CTkButton(
+                                                        self.fr_informacoes,  
+                                                        text='',
+                                                        image=icon_image, 
+                                                        fg_color='transparent', 
+                                                        command=lambda: self.simulador_anexo(
+                                                                                    self.obter_Empresa_ID(self.entry_empresa.get(), janela), 
+                                                                                    self.entry_uf.get(), 
+                                                                                    self.entry_municipio.get(), 
+                                                                                    self.entry_tpo_projeto.get(),
+                                                                                    self.entry_nome_cenario.get(),
+                                                                                    self.janela_simulador_rel
+                                                                                )
+                                                        )
+        self.btn_gravar_anexo.place(relx=0.315, rely=0.19, relwidth=0.05, relheight=0.25)
+        self.btn_gravar_anexo.bind("<Return>", lambda event: self.btn_gravar_maps.invoke())
+        # Adicionar o tooltip
+        ToolTip(self.btn_gravar_anexo, "Incluir Anexos Estudo")
 
         # Data do Contrato
         self.lb_informacoes_data = customtkinter.CTkLabel(self.fr_informacoes, text="Data do Contrato", text_color="black", font=('Arial', 10), anchor=tk.W)
@@ -1667,11 +1683,8 @@ class Simulador_Estudos_Rel(Widgets):
         
         # Coordenadas Maps - Desativado gravando em branco o campo
         self.lb_informacoes_maps = customtkinter.CTkLabel(self.fr_informacoes, text="Coordenadas Maps", text_color="black", font=('Arial', 10), anchor=tk.W)
-        # self.lb_informacoes_maps.place(relx=0.01, rely=0.45, relheight=0.08, relwidth=0.25)
         self.entry_informacoes_maps = customtkinter.CTkEntry(self.fr_informacoes, fg_color="black", text_color="white", justify=tk.LEFT)
-        # self.entry_informacoes_maps.place(relx=0.01, rely=0.55, relwidth=0.85, relheight=0.25)
-        # self.entry_informacoes_maps.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_informacoes_maps))
-
+   
         # Icon Adicionar endereço no maps
         coordenadas_relx = 0.86
         coordenadas_rely = 0.55
@@ -1687,6 +1700,8 @@ class Simulador_Estudos_Rel(Widgets):
                                                         )
         self.btn_gravar_maps.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
         self.btn_gravar_maps.bind("<Return>", lambda event: self.btn_gravar_maps.invoke())
+        # Adicionar o tooltip
+        ToolTip(self.btn_gravar_maps, "Adicionar Endereço no Maps")
         
         # Icon de Consulta Endereço Cadastrado
         def selected_maps():
@@ -1739,7 +1754,124 @@ class Simulador_Estudos_Rel(Widgets):
                                                         )
         self.btn_consultar_maps.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
         self.btn_consultar_maps.bind("<Return>", lambda event: self.btn_consultar_maps.invoke())
+        # Adicionar o tooltip
+        ToolTip(self.btn_consultar_maps, "Consultar Endereço Cadastrado")
         
         self.limpar_simulador_negocios()
+    
+    def simulador_anexo(self, empresa_id, uf, cidade, tipo_estudo, nome_estudo, janela):
+        
+        if not empresa_id:
+            messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!', parent=self.janela_simulador_rel)
+            return
+        
+        uf = uf.upper()
+        if not uf:
+            messagebox.showinfo('Gestor Negócios', 'UF em Branco!!!', parent=self.janela_simulador_rel)
+            return
+        
+        if not cidade:
+            messagebox.showinfo('Gestor Negócios', 'Município em Branco!!!', parent=self.janela_simulador_rel)
+            return
+        
+        if not tipo_estudo:
+            messagebox.showinfo('Gestor Negócios', 'Tipo do Estudo em Branco!!!', parent=self.janela_simulador_rel)
+            return
+        
+        if not nome_estudo:
+            messagebox.showinfo('Gestor Negócios', 'Nome da Área em Branco!!!', parent=self.janela_simulador_rel)
+            return
+        
+        # Define o caminho do diretório
+        sPath = os.path.join(os.getcwd(), '')  # Usa o diretório atual do script
+        
+        # Verifica se o diretório existe
+        if os.path.exists(sPath):
+            # Chama a função para gravar o anexo
+            self.gravar_anexo_simulador(empresa_id, uf, cidade, tipo_estudo, nome_estudo, self.janela_simulador_rel)
+        else:
+            # Mostra uma mensagem se o diretório não existir
+            messagebox.showinfo("Gestor de Negócios", f"Erro - Arquivo Não Encontrado no caminho: {sPath}", parent=self.janela_simulador_rel)
+    
+    def gravar_anexo_simulador(self, empresa_id, uf, cidade, tipo_estudo, nome_estudo, janela):
+        try:
+            # Abrir a pasta e selecionar o PDF
+            root = tk.Tk()
+            root.withdraw()  # Esconder sua Janela
+            file_path = filedialog.askopenfilename(
+                title="Procurar Arquivos .pdf",
+                initialdir=os.getcwd(),  # Setar o Diretório
+                filetypes=[("PDF Files", "*.pdf"), ("All Files", "*.*")]
+            )
+            
+            if not file_path:
+                messagebox.showinfo("Gestor de Negócios", "Informação nenhum arquivo selecionado!!!", parent=self.janela_simulador_rel)
+                return
+
+            # Pegar detalhes do arquivo
+            file_name = os.path.basename(file_path)
+            documento_ds = file_name
+
+            conditions = []  
+            conditions.append('Empresa_ID = %s')
+            params = [empresa_id]
+
+            conditions.append('UF = %s')
+            params.append(uf)
+
+            conditions.append('Cidade = %s')
+            params.append(cidade)
+
+            conditions.append('Tipo_Estudo = %s')
+            params.append(tipo_estudo)
+
+            conditions.append('Nome_Area = %s')
+            params.append(nome_estudo)
+
+            conditions.append('Doc_Num_Documento = %s')
+            params.append(documento_ds)
+            
+            # Checar se a tarefa existe
+            sql_check = f"""
+                            SELECT ID_Anexo FROM TB_Gedoc 
+                            WHERE {' AND '.join(conditions)} 
+                        """
+            
+            record = db.executar_consulta(sql_check, params)
+            # Abir e ler o arquivo em modo binário
+            with open(file_path, 'rb') as file:
+                file_data = file.read()
+            
+            if record:
+                existing_record = record
+                id_anexo = existing_record[0]['ID_Anexo']
+                sql_update = """
+                                UPDATE TB_Gedoc 
+                                SET BinarioPDF = %s 
+                                WHERE ID_Anexo = %s
+                            """
+                db.executar_consulta(sql_update, (file_data, id_anexo))
+                messagebox.showinfo("Gestor de Negócios", "Documento Alterado com sucesso!!!", parent=self.janela_simulador_rel)
+            else:
+                # Inserir um Novo Registro
+                sql_insert = """
+                                INSERT INTO TB_Gedoc 
+                                (
+                                    Empresa_ID,
+                                    UF,
+                                    Cidade,
+                                    Tipo_Estudo,
+                                    Nome_Area,
+                                    Doc_Num_Documento, 
+                                    BinarioPDF) 
+                                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                            """
+                db.executar_consulta(sql_insert, (empresa_id, uf, cidade, tipo_estudo, nome_estudo, file_name, file_data))
+                messagebox.showinfo("Gestor de Negócios", "Documento salvo com sucesso!!!", parent=self.janela_simulador_rel)
+
+        except Exception as e:
+            messagebox.showerror("Gestor de Negócios", f"Erro - ocorrência: {str(e)}", parent=self.janela_simulador_rel)
+        finally:
+            pass
 
 Simulador_Estudos_Rel()

@@ -19,9 +19,17 @@ from UsrAprovacaoLctos                import AprovacaoLctos
 from UsrExtratoBancario               import ExtratoBancario
 from UsrBaixasFinanceiras             import BaixasFinanceiras
 from UsrCronograma                    import Cronograma_Atividades
+from UsrCronograma_Hierarquico        import Cronograma_Atividades_Hierarquico
 from UsrAnexos                        import Pesquisa_Anexos
+from UsrAnexos                        import Pesquisa_Anexos_Simulador
 from UsrTelaPrincipal                 import Tela_Principal
 from UsrCadastro_Curvas_Negocio       import Cadastrar_Curvas_Negocio
+from UsrBorderoBancario               import BorderoBancario
+from UsrAlterar_Senha                 import AlterarSenha
+from UsrUsuarios_Sistema              import UsuariosSistema
+from UsrPermissoes_Sistema            import PermissoesSistema
+from UsrContas_Pagar                  import ContasPagar
+from UsrModulos_Sistema               import ModuloSistema
 
 
 
@@ -46,9 +54,17 @@ class PrimaryWindow(
                     ExtratoBancario,
                     BaixasFinanceiras,
                     Cronograma_Atividades,
+                    Cronograma_Atividades_Hierarquico,
                     Pesquisa_Anexos,
+                    Pesquisa_Anexos_Simulador,
                     Tela_Principal,
-                    Cadastrar_Curvas_Negocio
+                    Cadastrar_Curvas_Negocio,
+                    BorderoBancario,
+                    AlterarSenha,
+                    UsuariosSistema,
+                    PermissoesSistema,
+                    ContasPagar,
+                    ModuloSistema,
                     ):
 
     def __init__(self):
@@ -56,10 +72,6 @@ class PrimaryWindow(
         customtkinter.set_default_color_theme("dark-blue")
 
         self.login_screen()
-
-        # self.janela_simulador_rel = None  # Initialize the attribute
-        # self.janela_cadastro_pessoas = None
-        # self.janela_cadastro_produtos = None
         
     def menu_conectar(self, modulo):
         Permitido = self.usuario_autentic(os.environ.get('Usr_login'), modulo)
@@ -97,8 +109,23 @@ class PrimaryWindow(
                 self.baixas_financeiras(self.principal_frame)
             elif modulo == 'Cronograma_Barra_Projetos':
                 self.cronograma_atividades()
+            elif modulo == 'Cronograma_Barra_Projetos_Hierarquico':
+                self.cronograma_atividades_hierarquico()
             elif modulo == 'Cadastro_Curvas':
                 self.cadastrar_curvas_negocio()
+            elif modulo == 'Bordero_Bancario':
+                self.consultar_bordero(self.principal_frame)
+            elif modulo == 'Alterar_Senha':
+                self.alterar_senha(self.principal_frame, self.username)
+            elif modulo == "Usuarios_Sistema":
+                self.usuarios_sistema(self.principal_frame)
+            elif modulo == 'Permissoes_Sistema':
+                self.permissoes_sistema(self.principal_frame)
+            elif modulo == 'Contas_Pagar':
+                self.contas_pagar(self.principal_frame)
+            elif modulo == 'Modulos_Sistema': 
+                self.consultar_modulo(self.principal_frame)
+                
 
     def login_screen(self):
         # Configura a janela principal
@@ -145,11 +172,13 @@ class PrimaryWindow(
             self.insert_user.insert(0, username)
             self.insert_senha.insert(0, password)
             self.cbk_lembrar_senha.select()
+        
+        self.username = self.insert_user.get()
 
         # Botão de login
         self.btn_login = customtkinter.CTkButton(self.login_frame, text='Login',
                                                  command=lambda: self.loginauth(
-                                                     username=self.insert_user.get(),
+                                                     username=self.username,
                                                      password=self.insert_senha.get(),
                                                      remember=self.lembrar_senha.get()))
         self.btn_login.pack(pady=10)
@@ -202,23 +231,7 @@ class PrimaryWindow(
         self.principal_frame = customtkinter.CTkFrame(self.window_one, fg_color='black')  # Frame Principal
         self.principal_frame.pack(pady=10, padx=10, fill="both", expand=True)
         
-        # # Adicionando um título
-        # title_label = ctk.CTkLabel(self.principal_frame, text="FG - FullGestor", font=("Roboto", 30, "bold"), text_color='white')
-        # title_label.pack(pady=10)
-        
-        # Adicionando um espaço para permitir que outros widgets fiquem acima (se houver)
-        spacer = ctk.CTkLabel(self.principal_frame, text="")
-        spacer.pack(expand=True)
-        
-        # Criando o label para a versão do aplicativo
-        lb_version = ctk.CTkLabel(self.principal_frame, text="Versão: 1.00.00.008", text_color='white')
-        lb_version.pack(side="bottom", pady=(5, 0), padx=10, fill="x")  # Posicionando no rodapé
-
-        # Criando o label para o copyright
-        lb_copyright = ctk.CTkLabel(self.principal_frame, text="Feito por FullHouse Serviços em Tecnologia - Todos os direitos reservados", text_color='white')
-        lb_copyright.pack(side="bottom", pady=(0, 10), padx=10, fill="x")  # Posicionando no rodapé
-        
-
+        self.tela_principal()
         self.menus()
         
         def site_rfz():
@@ -281,7 +294,7 @@ class PrimaryWindow(
         filemenu.add_command(label="Contas Bancárias")
         filemenu.add_command(label="Produtos e Serviços")
         filemenu.add_command(label="Unidades Medidas")
-        filemenu.add_command(label="Trocar Senha")  # , command=self.cadtec)
+        filemenu.add_command(label="Trocar Senha", command=lambda: self.menu_conectar('Alterar_Senha'))
 
         filemenu2.add_command(label="Informe Gestão")
         filemenu2.add_command(label="Previsão Financeira")
@@ -295,14 +308,16 @@ class PrimaryWindow(
 
         filemenu4.add_command(label="Lcto (CPA/CRE)", command=lambda: self.menu_conectar('Lcto_Documentos'))
         filemenu4.add_command(label="Aprovação Lçtos", command=lambda: self.menu_conectar('Aprovacao_Lctos'))
-        filemenu4.add_command(label="Borderô Bancário")
+        filemenu4.add_command(label="Borderô Bancário", command=lambda: self.menu_conectar('Bordero_Bancario'))
         filemenu4.add_command(label="Baixas Financeiras", command=lambda: self.menu_conectar('Baixas_Financeiras'))
         filemenu4.add_command(label="Relatório Cli/Fornec.", command=lambda: self.menu_conectar('Extrato_Financeiro'))
         filemenu4.add_command(label="Extrato Bancário", command=lambda: self.menu_conectar('Extrato_Bancario'))
+        filemenu4.add_command(label="Contas a Pagar", command=lambda: self.menu_conectar('Contas_Pagar'))
 
         filemenu5.add_command(label="Cronograma", command=lambda: self.menu_conectar('Cronograma_Barra_Projetos'))
-        filemenu5.add_command(label="Reuniões")  # , command=modo_escuro)
-        filemenu5.add_command(label="Cad. Projetos")  # , command=modo_escuro)
+        filemenu5.add_command(label="Cronograma (Beta)", command=lambda: self.menu_conectar('Cronograma_Barra_Projetos_Hierarquico'))
+        filemenu5.add_command(label="Reuniões")
+        # filemenu5.add_command(label="Cad. Projetos") 
         filemenu5.add_command(label="Envios de SMS")
         filemenu5.add_command(label="Envios de Whatsapp")
         # Criação de submenu Planejamento
@@ -357,9 +372,9 @@ class PrimaryWindow(
         filemenu6.add_command(label="Atendimento Cliente")
         filemenu6.add_command(label="Resumo clientes")
 
-        filemenu7.add_command(label="Usuários Sistema")
-        filemenu7.add_command(label="Permissões")  # , command=modo_escuro)
-        filemenu7.add_command(label="Modulos")  # , command=modo_escuro)
+        filemenu7.add_command(label="Usuários Sistema", command=lambda: self.menu_conectar('Usuarios_Sistema'))
+        filemenu7.add_command(label="Permissões", command=lambda: self.menu_conectar('Permissoes_Sistema'))
+        filemenu7.add_command(label="Modulos", command=lambda: self.menu_conectar('Modulos_Sistema'))  # , command=modo_escuro)
         filemenu7.add_command(label="Clientes do Sistema")
         filemenu7.add_command(label="Sistema Amortização")
         filemenu7.add_command(label="Atualizações - Versão Sistema", command=lambda: self.menu_conectar('Versoes'))

@@ -1,6 +1,7 @@
 from imports import *
 from PIL import ImageTk, Image
 
+
 ################# criando janela ###############
 # Cadastro de Fornecedores e Clientes
 class Pessoas(Icons, Functions):
@@ -543,6 +544,7 @@ class Produtos(Icons, Functions):
 
 Produtos()
 
+# Cadastro de Versões
 class Versoes(Icons, Functions):
 
     def cad_versoes(self):
@@ -728,7 +730,7 @@ class Versoes(Icons, Functions):
                         versao_dta
                     FROM
                         sys_versao
-                    ORDER BY versao_nr ASC """
+                    ORDER BY versao_id, versao_nr ASC """
         
         myresult = db._querying(vs_sql)
         consulta = [(consulta) for consulta in myresult]
@@ -1436,3 +1438,229 @@ class Projetos(Icons, Functions):
             self.atualizar_projetos_situacao(event, self.entry_status)
 
 Projetos()
+
+# Copiar Cronograma de Atividades
+class Cronograma_Atividades_Copiar(Icons, Functions):
+    def cad_cronograma_atividades_copiar(self):
+        self.janela_cronograma_copia = customtkinter.CTkToplevel(self.window_one)
+        self.janela_cronograma_copia.title('Cronograma Atividades - Copiar para um novo Projeto')
+        self.janela_cronograma_copia.geometry("1680x800")
+        self.janela_cronograma_copia.resizable(True, True)
+        self.janela_cronograma_copia.lift()  # Traz a janela para frente   
+
+        self.frame_cronograma_copia_principal = customtkinter.CTkFrame(self.janela_cronograma_copia, fg_color='black')
+        self.frame_cronograma_copia_principal.pack(pady=10, padx=10, fill="both", expand=True)
+        customtkinter.CTkLabel(self.frame_cronograma_copia_principal, text="", font=("Roboto", 30, "bold")).pack(pady=10)
+            
+        # Flag para controle do estado da aplicação
+        self.app_closing = False
+        
+        # Vincular o evento de fechamento da janela
+        self.janela_cronograma_copia.protocol("WM_DELETE_WINDOW", lambda:  self.on_closing_tela(self.janela_cronograma_copia))
+
+        self.images_base64()
+
+        self.frame_cabecalho_cronograma_atividades_copiar(self.frame_cronograma_copia_principal)
+        
+        
+        self.janela_cronograma_copia.focus_force()
+        self.janela_cronograma_copia.grab_set()
+        
+        # self.consulta_projetos()
+    def frame_cabecalho_cronograma_atividades_copiar(self, janela):
+        # Projeto Origem
+        coordenadas_relx = 0.005
+        coordenadas_rely = 0.01
+        coordenadas_relwidth = 0.45
+        coordenadas_relheight = 0.07
+        fr_projeto_origem = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_projeto_origem.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_projeto_origem = customtkinter.CTkLabel(fr_projeto_origem, text="Projetos - Origem")
+        lb_projeto_origem.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+
+        projetos_origem = []
+
+        self.entry_projeto_origem = AutocompleteCombobox(fr_projeto_origem, width=30, font=('Times', 11), completevalues=projetos_origem)
+        self.entry_projeto_origem.pack()
+        self.entry_projeto_origem.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_projeto_origem.bind("<Button-1>", lambda event: self.atualizar_projetos(event, self.entry_projeto_origem))
+        self.entry_projeto_origem.bind('<Down>', lambda event: self.atualizar_projetos(event, self.entry_projeto_origem))
+        
+        # Projeto Destino
+        coordenadas_relx = 0.455
+        coordenadas_rely = 0.01
+        coordenadas_relwidth = 0.45
+        coordenadas_relheight = 0.07
+        fr_projeto_destino = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
+        fr_projeto_destino.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+        lb_projeto_destino = customtkinter.CTkLabel(fr_projeto_destino, text="Projetos - Destino")
+        lb_projeto_destino.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+
+        projetos_destino = []
+
+        self.entry_projeto_destino = AutocompleteCombobox(fr_projeto_destino, width=30, font=('Times', 11), completevalues=projetos_destino)
+        self.entry_projeto_destino.pack()
+        self.entry_projeto_destino.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_projeto_destino.bind("<Button-1>", lambda event: self.atualizar_projetos(event, self.entry_projeto_destino))
+        self.entry_projeto_destino.bind('<Down>', lambda event: self.atualizar_projetos(event, self.entry_projeto_destino))
+
+        # Botão de Salvar Copia
+        icon_image = self.base64_to_photoimage('save')
+        self.btn_salvar_projeto = customtkinter.CTkButton(janela, text='', image=icon_image, fg_color='transparent', command=lambda: self.gravar_copia_cronograma(janela))
+        self.btn_salvar_projeto.pack(pady=10)
+        self.btn_salvar_projeto.place(relx=0.955, rely=0.02, relwidth=0.04, relheight=0.05)
+        
+        # # Botão Sair Cronograma
+        # icon_image = self.base64_to_photoimage('sair')
+        # self.btn_sair_projeto = customtkinter.CTkButton(janela, text='Sair', image=icon_image, fg_color='transparent', command=self.tela_principal)
+        # self.btn_sair_projeto.pack(pady=10)
+        # self.btn_sair_projeto.place(relx=0.955, rely=0.02, relwidth=0.04, relheight=0.05)
+    
+    def gravar_copia_cronograma(self, janela):
+        try:
+            projeto_origem_ds = self.entry_projeto_origem.get()
+            projeto_destino_ds = self.entry_projeto_destino.get()
+
+            if self.entry_projeto_origem.get() != '':
+                projeto_origem_id = self.obter_Projeto_ID(self.entry_projeto_origem.get(), janela)
+            else:
+                messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto Origem!!", parent=janela)
+                return
+            
+            if self.entry_projeto_destino.get() != '':
+                projeto_destino_id = self.obter_Projeto_ID(self.entry_projeto_destino.get(), janela)
+            else:
+                messagebox.showinfo("Gestor de Negócios", "Preencher o Projeto Destino!!", parent=janela)
+                return
+            
+
+            sql_query = f"""
+                            SELECT 
+                                *
+                            FROM programas_atividades
+                            WHERE projeto_ID = {projeto_destino_id}
+                            ORDER BY tarefa_ID
+                        """
+            myresult = db._querying(sql_query)
+            consulta = [(consulta) for consulta in myresult]
+            if consulta:
+                if messagebox.askyesno("Aviso", "Programa de Atividades com Tarefas já vinculadas, Tem Certeza que deseja Sobrepor?", parent=janela):
+                    delete_sql = f"""
+                                DELETE 
+                                FROM programas_atividades
+                                WHERE projeto_ID = {projeto_destino_id}
+                            """
+                    
+                    db._querying(delete_sql)
+                else:
+                    return
+            
+            # Cria uma nova janela (tela de carregamento)
+            coordenadas_relx = 0.20
+            coordenadas_rely = 0.30
+            coordenadas_relwidth = 0.60
+            coordenadas_relheight = 0.15
+            self.frm_barra_progresso = ctk.CTkFrame(janela, fg_color='transparent', corner_radius=10)
+            self.frm_barra_progresso.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
+            
+            # Cria um label para mostrar o texto "Aguardando processar"
+            self.label_aguardando = ctk.CTkLabel(self.frm_barra_progresso, text="Aguardando processar...", font=("Roboto", 16))
+            self.label_aguardando.pack(pady=(0, 10))
+
+            # Cria a Barra de Progresso
+            self.progress_bar = ctk.CTkProgressBar(
+                self.frm_barra_progresso,
+                width=400,
+                height=20,
+                corner_radius=10,
+                mode="indeterminate",
+                indeterminate_speed=1
+            )
+            self.progress_bar.pack(pady=10)
+            
+            # Inicia a animação da barra de progresso
+            self.progress_bar.start()
+
+            # Executa a operação de cópia em um thread separado
+            threading.Thread(target=self.executar_copia, args=(projeto_origem_id, projeto_destino_id, projeto_destino_ds, janela,)).start()
+            
+        except Exception as e:
+            messagebox.showinfo("Gestor de Negócios", f"Erro: {e}", parent=janela)
+            return
+        finally:
+            pass
+    
+    def executar_copia(self, projeto_origem_id, projeto_destino_id, projeto_destino_ds, janela):
+        try:
+            sql = f""" INSERT INTO programas_atividades
+                    (
+                        projeto_cr,
+                        projeto_id,
+                        projeto_DS,
+                        tarefa_ID,
+                        tarefa_DS,
+                        responsavel_nome,
+                        tarefa_dependencia,
+                        tempo_espera,
+                        tempo_previsto,
+                        percentual_execucao,
+                        data_Inicial_Prevista,
+                        data_Inicial_Realizada,
+                        dias_diferenca_inicio,
+                        data_conclusao_prevista,
+                        data_conclusao_realizada,
+                        prazo_fatal_dias,
+                        dias_diferenca,
+                        STATUS,
+                        observacao,
+                        anexos
+                    )
+                    SELECT
+                    projeto_cr,
+                    {projeto_destino_id},
+                    '{projeto_destino_ds}',
+                    tarefa_ID,
+                    tarefa_DS,
+                    responsavel_nome,
+                    tarefa_dependencia,
+                    tempo_espera,
+                    tempo_previsto,
+                    percentual_execucao,
+                    data_Inicial_Prevista,
+                    data_Inicial_Realizada,
+                    dias_diferenca_inicio,
+                    data_conclusao_prevista,
+                    data_conclusao_realizada,
+                    prazo_fatal_dias,
+                    dias_diferenca,
+                    STATUS,
+                    observacao,
+                    anexos
+                    FROM programas_atividades
+                    WHERE projeto_id = {projeto_origem_id}
+            """
+            
+            db._querying(sql)
+
+            janela.after(0, self.concluir_copia)
+        except Exception as e:
+            janela.after(0, lambda: messagebox.showinfo("Gestor de Negócios", f"Erro durante a cópia: {e}", parent=janela))
+
+    def concluir_copia(self):
+        # Para a animação da barra de progresso
+        self.progress_bar.stop()
+        
+        # Atualiza o texto para "Processamento concluído"
+        self.label_aguardando.configure(text="Processamento concluído")
+        
+        # Opcional: Muda a cor da barra para verde para indicar conclusão
+        self.progress_bar.configure(mode="determinate", progress_color="green")
+        self.progress_bar.set(1)  # Preenche a barra completamente
+        
+        # Agenda a remoção da barra de progresso após alguns segundos
+        self.frm_barra_progresso.after(3000, self.frm_barra_progresso.destroy)
+
+        messagebox.showinfo("Sucesso", "Cópia do cronograma concluída com sucesso!", parent=self.janela_cronograma_copia)
+
+Cronograma_Atividades_Copiar()
+

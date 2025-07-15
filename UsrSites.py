@@ -19,14 +19,14 @@ class Sites_rel(Widgets):
         # Empresa
         coordenadas_relx = 0.01
         coordenadas_rely = 0.02
-        coordenadas_relwidth = 0.38
+        coordenadas_relwidth = 0.345
         coordenadas_relheight = 0.09
         self.frame_empresa(janela, coordenadas_relx, coordenadas_rely, coordenadas_relwidth, coordenadas_relheight)
         self.combo_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_tipo_site_descr))
 
         # Tipo site
         fr_tipo_site = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_tipo_site.place(relx=0.395, rely=0.02, relwidth=0.10, relheight=0.09)
+        fr_tipo_site.place(relx=0.36, rely=0.02, relwidth=0.10, relheight=0.09)
 
         lb_tipo_site = customtkinter.CTkLabel(fr_tipo_site, text="Tipo Site")
         lb_tipo_site.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
@@ -38,7 +38,7 @@ class Sites_rel(Widgets):
 
         # Descrição
         fr_descricao = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_descricao.place(relx=0.50, rely=0.02, relwidth=0.15, relheight=0.09)
+        fr_descricao.place(relx=0.465, rely=0.02, relwidth=0.15, relheight=0.09)
 
         lb_descricao = customtkinter.CTkLabel(fr_descricao, text="Descricão")
         lb_descricao.place(relx=0.02, rely=0, relwidth=0.4, relheight=0.125)
@@ -49,7 +49,7 @@ class Sites_rel(Widgets):
 
         # Site
         fr_informacoes = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        fr_informacoes.place(relx=0.655, rely=0.02, relwidth=0.30, relheight=0.09)
+        fr_informacoes.place(relx=0.62, rely=0.02, relwidth=0.30, relheight=0.09)
         lb_informacoes = customtkinter.CTkLabel(fr_informacoes, text="Site", text_color="white", font=('Arial', 12, 'bold'), anchor=tk.W)
         lb_informacoes.place(relx=0.05, rely=0, relheight=0.10, relwidth=0.70)
 
@@ -65,7 +65,12 @@ class Sites_rel(Widgets):
 
         # Botão Consultar
         bt_consultar = customtkinter.CTkButton(janela, image=self.btconsulta_img, text='', fg_color='transparent', command=self.consulta_sites)
-        bt_consultar.place(relx=0.96, rely=0.02, relwidth=0.035, relheight=0.09)
+        bt_consultar.place(relx=0.925, rely=0.02, relwidth=0.035, relheight=0.09)
+
+        # Botão Sair 
+        icon_image = self.base64_to_photoimage('sair')
+        self.btn_sair_projeto = customtkinter.CTkButton(janela, text='Sair', image=icon_image, fg_color='transparent', command=self.tela_principal)
+        self.btn_sair_projeto.place(relx=0.96, rely=0.02, relwidth=0.035, relheight=0.09)
       
     def linha2_lista(self, janela):
         
