@@ -34,7 +34,7 @@ class Gravar():
             return
                 
         # Definição de variáveis
-        ID_Empresa = self.obter_Empresa_ID( self.combo_empresa.get())
+        ID_Empresa = self.obter_Empresa_ID( self.combo_empresa.get(), self.tela_principal)
         site_tpo = self.entry_tipo_site_descr.get().strip()  # Remove espaços em branco das extremidades
         site_ds = self.text_descricao.get().strip()
         site_http = self.entry_informacoes_https.get().strip()

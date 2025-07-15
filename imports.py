@@ -4,6 +4,10 @@ import time
 from db.db_conector import MySqlDatabase
 import logging
 
+import matplotlib.pyplot as plt
+import matplotlib.dates  as mdates
+import matplotlib.ticker as mticker
+import networkx          as nx
 
 from datetime import *
 from datetime import datetime

@@ -3,10 +3,10 @@ from widgets      import Widgets
 from datetime     import datetime
 from PIL          import ImageTk, Image
 
-import matplotlib.pyplot as plt
-import matplotlib.dates  as mdates
-import matplotlib.ticker as mticker
-import networkx          as nx
+# import matplotlib.pyplot as plt
+# import matplotlib.dates  as mdates
+# import matplotlib.ticker as mticker
+# import networkx          as nx
 
 from UsrCadastros import Projetos
 from UsrCadastros import Cronograma_Atividades_Copiar
@@ -1785,9 +1785,10 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                     ax.plot([x_atual, x_prox], [y_atual, y_prox], color='red', linewidth=2, linestyle='--', zorder=10)
 
         # Ajusta o tamanho da fonte das tarefas no eixo Y
-        ax.set_yticklabels(ax.get_yticklabels(), fontsize=8)  # Altere o valor conforme desejado
+        labels = ax.get_yticklabels()
+        for label in labels:
+            label.set_fontsize(8)
         
-
         ax.set_xlabel('Data')
         ax.set_ylabel('Tarefa')
         ax.set_title('Gantt ' + self.entry_projeto.get())
