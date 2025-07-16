@@ -1384,28 +1384,28 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             except:
                 pass
 
-    def dta_tarefa_mae_hierarquico(self):
-        dta_atualizacao = datetime.now()
-        def process_item(item_id, level=0):
-            task_data = self.LCronograma.item(item_id)
-            tarefa_id = str(task_data['values'][1]).zfill(2)
-            tarefa_DS = task_data['values'][2].strip()
-            nivel_atual = len(tarefa_id)
-            children = self.LCronograma.get_children(item_id)
+    # def dta_tarefa_mae_hierarquico(self):
+    #     dta_atualizacao = datetime.now()
+    #     def process_item(item_id, level=0):
+    #         task_data = self.LCronograma.item(item_id)
+    #         tarefa_id = str(task_data['values'][1]).zfill(2)
+    #         tarefa_DS = task_data['values'][2].strip()
+    #         nivel_atual = len(tarefa_id)
+    #         children = self.LCronograma.get_children(item_id)
 
-            # Processa recursivamente as tarefas filhas
-            for child in children:
-                process_item(child, level + 1)
+    #         # Processa recursivamente as tarefas filhas
+    #         for child in children:
+    #             process_item(child, level + 1)
 
-        # Processa todos os itens de nível superior
-        for item_id in self.LCronograma.get_children():
-            values = self.LCronograma.item(item_id, 'values')
-            nrcarat = 0
-            NrCampos = values[0]
-            tarefa_id = values[1]
-            nrcarat = len(tarefa_id)
+    #     # Processa todos os itens de nível superior
+    #     for item_id in self.LCronograma.get_children():
+    #         values = self.LCronograma.item(item_id, 'values')
+    #         nrcarat = 0
+    #         NrCampos = values[0]
+    #         tarefa_id = values[1]
+    #         nrcarat = len(tarefa_id)
 
-            process_item(item_id)
+    #         process_item(item_id)
         
     def process_records_hierarquico(self):
         if self.current_index < self.total_records:
@@ -2363,133 +2363,133 @@ class TreeviewEdit(ttk.Treeview):
         except Exception as e:
             messagebox.showerror("Erro!", f"Erro: {str(e)}")      
     
-    def dta_tarefa_mae_old_maisneyu(self):
-        dta_atualizacao = datetime.now()
-        def process_item(item_id, level=0):
-            tarefa_atual = self.item(item_id)
-            Nr_Linha = tarefa_atual['values'][0]
-            tarefa_id = str(tarefa_atual['values'][1]).zfill(2)
-            tarefa_DS = tarefa_atual['values'][2].strip()
+    # def dta_tarefa_mae_old_maisneyu(self):
+    #     dta_atualizacao = datetime.now()
+    #     def process_item(item_id, level=0):
+    #         tarefa_atual = self.item(item_id)
+    #         Nr_Linha = tarefa_atual['values'][0]
+    #         tarefa_id = str(tarefa_atual['values'][1]).zfill(2)
+    #         tarefa_DS = tarefa_atual['values'][2].strip()
             
-            children = self.get_children(item_id)
+    #         children = self.get_children(item_id)
             
-            # Processa recursivamente as tarefas filhas
-            for child in children:
-                process_item(child, level + 1)
+    #         # Processa recursivamente as tarefas filhas
+    #         for child in children:
+    #             process_item(child, level + 1)
                 
 
-        # Processa todos os itens de nível superior
-        for item_id in self.get_children():
-            tarefa_pai = self.item(item_id)
-            tarefa_id = str(tarefa_pai['values'][1]).zfill(2)
+    #     # Processa todos os itens de nível superior
+    #     for item_id in self.get_children():
+    #         tarefa_pai = self.item(item_id)
+    #         tarefa_id = str(tarefa_pai['values'][1]).zfill(2)
             
-            process_item(item_id)
+    #         process_item(item_id)
 
-    def dta_tarefa_mae_old_new(self):
-        dta_atualizacao = datetime.now()
+    # def dta_tarefa_mae_old_new(self):
+    #     dta_atualizacao = datetime.now()
 
-        nr = 1
-        def process_item(item_id, level=0):
-            task_data = self.item(item_id)
-            tarefa_id = str(task_data['values'][1]).zfill(2)
-            tarefa_DS = task_data['values'][2].strip()
+    #     nr = 1
+    #     def process_item(item_id, level=0):
+    #         task_data = self.item(item_id)
+    #         tarefa_id = str(task_data['values'][1]).zfill(2)
+    #         tarefa_DS = task_data['values'][2].strip()
             
             
-            if level > self.nivel_superior:
-                self.per_conclusao_items = float(task_data['values'][7].replace("%", ""))
-                self.data_inicial_prevista_items = self.parse_date(task_data['values'][8])
-                self.data_inicial_realizada_items = self.parse_date(task_data['values'][9])
-                self.data_conclusao_prevista_items = self.parse_date(task_data['values'][10])
-                self.data_conclusao_realizada_items = self.parse_date(task_data['values'][11])
+    #         if level > self.nivel_superior:
+    #             self.per_conclusao_items = float(task_data['values'][7].replace("%", ""))
+    #             self.data_inicial_prevista_items = self.parse_date(task_data['values'][8])
+    #             self.data_inicial_realizada_items = self.parse_date(task_data['values'][9])
+    #             self.data_conclusao_prevista_items = self.parse_date(task_data['values'][10])
+    #             self.data_conclusao_realizada_items = self.parse_date(task_data['values'][11])
                 
-                if self.data_inicial_prevista_items is not None:
-                    if self.dta_provisoria_inicial_prevista == '':
-                        self.dta_provisoria_inicial_prevista = self.data_inicial_prevista_items
-                        self.data_inicial_prevista = self.data_inicial_prevista_items
-                    else:
-                        self.data_inicial_prevista = min(self.parse_date(self.data_inicial_prevista_items), self.parse_date(self.dta_provisoria_inicial_prevista))
-                        self.dta_provisoria_inicial_prevista = self.data_inicial_prevista
+    #             if self.data_inicial_prevista_items is not None:
+    #                 if self.dta_provisoria_inicial_prevista == '':
+    #                     self.dta_provisoria_inicial_prevista = self.data_inicial_prevista_items
+    #                     self.data_inicial_prevista = self.data_inicial_prevista_items
+    #                 else:
+    #                     self.data_inicial_prevista = min(self.parse_date(self.data_inicial_prevista_items), self.parse_date(self.dta_provisoria_inicial_prevista))
+    #                     self.dta_provisoria_inicial_prevista = self.data_inicial_prevista
                     
-                if self.data_inicial_realizada_items is not None:
-                    if self.dta_provisoria_inicial_realizada == '':
-                        self.dta_provisoria_inicial_realizada = self.data_inicial_realizada_items
-                        self.data_inicial_realizada = self.data_inicial_realizada_items
-                    else:
-                        self.data_inicial_realizada = min(self.parse_date(self.data_inicial_realizada_items), self.parse_date(self.dta_provisoria_inicial_realizada))
-                        self.dta_provisoria_inicial_realizada = self.data_inicial_realizada 
+    #             if self.data_inicial_realizada_items is not None:
+    #                 if self.dta_provisoria_inicial_realizada == '':
+    #                     self.dta_provisoria_inicial_realizada = self.data_inicial_realizada_items
+    #                     self.data_inicial_realizada = self.data_inicial_realizada_items
+    #                 else:
+    #                     self.data_inicial_realizada = min(self.parse_date(self.data_inicial_realizada_items), self.parse_date(self.dta_provisoria_inicial_realizada))
+    #                     self.dta_provisoria_inicial_realizada = self.data_inicial_realizada 
                 
-                if self.data_conclusao_prevista_items is not None:
-                    if self.dta_provisoria_conclusao_prevista == '':
-                        self.dta_provisoria_conclusao_prevista = self.data_conclusao_prevista_items
-                        self.data_conclusao_prevista = self.data_conclusao_prevista_items 
-                    else:
-                        self.data_conclusao_prevista = max(self.parse_date(self.data_conclusao_prevista_items), self.parse_date(self.dta_provisoria_conclusao_prevista))
-                        self.dta_provisoria_conclusao_prevista = self.data_conclusao_prevista_items
+    #             if self.data_conclusao_prevista_items is not None:
+    #                 if self.dta_provisoria_conclusao_prevista == '':
+    #                     self.dta_provisoria_conclusao_prevista = self.data_conclusao_prevista_items
+    #                     self.data_conclusao_prevista = self.data_conclusao_prevista_items 
+    #                 else:
+    #                     self.data_conclusao_prevista = max(self.parse_date(self.data_conclusao_prevista_items), self.parse_date(self.dta_provisoria_conclusao_prevista))
+    #                     self.dta_provisoria_conclusao_prevista = self.data_conclusao_prevista_items
                 
-                if self.data_conclusao_realizada_items is not None:
-                    if self.dta_provisoria_conclusao_realizada == '':
-                        self.dta_provisoria_conclusao_realizada = self.data_conclusao_realizada_items
-                        self.data_conclusao_realizada = self.data_conclusao_realizada_items
-                    else:
-                        self.data_conclusao_realizada = max(self.parse_date(self.data_conclusao_realizada_items), self.parse_date(self.dta_provisoria_conclusao_realizada))
-                        self.dta_provisoria_conclusao_realizada = self.data_conclusao_realizada
+    #             if self.data_conclusao_realizada_items is not None:
+    #                 if self.dta_provisoria_conclusao_realizada == '':
+    #                     self.dta_provisoria_conclusao_realizada = self.data_conclusao_realizada_items
+    #                     self.data_conclusao_realizada = self.data_conclusao_realizada_items
+    #                 else:
+    #                     self.data_conclusao_realizada = max(self.parse_date(self.data_conclusao_realizada_items), self.parse_date(self.dta_provisoria_conclusao_realizada))
+    #                     self.dta_provisoria_conclusao_realizada = self.data_conclusao_realizada
                 
-                # Count completed tasks
+    #             # Count completed tasks
                 
-                if self.per_conclusao_items == 100.0:
-                    self.nr_tarefas_concluidas += 1
+    #             if self.per_conclusao_items == 100.0:
+    #                 self.nr_tarefas_concluidas += 1
 
             
-            # Calcular o Percentual de Execução
-            self.per_conclusao = (self.nr_tarefas_concluidas / self.nr_tarefas) * 100 if self.nr_tarefas > 0 else 0
+    #         # Calcular o Percentual de Execução
+    #         self.per_conclusao = (self.nr_tarefas_concluidas / self.nr_tarefas) * 100 if self.nr_tarefas > 0 else 0
 
-            # if level > nivel_superior:
-            #     tarefa_sub_id = item_id
-            #     tarefa_sub_valores     = self.item(item_id).get('values')
-            #     tarefa_sub_valores[8]  = (data_inicial_prevista).strftime("%d/%m/%Y")
-            #     tarefa_sub_valores[9]  = (data_inicial_realizada).strftime("%d/%m/%Y")
-            #     tarefa_sub_valores[10] = (data_conclusao_prevista).strftime("%d/%m/%Y")
-            #     tarefa_sub_valores[11] = (data_conclusao_realizada).strftime("%d/%m/%Y")
-            #     self.item(tarefa_sub_id, values=tarefa_sub_valores)
+    #         # if level > nivel_superior:
+    #         #     tarefa_sub_id = item_id
+    #         #     tarefa_sub_valores     = self.item(item_id).get('values')
+    #         #     tarefa_sub_valores[8]  = (data_inicial_prevista).strftime("%d/%m/%Y")
+    #         #     tarefa_sub_valores[9]  = (data_inicial_realizada).strftime("%d/%m/%Y")
+    #         #     tarefa_sub_valores[10] = (data_conclusao_prevista).strftime("%d/%m/%Y")
+    #         #     tarefa_sub_valores[11] = (data_conclusao_realizada).strftime("%d/%m/%Y")
+    #         #     self.item(tarefa_sub_id, values=tarefa_sub_valores)
             
-            children = self.get_children(item_id)
+    #         children = self.get_children(item_id)
             
-            # Processa recursivamente as tarefas filhas
-            for child in children:
-                self.nr_tarefas += 1
-                process_item(child, level + 1)
+    #         # Processa recursivamente as tarefas filhas
+    #         for child in children:
+    #             self.nr_tarefas += 1
+    #             process_item(child, level + 1)
 
-        # Processa todos os itens de nível superior
-        for item_id in self.get_children():
-            self.data_inicial_prevista = None
-            self.data_inicial_realizada = None
-            self.data_conclusao_prevista = None
-            self.data_conclusao_realizada = None
-            self.dta_provisoria_inicial_prevista = ''
-            self.dta_provisoria_inicial_realizada = ''
-            self.dta_provisoria_conclusao_prevista = ''
-            self.dta_provisoria_conclusao_realizada = ''
+    #     # Processa todos os itens de nível superior
+    #     for item_id in self.get_children():
+    #         self.data_inicial_prevista = None
+    #         self.data_inicial_realizada = None
+    #         self.data_conclusao_prevista = None
+    #         self.data_conclusao_realizada = None
+    #         self.dta_provisoria_inicial_prevista = ''
+    #         self.dta_provisoria_inicial_realizada = ''
+    #         self.dta_provisoria_conclusao_prevista = ''
+    #         self.dta_provisoria_conclusao_realizada = ''
 
-            tarefa_superior_id = item_id
-            tarefa_superior_valores = self.item(item_id).get('values')
-            tarefa_id = str(tarefa_superior_valores[1]).zfill(2)
-            tarefa_ds = tarefa_superior_valores[2].strip()
+    #         tarefa_superior_id = item_id
+    #         tarefa_superior_valores = self.item(item_id).get('values')
+    #         tarefa_id = str(tarefa_superior_valores[1]).zfill(2)
+    #         tarefa_ds = tarefa_superior_valores[2].strip()
             
-            self.nr_tarefas = 0
-            self.nr_tarefas_concluidas = 0
-            self.nivel_superior = 0
+    #         self.nr_tarefas = 0
+    #         self.nr_tarefas_concluidas = 0
+    #         self.nivel_superior = 0
             
-            process_item(item_id)
-            print(item_id, tarefa_id, tarefa_ds, self.data_inicial_prevista, self.data_inicial_realizada, self.data_conclusao_prevista, self.data_conclusao_realizada)
-            breakpoint()
+    #         process_item(item_id)
+    #         print(item_id, tarefa_id, tarefa_ds, self.data_inicial_prevista, self.data_inicial_realizada, self.data_conclusao_prevista, self.data_conclusao_realizada)
+    #         breakpoint()
                 
-            tarefa_superior_valores[7]  = f'{float(self.per_conclusao)/100:.2%}'
-            tarefa_superior_valores[8]  = self.data_inicial_prevista
-            tarefa_superior_valores[9]  = self.data_inicial_realizada
-            tarefa_superior_valores[10] = self.data_conclusao_prevista
-            tarefa_superior_valores[11] = self.data_conclusao_realizada
+    #         tarefa_superior_valores[7]  = f'{float(self.per_conclusao)/100:.2%}'
+    #         tarefa_superior_valores[8]  = self.data_inicial_prevista
+    #         tarefa_superior_valores[9]  = self.data_inicial_realizada
+    #         tarefa_superior_valores[10] = self.data_conclusao_prevista
+    #         tarefa_superior_valores[11] = self.data_conclusao_realizada
             
-            self.item(tarefa_superior_id, values=tarefa_superior_valores)
+    #         self.item(tarefa_superior_id, values=tarefa_superior_valores)
 
     def dta_tarefa_mae(self):
         all_numbers       = self.get_all_items_numbers()
@@ -2549,7 +2549,7 @@ class TreeviewEdit(ttk.Treeview):
                             data_conclusao_prevista = data_conclusao_prevista_items 
                         else:
                             data_conclusao_prevista = max(self.parse_date(data_conclusao_prevista_items), self.parse_date(dta_provisoria_conclusao_prevista))
-                            dta_provisoria_conclusao_prevista = data_conclusao_prevista_items
+                            dta_provisoria_conclusao_prevista = data_conclusao_prevista
                     
                     if data_conclusao_realizada_items is not None:
                         if dta_provisoria_conclusao_realizada == '':
