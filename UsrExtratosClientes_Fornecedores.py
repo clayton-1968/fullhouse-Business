@@ -14,36 +14,36 @@ class Extrato_Clientes_Fornecedores(Widgets):
     ################# dividindo a janela ###############
     def frame_cabecalho_extrato_clientes_fornecedores(self, janela):
         # Empresa
-        coordenadas_relx = 0.005
-        coordenadas_rely = 0.01
+        coordenadas_relx = 0
+        coordenadas_rely = 0
         coordenadas_relwidth = 0.25
         coordenadas_relheight = 0.07
         fr_empresa = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         fr_empresa.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
                          relheight=coordenadas_relheight)
         lb_empresa = customtkinter.CTkLabel(fr_empresa, text="Empresa")
-        lb_empresa.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+        lb_empresa.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.6)
 
         empresas = []
 
         self.entry_empresa = AutocompleteCombobox(fr_empresa, width=30, font=('Times', 11), completevalues=empresas)
         self.entry_empresa.pack()
-        self.entry_empresa.place(relx=0.01, rely=0.5, relwidth=0.98, relheight=0.4)
+        self.entry_empresa.place(relx=0, rely=0.5, relwidth=0.98, relheight=0.4)
         self.entry_empresa.bind("<Button-1>", lambda event: self.atualizar_empresas(event, self.entry_empresa))
         self.entry_empresa.bind("<KeyRelease>", lambda event: self.atualizar_empresas(event, self.entry_empresa))
         self.entry_empresa.bind('<Down>', lambda event: self.atualizar_empresas(event, self.entry_empresa))
         self.entry_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_uf))
 
         # Unidade de Negócio
-        coordenadas_relx = 0.26
-        coordenadas_rely = 0.01
+        coordenadas_relx = 0.255
+        coordenadas_rely = 0
         coordenadas_relwidth = 0.17
         coordenadas_relheight = 0.07
         fr_unidade_negocio = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         fr_unidade_negocio.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
                                  relheight=coordenadas_relheight)
         lb_unidade_negocio = customtkinter.CTkLabel(fr_unidade_negocio, text="Unidade Negócios")
-        lb_unidade_negocio.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+        lb_unidade_negocio.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.6)
 
         unidade_negocios = []
 
@@ -57,18 +57,18 @@ class Extrato_Clientes_Fornecedores(Widgets):
         TDta_Inicio = datetime.strptime("01/01/2000", "%d/%m/%Y")
         TDta_Fim = datetime.now()
 
-        coordenadas_relx = 0.435
-        coordenadas_rely = 0.01
+        coordenadas_relx = 0.43
+        coordenadas_rely = 0
         coordenadas_relwidth = 0.17
-        coordenadas_relheight = 0.07
+        coordenadas_relheight = 0.09
         fr_periodo = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         fr_periodo.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
                          relheight=coordenadas_relheight)
         lb_periodo = customtkinter.CTkLabel(fr_periodo, text="Período Vencimento")
-        lb_periodo.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+        lb_periodo.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.6)
 
         lb_dt_venc_inicio = customtkinter.CTkLabel(fr_periodo, text="Data Início")
-        lb_dt_venc_inicio.place(relx=0.01, rely=0.30, relheight=0.125, relwidth=0.20)
+        lb_dt_venc_inicio.place(relx=0.10, rely=0.28, relheight=0.15, relwidth=0.35)
         self.entry_dt_venc_inicio = customtkinter.CTkEntry(fr_periodo, fg_color="white", text_color="black",
                                                            justify=tk.CENTER)
         self.entry_dt_venc_inicio.delete(0, 'end')
@@ -80,7 +80,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
                                                                             self.entry_dt_venc_fim))
 
         lb_dt_venc_fim = customtkinter.CTkLabel(fr_periodo, text="Data Fim")
-        lb_dt_venc_fim.place(relx=0.47, rely=0.30, relheight=0.125, relwidth=0.35)
+        lb_dt_venc_fim.place(relx=0.55, rely=0.28, relheight=0.15, relwidth=0.35)
         self.entry_dt_venc_fim = customtkinter.CTkEntry(fr_periodo, fg_color="white", text_color="black",
                                                         justify=tk.CENTER)
         self.entry_dt_venc_fim.delete(0, 'end')
@@ -91,15 +91,16 @@ class Extrato_Clientes_Fornecedores(Widgets):
                                                                                      self.entry_info_pag_valor_parc))
 
         # Pessoa
-        coordenadas_relx = 0.61
-        coordenadas_rely = 0.01
-        coordenadas_relwidth = 0.295
+        coordenadas_relx = 0.605
+        coordenadas_rely = 0
+        coordenadas_relwidth = 0.34
+
         coordenadas_relheight = 0.07
         fr_pessoa = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         fr_pessoa.place(relx=coordenadas_relx, rely=coordenadas_rely, relwidth=coordenadas_relwidth,
                         relheight=coordenadas_relheight)
         lb_pessoa = customtkinter.CTkLabel(fr_pessoa, text="Cliente/Fornecedor/Prestador Serviços")
-        lb_pessoa.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+        lb_pessoa.place(relx=0.2, rely=0, relheight=0.25, relwidth=0.6)
 
         pessoas = []
 
@@ -128,7 +129,7 @@ class Extrato_Clientes_Fornecedores(Widgets):
         treestyle.configure("Treeview", background="white", foreground="black", fieldbackground="white", borderwidth=0)
 
         self.fr_list = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
-        self.fr_list.place(relx=0.005, rely=0.085, relwidth=0.99, relheight=0.91)
+        self.fr_list.place(relx=0, rely=0.095, relwidth=1, relheight=1)
 
         self.scrollbar = ttk.Scrollbar(self.fr_list, orient='vertical')
         self.scrollbar.pack(side='right', fill='y')
@@ -159,10 +160,10 @@ class Extrato_Clientes_Fornecedores(Widgets):
 
         Col = 30
 
-        self.LExtrato.column('#0', width=2, anchor='w')
+        self.LExtrato.column('#0', width=0, anchor='w')
         self.LExtrato.column('ID', width=15, anchor='e')
-        self.LExtrato.column('Descricao', width=800, anchor='w')
-        self.LExtrato.column('Dta_Vencto_Liquidacao', width=5, anchor='c')
+        self.LExtrato.column('Descricao', width=50, anchor='w')
+        self.LExtrato.column('Dta_Vencto_Liquidacao', width=10, anchor='c')
         self.LExtrato.column('Tipo', width=Col, anchor='c')
         self.LExtrato.column('Banco', width=Col, anchor='c')
         self.LExtrato.column('Referencia', width=Col, anchor='c')
@@ -171,11 +172,13 @@ class Extrato_Clientes_Fornecedores(Widgets):
         self.LExtrato.column('Saldo', width=Col, anchor='e')
 
         self.LExtrato.pack(expand=True, fill='both')
-        self.LExtrato.place(relx=0.005, rely=0.01, relwidth=0.985, relheight=0.985)
+        self.LExtrato.place(relx=0, rely=0, relwidth=1, relheight=1)
 
     def consulta_extrato(self):
         if self.entry_empresa.get() != '':
-            ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get(), self.window_one)
+
+            ID_Empresa = self.obter_Empresa_ID(self.entry_empresa.get(), self.principal_frame)
+
         else:
             messagebox.showinfo("Gestor de Negócios", "Preencher a Empresa!!", parent=self.window_one)
             self.entry_empresa.focus()
@@ -424,8 +427,8 @@ class Extrato_Clientes_Fornecedores(Widgets):
                     vlr = transaction["Vlr"]
 
                     # Verifica se o valor é negativo para formatar os débitos e créditos
-                    debit = f"{abs(vlr):,.2f}" if vlr < 0 else "0.00"
-                    credit = "0.00" if vlr < 0 else f"{vlr:,.2f}"
+                    debit = f"{abs(vlr):,.2f}".replace(",", "v").replace(".", ",").replace("v", ".") if vlr < 0 else "0.00"
+                    credit = "0.00" if vlr < 0 else f"{vlr:,.2f}".replace(",", "v").replace(".", ",").replace("v", ".")
 
                     # Atualiza o saldo
                     saldo += vlr
@@ -434,7 +437,8 @@ class Extrato_Clientes_Fornecedores(Widgets):
                     # Adiciona a linha de transação na lista
                     # print(person_item, Dta_Documento, tipo, banco, nr_documento, debit, credit, f"{saldo:,.2f}")
                     self.LExtrato.insert("", "end", text="", values=(
-                        '', '', Dta_Documento, tipo, banco, nr_documento, debit, credit, f"{saldo:,.2f}"))
+                        '', '', Dta_Documento, tipo, banco, nr_documento, debit, credit,
+                        f"{saldo:,.2f}".replace(",", "v").replace(".", ",").replace("v", ".")))
 
         self.LExtrato.tag_configure('odd', background='#eee')
         self.LExtrato.tag_configure('even', background='#ddd')

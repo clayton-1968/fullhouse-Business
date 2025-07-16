@@ -16,13 +16,16 @@ class BorderoBancario(Widgets, Pessoas, Produtos, Icons):
     def create_widgets_bordero(self):
         # Data Vcto
         self.fr_dt_vcto = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_dt_vcto.place(relx=0, rely=0, relwidth=0.14, relheight=0.07)
+
+        self.fr_dt_vcto.place(relx=0, rely=0, relwidth=0.14, relheight=0.09)
+
         self.lb_dt_vcto = customtkinter.CTkLabel(self.fr_dt_vcto, text="Data Vcto")
         self.lb_dt_vcto.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
         # Data inicio
         self.lb_dt_inicio = customtkinter.CTkLabel(self.fr_dt_vcto, text="Data Início")
-        self.lb_dt_inicio.place(relx=0.1, rely=0.25, relheight=0.125, relwidth=0.35)
+
+        self.lb_dt_inicio.place(relx=0.10, rely=0.28, relheight=0.15, relwidth=0.35)
 
         self.entry_dt_inicio = customtkinter.CTkEntry(self.fr_dt_vcto, fg_color="white", text_color="black",
                                                       justify=tk.CENTER)
@@ -34,7 +37,8 @@ class BorderoBancario(Widgets, Pessoas, Produtos, Icons):
                                                                                    self.entry_dt_inicio))
         # Data fim
         self.lb_dt_fim = customtkinter.CTkLabel(self.fr_dt_vcto, text="Data Fim")
-        self.lb_dt_fim.place(relx=0.6, rely=0.25, relheight=0.125, relwidth=0.35)
+
+        self.lb_dt_fim.place(relx=0.55, rely=0.28, relheight=0.15, relwidth=0.35)
 
         self.entry_dt_fim = customtkinter.CTkEntry(self.fr_dt_vcto, fg_color="white", text_color="black",
                                                    justify=tk.CENTER)
@@ -78,15 +82,10 @@ class BorderoBancario(Widgets, Pessoas, Produtos, Icons):
         self.btn_consulta.pack(pady=10)
         self.btn_consulta.place(relx=0.25, rely=0.25, relwidth=0.50, relheight=0.5)
 
-        # Botão Sair Borderô
-        icon_image = self.base64_to_photoimage('sair')
-        self.btn_sair_bordero = customtkinter.CTkButton(self.frame_principal, text='Sair', image=icon_image, fg_color='transparent', command=self.tela_principal)
-        self.btn_sair_bordero.pack(pady=10)
-        self.btn_sair_bordero.place(relx=0.955, rely=0, relwidth=0.04, relheight=0.05)
 
         # Resultado
         self.fr_tree = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
-        self.fr_tree.place(relx=0, rely=0.075, relwidth=1, relheight=1)
+        self.fr_tree.place(relx=0, rely=0.095, relwidth=1, relheight=1)
 
         self.tree = ttk.Treeview(self.fr_tree, columns=(
             "Origem", "Fornecedor/Cliente", "Nr. Documento",
