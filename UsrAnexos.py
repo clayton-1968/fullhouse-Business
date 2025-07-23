@@ -179,8 +179,16 @@ class Pesquisa_Anexos(Widgets):
             messagebox.showerror("Erro", f"Erro! {str(e)}", self.principal_frame)
 
     def upload_arquivo_cronograma(self, projeto_id, tarefa_id, anexo_id, doc_num_documento):
-
         try:
+            # Definir o caminho da pasta de downloads
+            downloads_folder = os.path.join(os.environ.get('USERPROFILE'), 'Downloads')
+            
+            # Verificar se a pasta de downloads existe, caso contrário, crie-a
+            if not os.path.exists(downloads_folder):
+                print('Pasta de downloads não existe. Criando pasta...')
+                breakpoint()
+                os.makedirs(downloads_folder)
+
             conditions = []  
             conditions.append('Projeto_ID = %s')
             params = [projeto_id]
@@ -206,11 +214,12 @@ class Pesquisa_Anexos(Widgets):
                 return
             b64_data = record[0]['pdf']
             if b64_data is not None:
-                file_path = os.path.join(os.getcwd(), doc_num_documento)
+                file_path = os.path.join(downloads_folder, doc_num_documento)
+                # file_path = os.path.join(os.getcwd(), doc_num_documento) # baixa onde está o executável
                 with open(file_path, 'wb') as file:
                     file.write(b64_data)  # Write the binary data to a file
-
-                messagebox.showinfo("Sucesso", "Documento Baixado com sucesso!!!.", parent=self.principal_frame)
+                # Abre o arquivo PDF no navegador padrão
+                webbrowser.open(file_path)
             else:
                 messagebox.showinfo(
                     "Informações", "Nenhum documento encontrado!!!.", parent=self.principal_frame)
