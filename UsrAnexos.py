@@ -185,8 +185,6 @@ class Pesquisa_Anexos(Widgets):
             
             # Verificar se a pasta de downloads existe, caso contrário, crie-a
             if not os.path.exists(downloads_folder):
-                print('Pasta de downloads não existe. Criando pasta...')
-                breakpoint()
                 os.makedirs(downloads_folder)
 
             conditions = []  
@@ -426,6 +424,13 @@ class Pesquisa_Anexos_Simulador(Widgets):
 
     def upload_arquivo_simulador(self, empresa_id, uf, cidade, tipo_estudo, nome_estudo, anexo_id, doc_num_documento):
         try:
+            # Definir o caminho da pasta de downloads
+            downloads_folder = os.path.join(os.environ.get('USERPROFILE'), 'Downloads')
+            
+            # Verificar se a pasta de downloads existe, caso contrário, crie-a
+            if not os.path.exists(downloads_folder):
+                os.makedirs(downloads_folder)
+
             conditions = []  
             conditions.append('Empresa_ID = %s')
             params = [empresa_id]
@@ -472,11 +477,15 @@ class Pesquisa_Anexos_Simulador(Widgets):
                 return
             b64_data = record[0]['pdf']
             if b64_data is not None:
-                file_path = os.path.join(os.getcwd(), doc_num_documento)
+                file_path = os.path.join(downloads_folder, doc_num_documento)
+                # file_path = os.path.join(os.getcwd(), doc_num_documento)
                 with open(file_path, 'wb') as file:
                     file.write(b64_data)  # Write the binary data to a file
+                
+                # Abre o arquivo PDF no navegador padrão
+                webbrowser.open(file_path)
 
-                messagebox.showinfo("Sucesso", "Documento Baixado com sucesso!!!.", parent=self.janela_simulador_anexos)
+                
             else:
                 messagebox.showinfo(
                     "Informações", "Nenhum documento encontrado!!!.", parent=self.janela_simulador_anexos)
