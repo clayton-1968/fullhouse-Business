@@ -7,10 +7,17 @@ import logging
 import matplotlib.pyplot as plt
 import matplotlib.dates  as mdates
 import matplotlib.ticker as mticker
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 import networkx          as nx
+
+import tempfile
+  
 
 from datetime import *
 from datetime import datetime
+from dateutil.parser import parse
+
 from PIL import ImageTk, Image
 import io
 
@@ -31,7 +38,7 @@ from customtkinter import *
 import tkinter as tk  # Importação do tkinter para o anchor
 
 import numpy as np
-# import pandas as pd
+import pandas as pd
 # import matplotlib.pyplot as plt
 # from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # from matplotlib.patches import Circle

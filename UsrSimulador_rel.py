@@ -693,7 +693,7 @@ class Simulador_Estudos_Rel(Widgets):
 
     def frame_novosnegocios(self, janela, ID_Empresa, DS_Empresa, UF, Cidade):
         # Preenche Cabeçalho
-        self.entry_empresa.set( DS_Empresa)
+        self.entry_empresa.set(DS_Empresa)
         self.entry_uf.set(UF.upper())
         self.entry_municipio.set(Cidade)
         
@@ -1095,14 +1095,10 @@ class Simulador_Estudos_Rel(Widgets):
         self.lb_custos.place(relx=0.05, rely=0, relheight=0.03, relwidth=0.50)
 
         # Projetos
-        self.fr_projetos = customtkinter.CTkFrame(
-            self.fr_custos, border_color="gray75", border_width=1, fg_color="#8B0000")
-        self.fr_projetos.place(relx=0.005, rely=0.03,
-                               relwidth=0.33, relheight=0.47)
-        self.lb_projetos = customtkinter.CTkLabel(
-            self.fr_projetos, text="Projetos", text_color="black", font=('Arial', 12, 'bold'), anchor=tk.W)
-        self.lb_projetos.place(
-            relx=0.05, rely=0, relheight=0.04, relwidth=0.50)
+        self.fr_projetos = customtkinter.CTkFrame(self.fr_custos, border_color="gray75", border_width=1, fg_color="#8B0000")
+        self.fr_projetos.place(relx=0.005, rely=0.03,relwidth=0.33, relheight=0.47)
+        self.lb_projetos = customtkinter.CTkLabel(self.fr_projetos, text="Projetos", text_color="black", font=('Arial', 12, 'bold'), anchor=tk.W)
+        self.lb_projetos.place(relx=0.05, rely=0, relheight=0.04, relwidth=0.50)
 
         self.lb_projetos_per_obra = customtkinter.CTkLabel(self.fr_projetos, text="% x Obra", text_color="black", font=('Arial', 10), anchor=tk.W)
         self.lb_projetos_per_obra.place(relx=0.01, rely=0.10, relheight=0.05, relwidth=0.97)

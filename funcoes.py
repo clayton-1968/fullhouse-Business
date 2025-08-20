@@ -12,6 +12,7 @@ import numpy as np
 import numpy_financial as npf 
 import math
 from datetime import datetime, timedelta
+from dateutil.parser import parse
 from calendar import monthrange
 from dateutil.relativedelta import relativedelta
 import base64
@@ -1051,9 +1052,12 @@ class Gravar():
         # GRAVAR FLUXO DE CAIXA MENSAL
         Dta_Inicio = TDta_Contrato
         if TStatus == "Contratado":
-            Dta_Inicio = datetime.strptime(Dta_Inicio, '%Y-%m-%d')  # Ajuste conforme necessário
-            Dta_Inicio = Dta_Inicio.replace(day=self.ult_dia_mes(Dta_Inicio))
+            if isinstance(Dta_Inicio, str):
+                Dta_Inicio = parse(Dta_Inicio)  # parse automatically detects format
 
+           # Dta_Inicio = Dta_Inicio.replace(day=self.ult_dia_mes(Dta_Inicio))
+            Dta_Inicio = self.ult_dia_mes(Dta_Inicio)
+            
             str_sql = """
                 SELECT * FROM Dados_Fluxo
                 WHERE Empresa_ID = %s 
@@ -1061,10 +1065,9 @@ class Gravar():
                 AND Cidade = %s 
                 AND Tipo = %s 
                 AND Nome_da_Area = %s 
-                AND Periodo_Nr = %s
                 """
             # Executando a consulta com os parâmetros
-            params = (ID_Empresa, UF, Cidade, Tipo_Estudo, Nome_Area, vi_contador)
+            params = (ID_Empresa, UF, Cidade, Tipo_Estudo, Nome_Area)
             myresult = db.executar_consulta(str_sql, params)
             
             if myresult:
@@ -1115,8 +1118,9 @@ class Gravar():
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) 
                 """
                 # Formatação da data
-                dta_inicio_formatada = Dta_Inicio.strftime("%Y-%m-%d")
-
+                # dta_inicio_formatada = Dta_Inicio.strftime("%Y-%m-%d")
+                dta_inicio_formatada = Dta_Inicio
+            
                 # Definindo os valores a serem inseridos
                 values = (
                     ID_Empresa,
@@ -1124,7 +1128,7 @@ class Gravar():
                     Cidade,
                     Nome_Area,
                     Tipo_Estudo,
-                    float(vi_contador+1),
+                    float(vi_contador + 1),
                     dta_inicio_formatada,
                     float(self.Valor_Mensal[vi_contador]),
                     float(self.Valor_Parcelas[vi_contador]),
@@ -1149,6 +1153,13 @@ class Gravar():
                     float(self.FluxoAcumulado[vi_contador])
                 )
                 myresult = db.executar_consulta(str_sql, (values))
+                
+                if isinstance(Dta_Inicio, str):
+                    try:
+                        Dta_Inicio = parse(Dta_Inicio)
+                    except ValueError:
+                        raise ValueError(f"Invalid date string: {Dta_Inicio}")
+                    
                 Dta_Inicio = Dta_Inicio + relativedelta(months=1)
                 
         else:
@@ -3972,6 +3983,14 @@ class Limpeza():
             self.window_one.destroy()  # Fechar a janela principal 
             self.window_one = None  # Initialize the attribute 
             self.treeview = None
+
+    def on_closing_tela_resultados(self):
+        self.janela_simulador_resultado.destroy()  # Fechar a janela principal    
+        self.janela_simulador_resultado = None  # Initialize the attribute
+        self.window_one.update_idletasks()  # Update the window to get correct dimensions
+        width = self.window_one.winfo_screenwidth()
+        height = self.window_one.winfo_screenheight()
+        self.window_one.geometry(f"{width}x{height}+0+0") 
 
     def on_closing_tela_negocios(self):
         self.janela_simulador_rel.destroy()  # Fechar a janela principal    

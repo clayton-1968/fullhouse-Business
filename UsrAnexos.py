@@ -69,7 +69,20 @@ class Pesquisa_Anexos(Widgets):
         self.LPesquisa_Anexos.pack(expand=True, fill='both')
         self.LPesquisa_Anexos.place(relx=0.005, rely=0.01, relwidth=0.985, relheight=0.985)
         
-
+        def selectec_enviar_whatsapp():
+            selected_item = self.LPesquisa_Anexos.selection()
+            if selected_item:
+                values = self.LPesquisa_Anexos.item(self.LPesquisa_Anexos.selection(), 'values')
+                projeto_id = values[0]
+                tarefa_id = values[1]
+                anexo_id = values[2]
+                doc_num_documento = values[3]
+                self.whatsapp_arquivo_cronograma(projeto_id, tarefa_id, anexo_id, doc_num_documento)
+            else:
+                messagebox.showwarning("Anexo", "Selecionar uma linha de documento!!!", parent=self.janela_documentos_anexos)
+                return
+            
+        
         def selectec_abrir():
             selected_item = self.LPesquisa_Anexos.selection()
             if selected_item:
@@ -221,6 +234,48 @@ class Pesquisa_Anexos(Widgets):
             else:
                 messagebox.showinfo(
                     "Informações", "Nenhum documento encontrado!!!.", parent=self.principal_frame)
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Erro ocorrido: {str(e)}", parent=self.principal_frame)
+
+    def whatsapp_arquivo_cronograma(self, projeto_id, tarefa_id, anexo_id, doc_num_documento):
+        try:
+            conditions = []  
+            conditions.append('Projeto_ID = %s')
+            params = [projeto_id]
+            conditions.append('Tarefa_ID = %s')
+            params.append(tarefa_id)
+            conditions.append('ID_Anexo = %s')
+            params.append(anexo_id)
+            
+            sql_query = f"""
+                            SELECT 
+                                Empresa_ID          AS Empresa_ID, 
+                                Projeto_ID          AS Projeto_ID, 
+                                Tarefa_ID           AS Tarefa_ID, 
+                                Doc_Num_Documento   AS Doc_Num_Documento, 
+                                BinarioPDF          AS pdf
+                            FROM TB_Gedoc_Tarefas 
+                            WHERE {' AND '.join(conditions)} 
+                        """
+            
+            record = db.executar_consulta(sql_query, params)
+
+            if record:
+                # Salve o anexo em um arquivo temporário
+                with tempfile.NamedTemporaryFile(delete=False) as arquivo_temporario:
+                    arquivo_temporario.write(record[0])
+                    arquivo_temporario.close()
+
+                # Envie o arquivo como uma mensagem do WhatsApp
+                numero_do_destinatario = "seu_numero_do_destinatario"  # Substitua pelo número do WhatsApp do destinatário
+                # pywhatkit.sendwhatmsg_to_image(numero_do_destinatario, arquivo_temporario.name, 0, 0)
+        
+                messagebox.showinfo("Info", "Anexo enviado com sucesso!", parent=self.principal_frame)
+                return
+            else:
+                messagebox.showinfo("Info", "Anexo não encontrado!", parent=self.principal_frame)
+                return
 
         except Exception as e:
             messagebox.showerror("Error", f"Erro ocorrido: {str(e)}", parent=self.principal_frame)

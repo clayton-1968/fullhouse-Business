@@ -200,6 +200,22 @@ class Resumo_Estudos(Widgets):
                     Nome_da_Area = values[4]
                     self.fluxo_projetado(ID_Empresa, DS_Empresa, UF, Cidade, Tipo, Nome_da_Area)
 
+            def selected_resultado():
+                selected_item = self.list_g.selection()
+                if selected_item:
+                    # Get the text of the selected item
+                    item_text = self.list_g.item(selected_item, 'text')
+                    # Get associated values as a tuple
+                    values = self.list_g.item(selected_item, 'values')
+                    
+                    ID_Empresa = self.obter_Empresa_ID(self.combo_empresa.get(), janela)
+                    DS_Empresa = self.combo_empresa.get()
+                    UF = values[6]
+                    Cidade = values[5]
+                    Tipo = values[3]
+                    Nome_da_Area = values[4]
+                    self.simulador_estudos_resultado(ID_Empresa, DS_Empresa, UF, Cidade, Tipo, Nome_da_Area)
+
             def selected_maps():
                 selected_item = self.list_g.selection()
                 if selected_item:
@@ -279,6 +295,7 @@ class Resumo_Estudos(Widgets):
                     
                     postPopUpMenu.add_command(label='Simulador', accelerator='Ctrl+S', command= selected_simulador)
                     postPopUpMenu.add_command(label='Fluxo Projetado', accelerator='Ctrl+F', command=selected_fluxo)
+                    postPopUpMenu.add_command(label='Demonstrativo - Resultado', accelerator='Ctrl+R', command=selected_resultado)
                     postPopUpMenu.add_command(label='Maps', accelerator='Ctrl+M', command=selected_maps)
                     postPopUpMenu.add_command(label='Pesquisas', accelerator='Ctrl+P', command=selected_pesquisa)
                     postPopUpMenu.add_command(label='Anexos', accelerator='Ctrl+A', command=selected_anexos)
@@ -293,6 +310,7 @@ class Resumo_Estudos(Widgets):
             self.list_g.bind("<Button-3>", postPopUpMenu)  # 'Button-3' é o clique direito do mouse
             self.list_g.bind('<Control-s>', lambda event: selected_simulador() if self.list_g.selection() else None)
             self.list_g.bind('<Control-f>', lambda event: selected_fluxo() if self.list_g.selection() else None)
+            self.list_g.bind('<Control-r>', lambda event: selected_resultado() if self.list_g.selection() else None)
             self.list_g.bind('<Control-m>', lambda event: selected_maps() if self.list_g.selection() else None)
             self.list_g.bind('<Control-p>', lambda event: selected_pesquisa() if self.list_g.selection() else None)
             self.list_g.bind('<Control-a>', lambda event: selected_anexos() if self.list_g.selection() else None)

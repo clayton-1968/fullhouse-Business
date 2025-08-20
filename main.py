@@ -5,6 +5,7 @@ from LancFinanceiro                   import Lanc_fin
 from UsrRelatorio_EstudosNegocio      import Resumo_Estudos
 from Lx.UsrSimulador                  import Simulador_Estudos
 from UsrSimulador_rel                 import Simulador_Estudos_Rel
+from UsrSimulador_resultado           import Simulador_Estudos_Resultado
 from UsrSimulador_Maps                import Simulador_Maps
 from UsrSites                         import Sites_rel
 from UsrPesquisaMercado               import Pesquisa_Mercado
@@ -39,6 +40,7 @@ class PrimaryWindow(
                     Resumo_Estudos,
                     Simulador_Estudos,
                     Simulador_Estudos_Rel,
+                    Simulador_Estudos_Resultado,
                     Simulador_Maps,
                     Sites_rel,
                     Pesquisa_Mercado,

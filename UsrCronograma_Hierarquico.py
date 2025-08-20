@@ -2,12 +2,6 @@ from imports      import *
 from widgets      import Widgets
 from datetime     import datetime
 from PIL          import ImageTk, Image
-
-# import matplotlib.pyplot as plt
-# import matplotlib.dates  as mdates
-# import matplotlib.ticker as mticker
-# import networkx          as nx
-
 from UsrCadastros import Projetos
 from UsrCadastros import Cronograma_Atividades_Copiar
 
@@ -463,6 +457,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
     def atualizar_dependencias_hierarquico(self, tpo_movto, lin, tarefa_id_nova):
         nr_campos = 1
         linha_base_predessessora = lin
+        # print(tpo_movto)
         if tpo_movto == 'incluir':
             movto = 1
         else:
@@ -470,13 +465,13 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         # linha_base_predessessora = None
         all_numbers       = self.get_all_items_numbers()
         # Primeiro loop para atualizar os números dos campos
-        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, str_observacao, level in all_numbers:
+        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, str_observacao, level in all_numbers:
             if tarefa_id == tarefa_id_nova:  
                 linha_base_predessessora = nr_campos
             nr_campos += 1    
         
         nr_campos = 1
-        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level in all_numbers:
+        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, str_observacao, level in all_numbers:
             tarefa_id_atual      = str(tarefa_id.zfill(2))
             nrcarat              = len(tarefa_id_atual)
             entry_descricao      = tarefa_ds
@@ -489,7 +484,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             str_per_conclusao = per_conclusao
             str_ini_prev = dta_inicial_prevista
             str_ini_real = dta_inicial_realizada
-            str_fim_prev =  fimista
+            str_fim_prev = dta_conclusao_prevista
             str_fim_real = dta_conclusao_realizada
             str_obs = str_observacao
 
@@ -509,6 +504,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                             linha_tarefa = dependente_num + movto
                         else:
                             linha_tarefa = dependente_num
+                        
                         tarefa_dependencia += str(linha_tarefa)
                         lin_dependente = ""
 
@@ -529,11 +525,9 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                 tarefa_dependencia = ""
 
             # Atualiza o subitem de dependência
-            
             self.LCronograma.item(
                 child,
                 text='',
-                
                 values=(
                     nr_campos,
                     str(tarefa_id_atual).zfill(2),
@@ -556,10 +550,10 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         all_numbers     = self.get_all_items_numbers()
         nr_interacao = int(int(len(all_numbers)) / 10)
         for _ in range(nr_interacao):
-            for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level in all_numbers:
+            for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, str_observacao, level in all_numbers:
                 self.predessessora_hierarquico(child)
             
-            self.dta_tarefa_mae_hierarquico
+            # self.dta_tarefa_mae_hierarquico
         
     def is_valid_date_hierarquico(self, date_str):
         try:
@@ -647,7 +641,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                     
                     if char == ';' or viContador == nr_caracteres - 1:
                         
-                        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level in all_dependentes:
+                        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, str_observacao, level in all_dependentes:
                             nr_items = len(all_dependentes)
                             if int(lin_dependente) > int(nr_items):
                                 messagebox.showinfo("Gestor de Negócios", f"Linha Dependência Inválida - {tarefa_id} - {tarefa_ds}", parent=self.master)
@@ -838,7 +832,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
 
     def incluir_tarefas_hierarquico(self, projeto_id, projeto_ds, linha, tarefa_id, selected_item):
         # Parametros Iniciais
-        nrcampo = int(linha) + 2
+        nrcampo = int(linha) + 1
         tarefa_id_origem = tarefa_id.replace(".", "")
         tarefa_ds_nova = "Preencher Descricão Nova Tarefa...................!!!!"
         
@@ -855,7 +849,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         selected_item_id = selected_item if isinstance(selected_item, tuple) else selected_item
         selected_index = next((index for index, item in enumerate(todos_itens) if item[0] == selected_item_id[0]), None)
         for item_data in todos_itens[selected_index:]:
-            child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, str_observacao, level = item_data
+            child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, str_observacao, level = item_data
             
             nivel_secundario = len(tarefa_id.replace(".", ""))
             if nivel_inclusao == nivel_secundario and tarefa_id_origem != tarefa_id.replace(".", ""):
@@ -879,7 +873,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                 
                 nivel_secundario = len(tarefa_id.replace(".", ""))
                 if nivel_inclusao == nivel_secundario and tarefa_id.replace(".", "")[:nivel_inclusao_mae] == tarefa_id_origem.replace(".", ""):
-                    nrcampo = int(linha) + 2
+                    nrcampo = int(linha) + 1
                     nivel_ultimo = tarefa_id
 
                 
@@ -1119,7 +1113,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                     per_conclusao = float(values[7].replace("%", ""))
                     dta_inicial_prevista = values[8]
                     dta_inicial_realizada = values[9]
-                    fimista = values[10]
+                    dta_conclusao_prevista = values[10]
                     dta_conclusao_realizada = values[11]
                     str_observacao = values[12] 
                     numbers.append((
@@ -1134,7 +1128,7 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                                     per_conclusao, 
                                     dta_inicial_prevista, 
                                     dta_inicial_realizada, 
-                                    fimista, 
+                                    dta_conclusao_prevista, 
                                     dta_conclusao_realizada, 
                                     item_id,
                                     str_observacao, 
@@ -1952,7 +1946,9 @@ class TreeviewEdit(ttk.Treeview):
                 messagebox.showinfo("Gestor de Negócios", "A tarefa já foi concluída, não é possível alterar a data inicial.")
                 event.widget.destroy()
                 return
-            
+            else:
+                self.entry_data_conclusao_prevista = (self.parse_date(new_value) + timedelta(days=float(self.entry_tempo_previsto))).strftime("%d/%m/%Y")
+                            
 
         elif self.column_index == 10:
             if self.entry_per_execucao == '100.00%':
@@ -1988,7 +1984,6 @@ class TreeviewEdit(ttk.Treeview):
             current_values[self.column_index] = new_value
             
             self.item(selected_iid, values=current_values)
-
             self.atualiza_cronograma_interacao(10)
             self.ajustar_list()
 
@@ -2036,7 +2031,7 @@ class TreeviewEdit(ttk.Treeview):
         all_numbers     = self.get_all_items_numbers()
         nr_interacao = int(int(len(all_numbers)) / 10)
         for _ in range(nr_interacao):
-            for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level in all_numbers:
+            for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
                 self.predessessora(child)
 
             self.dta_tarefa_mae()
@@ -2060,7 +2055,7 @@ class TreeviewEdit(ttk.Treeview):
                     per_conclusao = float(values[7].replace("%", ""))
                     dta_inicial_prevista = values[8]
                     dta_inicial_realizada = values[9]
-                    fimista = values[10]
+                    dta_conclusao_prevista = values[10]
                     dta_conclusao_realizada = values[11]
                     numbers.append((
                                     child, 
@@ -2074,7 +2069,7 @@ class TreeviewEdit(ttk.Treeview):
                                     per_conclusao, 
                                     dta_inicial_prevista, 
                                     dta_inicial_realizada, 
-                                    fimista, 
+                                    dta_conclusao_prevista, 
                                     dta_conclusao_realizada, 
                                     item_id, 
                                     level))  
@@ -2238,15 +2233,14 @@ class TreeviewEdit(ttk.Treeview):
                     
                     if char == ';' or viContador == (nr_caracteres - 1):
                         
-                        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level in all_dependentes:
+                        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_dependentes:
                             nr_items = len(all_dependentes)
                             if int(lin_dependente) > int(nr_items):
                                 messagebox.showinfo("Gestor de Negócios", f"Linha Dependência Inválida - {tarefa_id} - {tarefa_ds}", parent=self.master)
                                 return
                             
                             if int(lin_dependente) == int(linha):
-                                data_inicial_realizada = self.parse_date(dta_inicial_realizada)
-                                data_conclusao_prevista = self.parse_date(fimista)
+                                data_conclusao_prevista = self.parse_date(dta_conclusao_prevista)
                                 data_conclusao_realizada = self.parse_date(dta_conclusao_realizada)
                                 
                         
@@ -2263,11 +2257,15 @@ class TreeviewEdit(ttk.Treeview):
                                 
 
                         lin_dependente = ''
-                
-                if dta_precedente or dta_precedente is not None:
-                    current_values[8] = (dta_precedente + timedelta(days=tarefa_tempo_espera)).strftime("%d/%m/%Y")
+
+                current_values[8] = (dta_precedente + timedelta(days=tarefa_tempo_espera)).strftime("%d/%m/%Y")
+                if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
+                    current_values[10] = (self.parse_date(data_inicial_realizada) + timedelta(days=tarefa_tempo_previsto)).strftime("%d/%m/%Y")
+                else:
                     current_values[10] = (self.parse_date(current_values[8]) + timedelta(days=tarefa_tempo_previsto)).strftime("%d/%m/%Y")
+
             else:
+                
                 if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
                     current_values[10] = (self.parse_date(data_inicial_realizada) + timedelta(days=tarefa_tempo_previsto)).strftime("%d/%m/%Y")
                 else:
@@ -2343,7 +2341,7 @@ class TreeviewEdit(ttk.Treeview):
     def dta_tarefa_mae(self):
         all_numbers       = self.get_all_items_numbers()
         all_numbers_check = self.get_all_items_numbers()
-        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level in all_numbers:
+        for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
             item_idx = child
             nrcarat              = 0
             NrCampos             = linha
@@ -2358,7 +2356,7 @@ class TreeviewEdit(ttk.Treeview):
 
             data_inicial_prevista              = self.parse_date(dta_inicial_prevista)
             data_inicial_realizada             = self.parse_date(dta_inicial_realizada)
-            data_conclusao_prevista            = self.parse_date(fimista)
+            data_conclusao_prevista            = self.parse_date(dta_conclusao_prevista)
             data_conclusao_realizada           = self.parse_date(dta_conclusao_realizada)
             dta_provisoria_inicial_prevista    = ''
             dta_provisoria_inicial_realizada   = ''
@@ -2366,14 +2364,14 @@ class TreeviewEdit(ttk.Treeview):
             dta_provisoria_conclusao_realizada = ''
             nr_tarefas = 0
             nr_tarefas_concluidas = 0
-            for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, fimista, dta_conclusao_realizada, item_id, level in all_numbers_check:
+            for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers_check:
                 nr_caracteres = len(tarefa_id)
                 if tarefa_id[:nrcarat] == tarefa_id_atual and nr_caracteres > nrcarat:
                     nr_tarefas += 1
                     per_conclusao_items = per_conclusao
                     data_inicial_prevista_items = self.parse_date(dta_inicial_prevista)
                     data_inicial_realizada_items = self.parse_date(dta_inicial_realizada)
-                    data_conclusao_prevista_items = self.parse_date(fimista)
+                    data_conclusao_prevista_items = self.parse_date(dta_conclusao_prevista)
                     data_conclusao_realizada_items = self.parse_date(dta_conclusao_realizada)
                         
                     if data_inicial_prevista_items is not None:
