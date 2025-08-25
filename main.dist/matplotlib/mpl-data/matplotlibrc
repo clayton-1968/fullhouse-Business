@@ -811,4 +811,4 @@
 #
 #animation.embed_limit:  20.0     # Limit, in MB, of size of base64 encoded
                                   # animation in HTML (i.e. IPython notebook)
-backend: TkAgg
+backend: tkagg

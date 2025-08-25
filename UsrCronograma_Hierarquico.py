@@ -1947,7 +1947,10 @@ class TreeviewEdit(ttk.Treeview):
                 event.widget.destroy()
                 return
             else:
-                self.entry_data_conclusao_prevista = (self.parse_date(new_value) + timedelta(days=float(self.entry_tempo_previsto))).strftime("%d/%m/%Y")
+                if new_value:
+                    self.entry_data_conclusao_prevista = (self.parse_date(new_value) + timedelta(days=float(self.entry_tempo_previsto))).strftime("%d/%m/%Y")
+                else:
+                    self.entry_data_conclusao_prevista = ''
                             
 
         elif self.column_index == 10:
