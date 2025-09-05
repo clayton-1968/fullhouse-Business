@@ -30,6 +30,7 @@ from UsrAlterar_Senha                 import AlterarSenha
 from UsrUsuarios_Sistema              import UsuariosSistema
 from UsrPermissoes_Sistema            import PermissoesSistema
 from UsrContas_Pagar                  import ContasPagar
+from UsrInformeGestao                 import InformeGestao
 
 from UsrModulos_Sistema               import ModuloSistema
 
@@ -65,6 +66,7 @@ class PrimaryWindow(
                     UsuariosSistema,
                     PermissoesSistema,
                     ContasPagar,
+                    InformeGestao,
                     ):
 
     def __init__(self):
@@ -117,14 +119,14 @@ class PrimaryWindow(
                 self.consultar_bordero(self.principal_frame)
             elif modulo == 'Alterar_Senha':
                 self.alterar_senha(self.principal_frame, self.username)
-
             elif modulo == 'Usuarios_Sistema':
-
                 self.usuarios_sistema(self.principal_frame)
             elif modulo == 'Permissoes_Sistema':
                 self.permissoes_sistema(self.principal_frame)
             elif modulo == 'Contas_Pagar':
                 self.contas_pagar(self.principal_frame)
+            elif modulo == 'Informe_Gestao':
+                self.informe_gestao(self.principal_frame)
 
 
     def login_screen(self):
@@ -299,7 +301,7 @@ class PrimaryWindow(
         filemenu.add_command(label="Unidades Medidas")
         filemenu.add_command(label="Trocar Senha", command=lambda: self.menu_conectar('Alterar_Senha'))
 
-        filemenu2.add_command(label="Informe Gestão")
+        filemenu2.add_command(label="Informe Gestão", command=lambda: self.menu_conectar('Informe_Gestao'))
         filemenu2.add_command(label="Previsão Financeira")
 
         filemenu3.add_command(label="Estudos", command=lambda: self.menu_conectar('Indicadores'))
