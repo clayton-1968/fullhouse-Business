@@ -26,10 +26,13 @@ class InformeGestao(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
                                                              text_color="black",
                                                              justify=tk.CENTER)
         self.entry_cnpj_info_gestao.place(relx=0.01, rely=0.5, relwidth=0.96, relheight=0.4)
+        self.entry_cnpj_info_gestao.bind("<Return>", lambda event: self.carregar_orcamentos())
+        self.entry_cnpj_info_gestao.bind("<FocusOut>", lambda event: self.carregar_orcamentos())
 
         # Nome (Empresa)
         self.frame_empresa(self.frame_principal, 0.105, 0, 0.30, 0.07)
 
+        self.combo_empresa.bind("<<ComboboxSelected>>", self.preencher_cnpj_automaticamente)
         self.combo_empresa.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_banco))
 
         # Código Orçamento
@@ -54,10 +57,13 @@ class InformeGestao(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
                                                                text="Descrição Orçamento")
         self.lb_descricao_info_gestao.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
-        self.entry_descricao_info_gestao = customtkinter.CTkEntry(self.fr_descricao_info_gestao, fg_color="white",
-                                                                  text_color="black",
-                                                                  justify=tk.CENTER)
-        self.entry_descricao_info_gestao.place(relx=0.01, rely=0.5, relwidth=0.96, relheight=0.4)
+        self.combo_descricao_orcamento = customtkinter.CTkComboBox(self.fr_descricao_info_gestao,
+                                                                   fg_color="white",
+                                                                   text_color="black",
+                                                                   justify="center",
+                                                                   state="readonly")
+        self.combo_descricao_orcamento.place(relx=0.01, rely=0.5, relwidth=0.96, relheight=0.4)
+        self.combo_descricao_orcamento.bind("<<ComboboxSelected>>", self.atualizar_codigo_orcamento)
 
         # Código Unid. Negócios
         self.fr_codigo_un_info_gestao = customtkinter.CTkFrame(self.frame_principal, border_color="gray75",
@@ -97,7 +103,7 @@ class InformeGestao(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.entry_dt = customtkinter.CTkEntry(self.fr_data_inicio_info_gestao, fg_color="white",
                                                text_color="black", justify=tk.CENTER)
         self.entry_dt.delete(0, 'end')
-        self.entry_dt.insert(0, datetime.now().strftime("%d/%m/%Y"))
+        self.entry_dt.insert(0, "01/01/2000")
         self.entry_dt.place(relx=0.275, rely=0.35, relwidth=0.485, relheight=0.50)
         self.entry_dt.bind("<Button-1>", lambda event: self.calendario(event, self.entry_dt))
         self.entry_dt.bind("<Return>", lambda event: self.muda_barrinha_dta(event, self.entry_dt, self.entry_dt))
@@ -136,37 +142,37 @@ class InformeGestao(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.fr_botoes_info_gestao_box.place(relx=0, rely=0.25, relwidth=1, relheight=0.75)
 
         # Box Receitas
-        self.receitas_var = tk.BooleanVar()
+        self.receitas_var = tk.BooleanVar(value=True)
         self.receitas_cbox = customtkinter.CTkCheckBox(self.fr_botoes_info_gestao_box, text="Receitas",
                                                        variable=self.receitas_var)
         self.receitas_cbox.place(relx=0.02, rely=0.1, relwidth=0.15, relheight=0.8)
 
         # Box Custos
-        self.custos_var = tk.BooleanVar()
+        self.custos_var = tk.BooleanVar(value=True)
         self.custos_cbox = customtkinter.CTkCheckBox(self.fr_botoes_info_gestao_box, text="Custos",
                                                      variable=self.custos_var)
         self.custos_cbox.place(relx=0.18, rely=0.1, relwidth=0.15, relheight=0.8)
 
         # Box Despesas
-        self.despesas_var = tk.BooleanVar()
+        self.despesas_var = tk.BooleanVar(value=True)
         self.despesas_cbox = customtkinter.CTkCheckBox(self.fr_botoes_info_gestao_box, text="Despesas",
                                                        variable=self.despesas_var)
         self.despesas_cbox.place(relx=0.34, rely=0.1, relwidth=0.15, relheight=0.8)
 
         # Box Investimentos
-        self.investimentos_var = tk.BooleanVar()
+        self.investimentos_var = tk.BooleanVar(value=True)
         self.investimentos_cbox = customtkinter.CTkCheckBox(self.fr_botoes_info_gestao_box, text="Investimentos",
                                                             variable=self.investimentos_var)
         self.investimentos_cbox.place(relx=0.50, rely=0.1, relwidth=0.15, relheight=0.8)
 
         # Box Estoques
-        self.estoques_var = tk.BooleanVar()
+        self.estoques_var = tk.BooleanVar(value=True)
         self.estoques_cbox = customtkinter.CTkCheckBox(self.fr_botoes_info_gestao_box, text="Estoques",
                                                        variable=self.estoques_var)
         self.estoques_cbox.place(relx=0.66, rely=0.1, relwidth=0.15, relheight=0.8)
 
         # Box Ativos/Passivos
-        self.ativos_pass_var = tk.BooleanVar()
+        self.ativos_pass_var = tk.BooleanVar(value=True)
         self.ativos_pass_cbox = customtkinter.CTkCheckBox(self.fr_botoes_info_gestao_box, text="Ativos/Passivos",
                                                           variable=self.ativos_pass_var)
         self.ativos_pass_cbox.place(relx=0.82, rely=0.1, relwidth=0.15, relheight=0.8)
@@ -241,6 +247,84 @@ class InformeGestao(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         self.fr_tree.grid_rowconfigure(0, weight=1)
         self.fr_tree.grid_columnconfigure(0, weight=1)
 
+
+    def preencher_cnpj_automaticamente(self, event):
+        empresa_selecionada = self.combo_empresa.get()
+        self.carregar_orcamentos()
+
+        if empresa_selecionada:
+            cnpj = self.empresas_dict.get(empresa_selecionada)
+
+            if cnpj:
+                self.entry_cnpj_info_gestao.delete(0, 'end')
+                self.entry_cnpj_info_gestao.insert(0, cnpj)
+            else:
+                # Se não encontrar o CNPJ, limpa o campo
+                self.entry_cnpj_info_gestao.delete(0, 'end')
+        else:
+            # Se nenhuma empresa estiver selecionada, limpa o campo
+            self.entry_cnpj_info_gestao.delete(0, 'end')
+
+
+    def atualizar_codigo_orcamento(self):
+        descricao_selecionada = self.combo_descricao_orcamento.get()
+
+        if descricao_selecionada and hasattr(self, 'orcamentos_dict'):
+            orc_id = self.orcamentos_dict.get(descricao_selecionada)
+
+            if orc_id:
+                self.entry_codigo_info_gestao.delete(0, 'end')
+                self.entry_codigo_info_gestao.insert(0, str(orc_id))
+            else:
+                self.entry_codigo_info_gestao.delete(0, 'end')
+        else:
+            self.entry_codigo_info_gestao.delete(0, 'end')
+
+
+    def carregar_orcamentos(self):
+        try:
+            cnpj_empresa = self.entry_cnpj_info_gestao.get().strip()
+
+            if not cnpj_empresa:
+                self.combo_descricao_orcamento.configure(values=[])
+                self.combo_descricao_orcamento.set("")
+                self.entry_codigo_info_gestao.delete(0, 'end')
+                return
+
+            str_sql = f"""
+                SELECT Orc_ID, Orc_Descricao 
+                FROM orc_orcamentos 
+                WHERE Empresa_ID = '{cnpj_empresa}'
+                ORDER BY Orc_Descricao
+            """
+
+            myresult = db._querying(str_sql)
+
+            if myresult:
+                self.orcamentos_dict = {}
+                descricoes = []
+
+                for orc in myresult:
+                    orc_id = orc['Orc_ID']
+                    orc_descricao = orc['Orc_Descricao']
+                    self.orcamentos_dict[orc_descricao] = orc_id
+                    descricoes.append(orc_descricao)
+
+                self.combo_descricao_orcamento.configure(values=descricoes)
+
+                if descricoes:
+                    self.combo_descricao_orcamento.set(descricoes[0])
+                    self.atualizar_codigo_orcamento()
+            else:
+                self.combo_descricao_orcamento.configure(values=[])
+                self.combo_descricao_orcamento.set("")
+                self.entry_codigo_info_gestao.delete(0, 'end')
+                messagebox.showinfo("Info", "Nenhum orçamento encontrado!")
+
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao carregar orçamentos: {str(e)}")
+
+
     def consulta_infos_gestao(self):
         # Limpa a treeview antes de nova consulta
         for item in self.tree.get_children():
@@ -255,7 +339,6 @@ class InformeGestao(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icons):
         # Verifica se a data é válida
         try:
             dia, mes, ano = map(int, data_inicio.split('/'))
-            data_valida = True
         except:
             messagebox.showerror("Erro", "Data inválida!")
             return
