@@ -30,6 +30,7 @@ from UsrUsuarios_Sistema              import UsuariosSistema
 from UsrPermissoes_Sistema            import PermissoesSistema
 from UsrContas_Pagar                  import ContasPagar
 from UsrInformeGestao                 import InformeGestao
+from UsrReunioes                      import GerenciadorReunioes
 
 from UsrModulos_Sistema               import ModuloSistema
 
@@ -65,6 +66,7 @@ class PrimaryWindow(
                     PermissoesSistema,
                     ContasPagar,
                     InformeGestao,
+                    GerenciadorReunioes
                     ):
 
     def __init__(self):
@@ -127,6 +129,8 @@ class PrimaryWindow(
                 self.contas_pagar(self.principal_frame)
             elif modulo == 'Informe_Gestao':
                 self.informe_gestao(self.principal_frame)
+            elif modulo == 'Gerenciador_Reunioes':
+                self.gerenciador_reunioes(self.principal_frame)
 
 
     def login_screen(self):
@@ -321,7 +325,7 @@ class PrimaryWindow(
 
         filemenu5.add_command(label="Cronograma", command=lambda: self.menu_conectar('Cronograma_Barra_Projetos'))
         filemenu5.add_command(label="Cronograma (Beta)", command=lambda: self.menu_conectar('Cronograma_Barra_Projetos_Hierarquico'))
-        filemenu5.add_command(label="Reuniões")
+        filemenu5.add_command(label="Reuniões", command=lambda: self.menu_conectar('Gerenciador_Reunioes'))
         # filemenu5.add_command(label="Cad. Projetos") 
         filemenu5.add_command(label="Envios de SMS")
         filemenu5.add_command(label="Envios de Whatsapp")
