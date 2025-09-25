@@ -102,18 +102,25 @@ class Pesquisa_Anexos(Widgets):
                 values = self.LPesquisa_Anexos.item(self.LPesquisa_Anexos.selection(), 'values')
                 self.row_id = selected_item[0]
                 projeto_id = values[0]
-                
+                tarefa_id = values[1]
+                anexo_id = values[2]
+
             conditions = []  # Lista para armazenar as condições
             conditions.append('Projeto_ID = %s')
             params = [projeto_id]
+            conditions.append('Tarefa_ID = %s')
+            params.append(tarefa_id)
+            conditions.append('ID_Anexo = %s')
+            params.append(anexo_id)
             
-
             if messagebox.askyesno("Confirmar", "Tem Certeza que deseja Excluir?"):
-                strSql = f"""DELETE 
-                         FROM TB_Gedoc_Tarefas
-                         WHERE {' AND '.join(conditions)}"""
-
-                results = db.executar_consulta(strSql, params)
+                strSql = f"""
+                            DELETE 
+                                FROM TB_Gedoc_Tarefas
+                                WHERE {' AND '.join(conditions)}
+                        """
+                
+                db.executar_consulta(strSql, params)
                 self.LPesquisa_Anexos.delete(self.row_id)
 
             else:

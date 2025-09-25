@@ -132,21 +132,24 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             return
         self.gerou_cronograma = True
         # Listbox _ Cronograma de Atividades
-        # Definindo cores
+        # Definindo cores e estilos
         treestyle = ttk.Style()
         treestyle.theme_use('default')
         treestyle.configure("Treeview", 
                             background='#FFFFFF',
                             foreground="black",
-                            rowheight=25,
-                            fieldbackground="#D3D3D3")
+                            rowheight=30,
+                            fieldbackground="#D3D3D3",
+                            bordercolor="#A0A0A0",  # cor da borda
+                            borderwidth=1
+                            )
         # Configura o estilo para a linha selecionada
         treestyle.map('Treeview', 
                     background=[('selected', '#4A6984')],  # Cor de fundo quando selecionado
                     foreground=[('selected', 'white')])  # Cor do texto quando selecionado
         
         # Adicione estas linhas para criar as linhas de grade
-        treestyle.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'})])  # Remove the borders
+        treestyle.layout("Treeview", [('Treeview.treearea', {'sticky': 'nswe'}),('Treeview.border', {'sticky': 'nswe'})])
         treestyle.configure("Treeview", highlightthickness=0, bd=0, font=('Calibri', 11))  # Modify the font of the body
         treestyle.configure("Treeview.Heading",  font=('Calibri', 13,'bold'))  # Modify the font of the headings
         treestyle.configure("Treeview", rowheight=30)  # Adjust row height
@@ -218,31 +221,37 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         self.LCronograma.delete(*self.LCronograma.get_children())
 
         sql_query = """
-                        SELECT 
-                            pc.projeto_empresa          AS projeto_empresa,
-                            pa.projeto_ID               AS projeto_ID, 
-                            pa.projeto_DS               AS projeto_DS, 
-                            pa.tarefa_ID                AS tarefa_ID, 
-                            pa.tarefa_DS                AS tarefa_DS, 
-                            pa.parent_id                AS parent_id,
-                            pa.responsavel_nome         AS responsavel_nome,
-                            pa.tarefa_dependencia       AS tarefa_dependencia, 
-                            pa.tempo_espera             AS tempo_espera, 
-                            pa.tempo_previsto           AS tempo_previsto, 
-                            pa.percentual_execucao      AS percentual_execucao,
-                            pa.data_Inicial_Prevista    AS data_Inicial_Prevista, 
-                            pa.data_Inicial_Realizada   AS data_Inicial_Realizada, 
-                            pa.dias_diferenca_inicio    AS dias_diferenca_inicio,
-                            pa.data_conclusao_prevista  AS data_conclusao_prevista, 
-                            pa.data_conclusao_realizada AS data_conclusao_realizada, 
-                            pa.prazo_fatal_dias         AS prazo_fatal_dias,
-                            pa.dias_diferenca           AS dias_diferenca, 
-                            pa.status                   AS status, 
-                            pa.observacao               AS observacao
+                        SELECT
+                        pc.projeto_empresa          AS projeto_empresa,
+                        pa.projeto_ID               AS projeto_ID, 
+                        pa.projeto_DS               AS projeto_DS, 
+                        pa.tarefa_ID                AS tarefa_ID, 
+                        pa.tarefa_DS                AS tarefa_DS, 
+                        pa.parent_id                AS parent_id,
+                        pa.responsavel_nome         AS responsavel_nome,
+                        pa.tarefa_dependencia       AS tarefa_dependencia, 
+                        pa.tempo_espera             AS tempo_espera, 
+                        pa.tempo_previsto           AS tempo_previsto, 
+                        pa.percentual_execucao      AS percentual_execucao,
+                        pa.data_Inicial_Prevista    AS data_Inicial_Prevista, 
+                        pa.data_Inicial_Realizada   AS data_Inicial_Realizada, 
+                        pa.dias_diferenca_inicio    AS dias_diferenca_inicio,
+                        pa.data_conclusao_prevista  AS data_conclusao_prevista, 
+                        pa.data_conclusao_realizada AS data_conclusao_realizada, 
+                        pa.prazo_fatal_dias         AS prazo_fatal_dias,
+                        pa.dias_diferenca           AS dias_diferenca, 
+                        pa.status                   AS STATUS, 
+                        pa.observacao               AS observacao,
+                        anexos.Doc_Num_Documento    AS anexos
                         FROM programas_atividades pa
-                        INNER JOIN projetos_cronograma pc ON pc.projeto_id=pa.projeto_id 
+                        INNER JOIN projetos_cronograma pc ON pc.projeto_id = pa.projeto_id 
+                        LEFT JOIN (
+                            SELECT projeto_id, tarefa_id, MIN(Doc_Num_Documento) AS Doc_Num_Documento
+                            FROM TB_Gedoc_Tarefas
+                            GROUP BY projeto_id, tarefa_id
+                        ) anexos ON anexos.projeto_id = pa.projeto_id AND anexos.tarefa_id = pa.tarefa_id
                         WHERE pa.projeto_ID = %s
-                        ORDER BY tarefa_ID
+                        ORDER BY pa.tarefa_ID
                     """
 
         self.list_tarefas = []
@@ -300,11 +309,15 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                     data_conclusao_prev = data_conclusao_prev.strftime("%d/%m/%Y")  # Formato desejado: "DD/MM/YYYY"
 
                 if record.get('observacao') is None:
-
                     Observacao = ''
                 else:
                     Observacao = record.get('observacao')
-                
+
+                if record.get('anexos'):  # Supondo que o campo 'anexos' indica se há anexo
+                    Observacao = '  📎🗂️  ' + (Observacao or '') 
+                else:
+                    Observacao = Observacao or ''
+                                
                 tarefa_info = (
                     nrregistros,
                     tarefa_id,
@@ -1284,6 +1297,8 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
                 dias_diferenca_Conclusao = 0
                 status_projeto = ""
                 observacao = task_data['values'][12]
+                # Remover símbolo de anexo antes de gravar
+                observacao = observacao.replace('  📎🗂️  ', '').strip()
                 Anexos = ''
                 
                 # Calculate date differences
@@ -1537,6 +1552,21 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
         
         G.add_edges_from(dependencias)
 
+        # Verifique se o grafo é acíclico
+        if not nx.is_directed_acyclic_graph(G):
+            try:
+                ciclo = nx.find_cycle(G)
+                tarefas_ciclo = [f"{G.nodes[n]['nome']} ({n})" for n, _ in ciclo]
+                msg = "Dependência circular detectada entre as tarefas:\n" + "\n".join(tarefas_ciclo)
+            except Exception as e:
+                msg = "Dependência circular detectada, mas não foi possível identificar as tarefas."
+            messagebox.showerror("Erro", msg)
+            return
+        
+        # if not nx.is_directed_acyclic_graph(G):
+        #     messagebox.showerror("Erro", "O cronograma possui dependências circulares. Corrija antes de gerar o Gantt.")
+        #     return
+        
         # Encontrar caminho crítico
         caminho_critico = nx.dag_longest_path(G, weight='duracao')
 
@@ -1905,6 +1935,15 @@ class TreeviewEdit(ttk.Treeview):
                 messagebox.showinfo('Gestor de Negócios", "A tarefa já foi concluída, não é possível alterar a dependência!!!')
                 event.widget.destroy()
                 return
+            else:
+                dependencias = [dep.strip() for dep in new_value.split(';') if dep.strip().isdigit()]
+                linha_atual = str(self.item(selected_iid).get('values')[0])
+                # Verificação de dependência circular
+                if linha_atual in dependencias:
+                    messagebox.showerror("Erro", "Dependência circular: uma tarefa não pode depender de si mesma!")
+                    event.widget.destroy()
+                    return
+                new_value = ';'.join(dependencias)
             
         elif self.column_index == 5:
             # Espera
@@ -2032,7 +2071,7 @@ class TreeviewEdit(ttk.Treeview):
 
     def atualiza_cronograma_interacao(self, nr_interacao):
         all_numbers     = self.get_all_items_numbers()
-        nr_interacao = int(int(len(all_numbers)) / 10)
+        nr_interacao = int(int(len(all_numbers)) / 20)
         for _ in range(nr_interacao):
             for child, linha, tarefa_id, tarefa_ds, responsavel, dependencia, tempo_espera, tempo_previsto, per_conclusao, dta_inicial_prevista, dta_inicial_realizada, dta_conclusao_prevista, dta_conclusao_realizada, item_id, level in all_numbers:
                 self.predessessora(child)
@@ -2243,6 +2282,8 @@ class TreeviewEdit(ttk.Treeview):
                                 return
                             
                             if int(lin_dependente) == int(linha):
+                                data_inicial_prevista = self.parse_date(dta_inicial_prevista)
+                                data_inicial_realizada = self.parse_date(dta_inicial_realizada)
                                 data_conclusao_prevista = self.parse_date(dta_conclusao_prevista)
                                 data_conclusao_realizada = self.parse_date(dta_conclusao_realizada)
                                 
@@ -2262,13 +2303,13 @@ class TreeviewEdit(ttk.Treeview):
                         lin_dependente = ''
 
                 current_values[8] = (dta_precedente + timedelta(days=tarefa_tempo_espera)).strftime("%d/%m/%Y")
-                if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
-                    current_values[10] = (self.parse_date(data_inicial_realizada) + timedelta(days=tarefa_tempo_previsto)).strftime("%d/%m/%Y")
-                else:
-                    current_values[10] = (self.parse_date(current_values[8]) + timedelta(days=tarefa_tempo_previsto)).strftime("%d/%m/%Y")
+                current_values[10] = (self.parse_date(current_values[8]) + timedelta(days=tarefa_tempo_previsto)).strftime("%d/%m/%Y")
+                # if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
+                #     current_values[10] = (self.parse_date(data_inicial_realizada) + timedelta(days=tarefa_tempo_previsto)).strftime("%d/%m/%Y")
+                # else:
+                #     current_values[10] = (self.parse_date(current_values[8]) + timedelta(days=tarefa_tempo_previsto)).strftime("%d/%m/%Y")
 
             else:
-                
                 if data_inicial_realizada and self.is_valid_date(data_inicial_realizada):
                     current_values[10] = (self.parse_date(data_inicial_realizada) + timedelta(days=tarefa_tempo_previsto)).strftime("%d/%m/%Y")
                 else:

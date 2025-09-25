@@ -250,7 +250,6 @@ class Simulador_Estudos_Resultado(Widgets):
             self.entry_dre_ebtda_valor.insert(0, self.format_valor_fx(DrE_ebtda_valor))
             self.entry_dre_ebtda_per.insert(0, self.format_per_fx(DrE_ebtda_per))
             
-
     def consultar_fluxo_indicadores(self, janela, Empresa_ID, UF, Cidade, Tipo, Nome_da_Area):
         if Empresa_ID == '': 
             messagebox.showinfo('Gestor Negócios', 'Empresa em Branco!!!.', parent=janela)
@@ -410,20 +409,20 @@ class Simulador_Estudos_Resultado(Widgets):
         lb_deducao_11 = customtkinter.CTkLabel(fr_dre, text="( - )", text_color="red", font=('Arial', 15, 'bold'), anchor=tk.W)
         
         # VGV Bruto
-        lb_dre_vgv_bruto = customtkinter.CTkLabel(fr_dre, text="Valor Geral de Vendas - Bruto:", text_color="black", font=('Arial', 15, 'bold'), anchor=tk.W)
+        lb_dre_vgv_bruto = customtkinter.CTkLabel(fr_dre, text="VGV - Bruto:", text_color="black", font=('Arial', 15, 'bold'), anchor=tk.W)
         lb_dre_vgv_bruto.place(relx=0.01, rely=0.04, relheight=0.05, relwidth=0.45)
         self.entry_dre_vgv_bruto = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_dre_vgv_bruto.place(relx=0.50, rely=0.04, relwidth=0.49, relheight=0.05)
 
         # Comissão
-        lb_dre_comissao = customtkinter.CTkLabel(fr_dre, text="Comissão de Vendas:", text_color="black", font=('Arial', 12), anchor=tk.W)
+        lb_dre_comissao = customtkinter.CTkLabel(fr_dre, text="Comissão:", text_color="black", font=('Arial', 12), anchor=tk.W)
         lb_dre_comissao.place(relx=0.01, rely=0.10, relheight=0.05, relwidth=0.25)
         lb_deducao_7.place(relx=0.43, rely=0.10, relheight=0.05, relwidth=0.25)
         self.entry_dre_comissao = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="red", justify=tk.RIGHT)
         self.entry_dre_comissao.place(relx=0.50, rely=0.10, relwidth=0.49, relheight=0.05)
 
         # VGV Líquido
-        lb_dre_vgv_liquido = customtkinter.CTkLabel(fr_dre, text="Valor Geral de Vendas - Líquido.:", text_color="black", font=('Arial', 15, 'bold'), anchor=tk.W)
+        lb_dre_vgv_liquido = customtkinter.CTkLabel(fr_dre, text="VGV - Líquido:", text_color="black", font=('Arial', 15, 'bold'), anchor=tk.W)
         lb_dre_vgv_liquido.place(relx=0.01, rely=0.16, relheight=0.05, relwidth=0.45)
         self.entry_dre_vgv_liquido = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_dre_vgv_liquido.place(relx=0.50, rely=0.16, relwidth=0.49, relheight=0.05)
@@ -436,7 +435,7 @@ class Simulador_Estudos_Resultado(Widgets):
         self.entry_dre_impostos.place(relx=0.50, rely=0.22, relwidth=0.49, relheight=0.05)
 
         # Comissão de Negócio
-        lb_dre_comissao_negocio = customtkinter.CTkLabel(fr_dre, text="Itermediação do Negócio:", text_color="black", font=('Arial', 10), anchor=tk.W)
+        lb_dre_comissao_negocio = customtkinter.CTkLabel(fr_dre, text="Itermediação:", text_color="black", font=('Arial', 10), anchor=tk.W)
         lb_dre_comissao_negocio.place(relx=0.01, rely=0.28, relheight=0.05, relwidth=0.25)
         lb_deducao_9.place(relx=0.43, rely=0.28, relheight=0.05, relwidth=0.25)
         self.entry_dre_comissao_negocio = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="red", justify=tk.RIGHT)
@@ -449,15 +448,15 @@ class Simulador_Estudos_Resultado(Widgets):
         self.entry_dre_receita_liquida.place(relx=0.50, rely=0.34, relwidth=0.49, relheight=0.05)
 
         # VGV Parceiro
-        lb_dre_vgv_parceiro = customtkinter.CTkLabel(fr_dre, text="Receita do Parceiro:", text_color="black", font=('Arial', 10), anchor=tk.W)
+        lb_dre_vgv_parceiro = customtkinter.CTkLabel(fr_dre, text="Receita Parceiro:", text_color="black", font=('Arial', 10), anchor=tk.W)
         lb_dre_vgv_parceiro.place(relx=0.01, rely=0.40, relheight=0.05, relwidth=0.25)
         lb_deducao_10.place(relx=0.43, rely=0.40, relheight=0.05, relwidth=0.05)
         self.entry_dre_vgv_parceiro = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="red", justify=tk.RIGHT)
         self.entry_dre_vgv_parceiro.place(relx=0.50, rely=0.40, relwidth=0.49, relheight=0.05)
 
         # Receita Líquida Urbanizadora
-        lb_dre_receita_liquida_urbanizadora = customtkinter.CTkLabel(fr_dre, text="Receita Urbanizaodora:", text_color="black", font=('Arial', 15, 'bold'), anchor=tk.W)
-        lb_dre_receita_liquida_urbanizadora.place(relx=0.01, rely=0.46, relheight=0.05, relwidth=0.25)
+        lb_dre_receita_liquida_urbanizadora = customtkinter.CTkLabel(fr_dre, text="Receita Urbanizadora:", text_color="black", font=('Arial', 15, 'bold'), anchor=tk.W)
+        lb_dre_receita_liquida_urbanizadora.place(relx=0.01, rely=0.46, relheight=0.05, relwidth=0.45)
         self.entry_dre_receita_liquida_urbanizadora = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_dre_receita_liquida_urbanizadora.place(relx=0.50, rely=0.46, relwidth=0.49, relheight=0.05)
         
