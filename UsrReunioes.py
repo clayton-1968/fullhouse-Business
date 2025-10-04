@@ -29,12 +29,12 @@ class GerenciadorReunioes(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icon
         # Empresa
         self.frame_empresa(self.frame_principal, 0.2, 0, 0.30, 0.07)
         self.combo_empresa.bind("<<ComboboxSelected>>", self.preencher_cnpj_reuniao)
+        self.combo_empresa.bind("<<ComboboxSelected>>", lambda event: self.consulta_reunioes(), add="+")
 
         # Sim
         self.fr_sim_box_reuniao = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
         self.fr_sim_box_reuniao.place(relx=0.5, rely=0, relwidth=0.05, relheight=0.07)
 
-        # Sim
         self.sim_var_reuniao = tk.BooleanVar()
         self.sim_cbox_reuniao = customtkinter.CTkCheckBox(self.fr_sim_box_reuniao, text="Sim",variable=self.sim_var_reuniao)
         self.sim_cbox_reuniao.place(relx=0.1, rely=0.25, relwidth=0.8, relheight=0.5)
@@ -136,8 +136,12 @@ class GerenciadorReunioes(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icon
         self.lb_responsavel_reuniao = customtkinter.CTkLabel(self.fr_responsavel_reuniao, text="Responsável")
         self.lb_responsavel_reuniao.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.8)
 
-        self.entry_responsavel_reuniao = customtkinter.CTkEntry(self.fr_responsavel_reuniao, fg_color="white", text_color="black", justify=tk.CENTER)
+        self.usuarios = []
+        self.entry_responsavel_reuniao = AutocompleteCombobox(self.fr_responsavel_reuniao, font=('Times', 11), width=30, completevalues=self.usuarios)
+        self.entry_responsavel_reuniao.pack()
         self.entry_responsavel_reuniao.place(relx=0.01, rely=0.5, relwidth=0.95, relheight=0.4)
+        self.entry_responsavel_reuniao.bind("<Button-1>", lambda event: self.retornar_usuarios(self.entry_responsavel_reuniao))
+        self.entry_responsavel_reuniao.bind('<Down>', lambda event: self.retornar_usuarios(self.entry_responsavel_reuniao))
 
         # Botão Salvar (10%)
         self.fr_botao_salvar_reuniao = customtkinter.CTkFrame(self.frame_principal, border_color="gray75", border_width=1)
@@ -209,7 +213,7 @@ class GerenciadorReunioes(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icon
 
             self.tree.column(col, width=largura_max + 20)
 
-        self.tree.bind("<Double-1>", self.lreunicoes_click)
+        self.tree.bind("<Button-1>", self.lreunicoes_click)
 
         # Scrollbar
         scrollbar = ttk.Scrollbar(self.fr_tree, orient="vertical", command=self.tree.yview)
@@ -220,6 +224,22 @@ class GerenciadorReunioes(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icon
         self.fr_tree.grid_rowconfigure(0, weight=1)
         self.fr_tree.grid_columnconfigure(0, weight=1)
 
+
+    def retornar_usuarios(self, target):
+        query = """
+            SELECT UsuarioNome from usuarios
+        """
+
+        myresult = db._querying(query)
+        consulta = [(consulta) for consulta in myresult]
+
+        if not consulta:
+            messagebox.showinfo("Aviso", "Usuários não encontrados!", parent=self.window_one)
+            return
+
+        self.usuarios = [item["UsuarioNome"] for item in myresult]
+
+        target.set_completion_list(self.usuarios)
 
     def preencher_cnpj_reuniao(self, event):
         empresa_selecionada = self.combo_empresa.get()
@@ -328,24 +348,26 @@ class GerenciadorReunioes(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icon
             result_max_id = db.executar_consulta(query_max_id, (self.entry_cnpj_reuniao.get(),))
 
             if result_max_id and len(result_max_id) > 0:
-                self.reuniao_id = result_max_id[0]['next_id']
+                self.reuniao_providencia_id = result_max_id[0]['next_id']
             else:
-                self.reuniao_id = 1  # Primeiro registro para esta empresa
+                self.reuniao_providencia_id = 1  # Primeiro registro para esta empresa
 
             vs_sql = """INSERT INTO reuniao_assuntos
                             (
                                     Empresa_ID, 
                                     Reuniao_ID, 
+                                    Reuniao_Providencia_ID,
                                     Reuniao_Providencia_DS,
                                     Reuniao_Providencia_Dta_Registro,
                                     Reuniao_Providencia_Dta_Conclusao,
                                     Reuniao_Usr_ID
                             ) 
-                            VALUES (%s, %s, %s, %s, %s, %s)
+                            VALUES (%s, %s, %s, %s, %s, %s, %s)
                             """
             values = (
                 self.entry_cnpj_reuniao.get(),
                 self.reuniao_id,
+                self.reuniao_providencia_id,
                 self.entry_descricao_provid_reuniao.get(),
                 self.entry_dt_provid_reuniao,
                 self.entry_dt_conclu_reuniao,
@@ -395,14 +417,14 @@ class GerenciadorReunioes(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icon
                     self.reuniao_dict[reuniao_descricao] = reuniao_id
                     descricoes.append(reuniao_descricao)
 
-                # Adiciona à treeview
-                self.tree.insert("", "end", values=(
-                    reuniao_id,
-                    cnpj_empresa,
-                    reuniao_descricao,
-                    reuniao_data,
-                    reuniao_user_id
-                ))
+                    # Adiciona à treeview
+                    self.tree.insert("", "end", values=(
+                        reuniao_id,
+                        cnpj_empresa,
+                        reuniao_descricao,
+                        reuniao_data,
+                        reuniao_user_id
+                    ))
 
                 # Ajusta a largura das colunas após inserir os dados
                 for col in self.tree["columns"]:
@@ -452,14 +474,6 @@ class GerenciadorReunioes(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icon
             messagebox.showwarning("Aviso", "Selecione um Reunião!")
             return
 
-        # Obtém os dados da reunião selecionada
-        selecionado = self.tree.selection()
-        if selecionado:
-            item = self.tree.item(selecionado[0])
-            valores = item['values']
-            if valores:
-                self.empresa_id = valores[1]
-
         self.janela_log_reuniao = customtkinter.CTkToplevel(self.window_one)
         self.janela_log_reuniao.title('Log')
         self.janela_log_reuniao.geometry("400x150")
@@ -505,18 +519,18 @@ class GerenciadorReunioes(Widgets, Consultas_Financeiro, Pessoas, Produtos, Icon
         self.janela_log_reuniao.protocol("WM_DELETE_WINDOW",
                                              lambda: self.on_closing_tela(self.janela_log_reuniao))
 
-        self.carregar_dados_log(self.empresa_id, self.reuniao_id_selecionado)
+        self.carregar_dados_log(self.reuniao_id_selecionado)
 
         self.janela_log_reuniao.focus_force()
         self.janela_log_reuniao.grab_set()
 
 
-    def carregar_dados_log(self, empresa_id, reuniao_id):
+    def carregar_dados_log(self, reuniao_id):
         try:
             str_sql = f"""
                 SELECT Reuniao_Providencia_DS, Reuniao_Providencia_Dta_Registro
                 FROM reuniao_assuntos 
-                WHERE Empresa_ID = '{empresa_id}' AND Reuniao_Providencia_ID = '{reuniao_id}'
+                WHERE Reuniao_ID = '{reuniao_id}'
                 ORDER BY Reuniao_Providencia_Dta_Registro DESC 
                 LIMIT 1
             """
