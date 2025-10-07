@@ -1563,10 +1563,6 @@ class Cronograma_Atividades_Hierarquico(Widgets, Projetos, Cronograma_Atividades
             messagebox.showerror("Erro", msg)
             return
         
-        # if not nx.is_directed_acyclic_graph(G):
-        #     messagebox.showerror("Erro", "O cronograma possui dependências circulares. Corrija antes de gerar o Gantt.")
-        #     return
-        
         # Encontrar caminho crítico
         caminho_critico = nx.dag_longest_path(G, weight='duracao')
 

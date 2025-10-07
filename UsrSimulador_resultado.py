@@ -559,7 +559,6 @@ class Simulador_Estudos_Resultado(Widgets):
             
             if self.df_resultados['Projetos'].astype(float).sum() != 0.0:
                 _projetos = self.df_resultados['Projetos'].astype(float).cumsum() / 1000
-
                 idx_fim = len(_projetos)
                 for i in range(1, len(_projetos)):
                     if _projetos[i] == _projetos[i-1]:
@@ -568,36 +567,54 @@ class Simulador_Estudos_Resultado(Widgets):
                 ax.plot(_projetos[:idx_fim], label='Projetos')
             
             if self.df_resultados['Obras'].astype(float).sum() != 0:
-                _obras = self.df_resultados['Obras'].astype(float).cumsum() / 1000
+                _obras     = self.df_resultados['Obras'].astype(float).cumsum() / 1000
                 _adm_obras = self.df_resultados['AdmObras'].astype(float).cumsum() / 1000
                 _pos_obras = self.df_resultados['PosObras'].astype(float).cumsum() / 1000
 
-                idx_fim = len(_obras)
+                idx_inicio  = 0
+                idx_fim     = 0
                 for i in range(1, len(_obras)):
-                    if _obras[i] == _obras[i-1]:
+                    if idx_inicio == 0 and _obras[i] > 0:
+                        idx_inicio = i
+                        
+                    if _obras[i] == _obras.max():
                         idx_fim = i
                         break
-                ax.plot(_obras[:idx_fim], label='Obras')
+                
+                ax.plot(_obras[idx_inicio:idx_fim], label='Obras')
 
-                idx_fim = len(_adm_obras)
+                idx_inicio = 0
+                idx_fim    = 0
                 for i in range(1, len(_adm_obras)):
-                    if _adm_obras[i] == _adm_obras[i-1]:
+                    if idx_inicio == 0 and _adm_obras[i] > 0:
+                        idx_inicio = i
+
+                    if _adm_obras[i] == _adm_obras.max():
                         idx_fim = i
                         break
                 ax.plot(_adm_obras[:idx_fim], label='Adm. Obras')
 
-                idx_fim = len(_pos_obras)
+                idx_inicio = 0
+                idx_fim    = 0
                 for i in range(1, len(_pos_obras)):
-                    if _pos_obras[i] == _pos_obras[i-1]:
+                    if idx_inicio == 0 and _pos_obras[i] > 0:
+                        idx_inicio = i
+
+                    if _pos_obras[i] == _pos_obras.max():
                         idx_fim = i
                         break
                 ax.plot(_pos_obras[:idx_fim], label='Pós Obras')
                 
             if self.df_resultados['Adm'].astype(float).sum() != 0:
                 _adm = self.df_resultados['Adm'].astype(float).cumsum() / 1000
-                idx_fim = len(_adm)
+                
+                idx_inicio = 0
+                idx_fim    = 0
                 for i in range(1, len(_adm)):
-                    if _adm[i] == _adm[i-1]:
+                    if idx_inicio == 0 and _adm[i] > 0:
+                        idx_inicio = i
+
+                    if _adm[i] == _adm.max():
                         idx_fim = i
                         break
                 ax.plot(_adm[:idx_fim], label='Adm')
@@ -605,15 +622,17 @@ class Simulador_Estudos_Resultado(Widgets):
             
             if self.df_resultados['MkT'].astype(float).sum() != 0:
                 _mkt = self.df_resultados['MkT'].astype(float).cumsum() / 1000
-                # Encontrar o índice onde o valor seguinte é igual ao anterior
-                idx_fim = len(_mkt)
+                
+                idx_inicio = 0
+                idx_fim    = 0
                 for i in range(1, len(_mkt)):
-                    if _mkt[i] == _mkt[i-1]:
+                    if idx_inicio == 0 and _mkt[i] > 0:
+                        idx_inicio = i
+
+                    if _mkt[i] == _mkt.max():
                         idx_fim = i
                         break
                 ax.plot(_mkt[:idx_fim], label='MkT')
-                
-            
             
             # Curva de Receitas x Gastos
             fr_curva_receitas_gastos = customtkinter.CTkFrame(fr_graficos, border_color="gray75", border_width=1, fg_color="white")
