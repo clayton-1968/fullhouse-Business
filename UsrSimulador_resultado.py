@@ -549,9 +549,9 @@ class Simulador_Estudos_Resultado(Widgets):
                 ax.plot(_terreno, label='Investimento Terreno')
 
             if self.df_resultados['Valor_Adto'].astype(float).sum() != 0:
-                _adto = self.df_resultados['Valor_Adto'].astype(float).cumsum() / 1000
+                _adto           = self.df_resultados['Valor_Adto'].astype(float).cumsum() / 1000
                 _devolucao_adto = self.df_resultados['Valor_DevolucaoAdto'].astype(float).cumsum() / 1000
-                _custo_adto = self.df_resultados['Valor_CustoAdto'].astype(float).cumsum() / 1000
+                _custo_adto     = self.df_resultados['Valor_CustoAdto'].astype(float).cumsum() / 1000
                 ax.plot(_adto, label='Adto')
                 ax.plot(_devolucao_adto, label='Devolução Adto')
                 ax.plot(_custo_adto, label='Custo Adto')
@@ -593,14 +593,14 @@ class Simulador_Estudos_Resultado(Widgets):
                         break
                 ax.plot(_pos_obras[:idx_fim], label='Pós Obras')
                 
-            # if self.df_resultados['Adm'].astype(float).sum() != 0:
-            #     _adm = self.df_resultados['Adm'].astype(float).cumsum() / 1000
-            #     idx_fim = len(_adm)
-            #     for i in range(1, len(_adm)):
-            #         if _adm[i] == _adm[i-1]:
-            #             idx_fim = i
-            #             break
-            #     ax.plot(_adm[:idx_fim], label='Adm')
+            if self.df_resultados['Adm'].astype(float).sum() != 0:
+                _adm = self.df_resultados['Adm'].astype(float).cumsum() / 1000
+                idx_fim = len(_adm)
+                for i in range(1, len(_adm)):
+                    if _adm[i] == _adm[i-1]:
+                        idx_fim = i
+                        break
+                ax.plot(_adm[:idx_fim], label='Adm')
                 
             
             if self.df_resultados['MkT'].astype(float).sum() != 0:

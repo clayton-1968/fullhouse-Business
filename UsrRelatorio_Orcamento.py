@@ -52,8 +52,8 @@ class Relatorio_Orcamento(Widgets):
         self.entry_orcamento.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_dt_inicio))
 
         # Data Início da Projeção Orçamentária
-        dta = self.ult_dia_mes(datetime.now())
-        TDta_Inicio =  datetime.strptime(dta, "%Y-%m-%d")
+         # dta = self.ult_dia_mes(datetime.now())
+        # TDta_Inicio =  datetime.strptime(dta, "%Y-%m-%d")
         
         coordenadas_relx = 0.435
         coordenadas_rely = 0.01
@@ -61,17 +61,17 @@ class Relatorio_Orcamento(Widgets):
         coordenadas_relheight = 0.07
         fr_dta_inicio = customtkinter.CTkFrame(janela, border_color="gray75", border_width=1)
         fr_dta_inicio.place(relx=coordenadas_relx, rely=coordenadas_rely,relwidth=coordenadas_relwidth, relheight=coordenadas_relheight)
-        lb_dta_inicio = customtkinter.CTkLabel(fr_dta_inicio, text="Data Início")
+        lb_dta_inicio = customtkinter.CTkLabel(fr_dta_inicio, text="Início")
         lb_dta_inicio.place(relx=0.1, rely=0, relheight=0.25, relwidth=0.55)
+
+        ano_corrente = datetime.now().year
 
         self.entry_dt_inicio = customtkinter.CTkEntry(fr_dta_inicio, fg_color="black", text_color="white", justify=tk.CENTER)
         self.entry_dt_inicio.delete(0, 'end')
-        self.entry_dt_inicio.insert(0, TDta_Inicio.strftime("%d/%m/%Y"))
+        self.entry_dt_inicio.insert(0, ano_corrente)
         self.entry_dt_inicio.place(relx=0.01, rely=0.46, relwidth=0.985, relheight=0.50)
-        self.entry_dt_inicio.bind("<Button-1>", lambda event: self.calendario(event, self.entry_dt_inicio))
         self.entry_dt_inicio.bind("<Return>", lambda event: self.muda_barrinha(event, self.entry_centro_resultado))
-        
-        
+
         # Centro Resultado
         coordenadas_relx = 0.52
         coordenadas_rely = 0.01
@@ -156,7 +156,7 @@ class Relatorio_Orcamento(Widgets):
                 intDiv = 1
                 chk_reais_mil = 1
             
-            Dta_Inicio = self.entry_dt_inicio.get()
+            Dta_Inicio = f"01/01/{self.entry_dt_inicio.get()}" #self.entry_dt_inicio.get()
             Dta_Inicio_str = datetime.strptime(Dta_Inicio, "%d/%m/%Y")
 
             dtaIni_obj = datetime.strptime(Dta_Inicio, "%d/%m/%Y")
@@ -297,7 +297,6 @@ class Relatorio_Orcamento(Widgets):
 
                 while i < len(lista) and lista[i]['Centro'] == ult_centro:
                     dta_ref_calculo = Dta_Inicio 
-
                     for coluna in range(1, 13):  # Loop through 1 to 12 for each month
                         if lista:
                             dta_lcto = lista[i]['DtaLcto']
@@ -381,9 +380,7 @@ class Relatorio_Orcamento(Widgets):
                                     else:
                                         valor_mes[coluna - 1] += 0
                                     
-                                    # dta_ref_calculo = dta_ref_calculo + relativedelta(months=1)
-                                    # dta_ref_calculo = self.ult_dia_mes(dta_ref_calculo)
-                                    # dta_ref_calculo = datetime.strptime(dta_ref_calculo, "%Y-%m-%d").date()
+                                    
                                 else:
                                     valor_mes[coluna - 1] += 0
                             else:
@@ -402,14 +399,12 @@ class Relatorio_Orcamento(Widgets):
                         item['Nov'].append(self.format_valor_fx(valor_mes[10]))  
                         item['Dez'].append(self.format_valor_fx(valor_mes[11]))
                         item['Total_1'].append(self.format_valor_fx(total_ano[0]))    
-
-
+                        
                         while (i < nr_registros and lista[i]['Centro'] == ult_centro and lista[i]['Conta'] == ult_conta):
                             dta_lcto = lista[i]['DtaLcto']
-                            if dta_lcto.year == ano_inicial:  
-                                for year_offset in range(1, 6):
-                                    if dta_lcto.year == ano_inicial + year_offset:
-                                        total_ano[year_offset] += lista[i]['Vlr'] / intDiv
+                            for year_offset in range(1, 6):
+                                if dta_lcto.year == ano_inicial + year_offset:
+                                    total_ano[year_offset] += lista[i]['Vlr'] / intDiv
                                         
                             i += 1
                             
