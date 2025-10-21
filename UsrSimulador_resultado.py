@@ -209,6 +209,12 @@ class Simulador_Estudos_Resultado(Widgets):
             self.entry_area_lote_medio.insert(0, self.format_m2_fx(float(Lote_Medio)))
             self.entry_area_nr_lotes.insert(0, self.format_valor_fx(Nr_Lotes))
             
+            self.entry_dre_comissao_per.insert(0, self.format_per_fx(Vendas_comissao_per))
+            self.entry_dre_impostos_per.insert(0, self.format_per_fx(self.impostos))
+            self.entry_dre_comissao_negocio_per.insert(0, self.format_per_fx(Per_Comissao_Negocio))
+            self.entry_dre_vgv_parceiro_per.insert(0, self.format_per_fx(Total_Parceiro))
+            self.entry_dre_receita_liquida_urbanizadora_per.insert(0, self.format_per_fx(Total_Urbanizadora))
+
             if Investimento_Aporte is not None:
                 if Investimento_Aporte == 'S':
                     self.entry_investimento_valor.insert(0, self.format_valor_fx(Investimento_Area*-1))
@@ -282,16 +288,14 @@ class Simulador_Estudos_Resultado(Widgets):
                         ff.Tir_Urbanizadora_am         AS Tir_am,
                         ff.PayBack_Urbanizadora        AS PayBack,
                         
-                        ff.DrE_Ebtda_Percente          AS DrE_Ebtda_Percente,
-                        ff.tickt_medio                 AS tickt_medio,
-                        ff.Prazo_Financiamento         AS Vendas_prazo_financiamento,
-                        ff.Sistema_Amortização_Cliente AS Vendas_sistema_amortizacao,
-                        ff.Per_Juros                   AS Vendas_juros_taxa,
-                        ff.Per_Juros_am                AS Per_Juros_am,
-                        ff.Per_Entrada                 AS Vendas_per_entrada,
-
-
-
+                        ff.DrE_Ebtda_Percente              AS DrE_Ebtda_Percente,
+                        ff.tickt_medio                     AS tickt_medio,
+                        ff.Prazo_Financiamento             AS Vendas_prazo_financiamento,
+                        ff.Sistema_Amortização_Cliente     AS Vendas_sistema_amortizacao,
+                        ff.Per_Juros                       AS Vendas_juros_taxa,
+                        ff.Per_Juros_am                    AS Per_Juros_am,
+                        ff.Per_Entrada                     AS Vendas_per_entrada,
+                        
                         ff.Multiplicador               AS Multiplicador,
                         ff.Vlr_Exposicao_Maxima*-1     AS Exposicao_Maxima,
                         ff.VpL_Urbanizadora            AS VpL,
@@ -417,6 +421,8 @@ class Simulador_Estudos_Resultado(Widgets):
         # Comissão
         lb_dre_comissao = customtkinter.CTkLabel(fr_dre, text="Comissão:", text_color="black", font=('Arial', 12), anchor=tk.W)
         lb_dre_comissao.place(relx=0.01, rely=0.10, relheight=0.05, relwidth=0.25)
+        self.entry_dre_comissao_per = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", font=('Arial', 10), justify=tk.RIGHT)
+        self.entry_dre_comissao_per.place(relx=0.30, rely=0.10, relwidth=0.10, relheight=0.05)
         lb_deducao_7.place(relx=0.43, rely=0.10, relheight=0.05, relwidth=0.25)
         self.entry_dre_comissao = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="red", justify=tk.RIGHT)
         self.entry_dre_comissao.place(relx=0.50, rely=0.10, relwidth=0.49, relheight=0.05)
@@ -430,6 +436,8 @@ class Simulador_Estudos_Resultado(Widgets):
         # Imposto
         lb_dre_impostos = customtkinter.CTkLabel(fr_dre, text="Impostos:", text_color="black", font=('Arial', 10), anchor=tk.W)
         lb_dre_impostos.place(relx=0.01, rely=0.22, relheight=0.05, relwidth=0.25)
+        self.entry_dre_impostos_per = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", font=('Arial', 10), justify=tk.RIGHT)
+        self.entry_dre_impostos_per.place(relx=0.30, rely=0.22, relwidth=0.10, relheight=0.05)
         lb_deducao_8.place(relx=0.43, rely=0.22, relheight=0.05, relwidth=0.25)
         self.entry_dre_impostos = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="red", justify=tk.RIGHT)
         self.entry_dre_impostos.place(relx=0.50, rely=0.22, relwidth=0.49, relheight=0.05)
@@ -437,6 +445,8 @@ class Simulador_Estudos_Resultado(Widgets):
         # Comissão de Negócio
         lb_dre_comissao_negocio = customtkinter.CTkLabel(fr_dre, text="Itermediação:", text_color="black", font=('Arial', 10), anchor=tk.W)
         lb_dre_comissao_negocio.place(relx=0.01, rely=0.28, relheight=0.05, relwidth=0.25)
+        self.entry_dre_comissao_negocio_per = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", font=('Arial', 10), justify=tk.RIGHT)
+        self.entry_dre_comissao_negocio_per.place(relx=0.30, rely=0.28, relwidth=0.10, relheight=0.05)
         lb_deducao_9.place(relx=0.43, rely=0.28, relheight=0.05, relwidth=0.25)
         self.entry_dre_comissao_negocio = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="red", justify=tk.RIGHT)
         self.entry_dre_comissao_negocio.place(relx=0.50, rely=0.28, relwidth=0.49, relheight=0.05)
@@ -450,13 +460,17 @@ class Simulador_Estudos_Resultado(Widgets):
         # VGV Parceiro
         lb_dre_vgv_parceiro = customtkinter.CTkLabel(fr_dre, text="Receita Parceiro:", text_color="black", font=('Arial', 10), anchor=tk.W)
         lb_dre_vgv_parceiro.place(relx=0.01, rely=0.40, relheight=0.05, relwidth=0.25)
+        self.entry_dre_vgv_parceiro_per = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", font=('Arial', 10), justify=tk.RIGHT)
+        self.entry_dre_vgv_parceiro_per.place(relx=0.30, rely=0.40, relwidth=0.10, relheight=0.05)
         lb_deducao_10.place(relx=0.43, rely=0.40, relheight=0.05, relwidth=0.05)
         self.entry_dre_vgv_parceiro = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="red", justify=tk.RIGHT)
         self.entry_dre_vgv_parceiro.place(relx=0.50, rely=0.40, relwidth=0.49, relheight=0.05)
 
         # Receita Líquida Urbanizadora
-        lb_dre_receita_liquida_urbanizadora = customtkinter.CTkLabel(fr_dre, text="Receita Urbanizadora:", text_color="black", font=('Arial', 15, 'bold'), anchor=tk.W)
+        lb_dre_receita_liquida_urbanizadora = customtkinter.CTkLabel(fr_dre, text="Receita UrbanVix:", text_color="black", font=('Arial', 15, 'bold'), anchor=tk.W)
         lb_dre_receita_liquida_urbanizadora.place(relx=0.01, rely=0.46, relheight=0.05, relwidth=0.45)
+        self.entry_dre_receita_liquida_urbanizadora_per = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", font=('Arial', 10), justify=tk.RIGHT)
+        self.entry_dre_receita_liquida_urbanizadora_per.place(relx=0.30, rely=0.46, relwidth=0.10, relheight=0.05)
         self.entry_dre_receita_liquida_urbanizadora = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_dre_receita_liquida_urbanizadora.place(relx=0.50, rely=0.46, relwidth=0.49, relheight=0.05)
         
@@ -467,9 +481,9 @@ class Simulador_Estudos_Resultado(Widgets):
         self.entry_investimento_valor = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="red", justify=tk.RIGHT)
         self.entry_investimento_valor.place(relx=0.50, rely=0.52, relwidth=0.49, relheight=0.05)
 
-        lb_projetos = customtkinter.CTkLabel(fr_dre, text="Projetos", text_color="black", font=('Arial', 10), anchor=tk.W)
+        lb_projetos = customtkinter.CTkLabel(fr_dre, text="Projetos - % x Obra", text_color="black", font=('Arial', 10), anchor=tk.W)
         lb_projetos.place(relx=0.01, rely=0.58, relheight=0.05, relwidth=0.25)
-        self.entry_projetos_per_obra = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_projetos_per_obra = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", font=('Arial', 10), justify=tk.RIGHT)
         self.entry_projetos_per_obra.place(relx=0.30, rely=0.58, relwidth=0.10, relheight=0.05)
         lb_deducao_1.place(relx=0.43, rely=0.58, relheight=0.05, relwidth=0.05)
         self.entry_projetos_valor_total = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="red", justify=tk.RIGHT)
@@ -477,7 +491,7 @@ class Simulador_Estudos_Resultado(Widgets):
 
         lb_mkt_per_vgv = customtkinter.CTkLabel(fr_dre, text="MkT - % x VGV Bruto", text_color="black", font=('Arial', 10), anchor=tk.W)
         lb_mkt_per_vgv.place(relx=0.01, rely=0.64, relheight=0.05, relwidth=0.25)
-        self.entry_mkt_per_vgv = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_mkt_per_vgv = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", font=('Arial', 10), justify=tk.RIGHT)
         self.entry_mkt_per_vgv.place(relx=0.30, rely=0.64, relwidth=0.10, relheight=0.05)
         lb_deducao_2.place(relx=0.43, rely=0.64, relheight=0.05, relwidth=0.05)
         self.entry_mkt_valor_total = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="red", justify=tk.RIGHT)
@@ -485,7 +499,7 @@ class Simulador_Estudos_Resultado(Widgets):
 
         lb_overhead_per_vgv = customtkinter.CTkLabel(fr_dre, text="Adm. - % x VGV Bruto", text_color="black", font=('Arial', 10), anchor=tk.W)
         lb_overhead_per_vgv.place(relx=0.01, rely=0.70, relheight=0.05, relwidth=0.25)
-        self.entry_overhead_per_vgv = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_overhead_per_vgv = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", font=('Arial', 10), justify=tk.RIGHT)
         self.entry_overhead_per_vgv.place(relx=0.30, rely=0.70, relwidth=0.10, relheight=0.05)
         lb_deducao_3.place(relx=0.43, rely=0.70, relheight=0.05, relwidth=0.25)
         self.entry_overhead_valor_total = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="red", justify=tk.RIGHT)
@@ -493,7 +507,7 @@ class Simulador_Estudos_Resultado(Widgets):
 
         lb_obras_valor_m2 = customtkinter.CTkLabel(fr_dre, text="Custo $m² de Obra", text_color="black", font=('Arial', 10), anchor=tk.W)
         lb_obras_valor_m2.place(relx=0.01, rely=0.76, relheight=0.05, relwidth=0.25)
-        self.entry_obras_valor_m2 = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_obras_valor_m2 = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", font=('Arial', 10), justify=tk.RIGHT)
         self.entry_obras_valor_m2.place(relx=0.30, rely=0.76, relwidth=0.10, relheight=0.05)
         lb_deducao_4.place(relx=0.43, rely=0.76, relheight=0.05, relwidth=0.25)
         self.entry_obras_valor_total = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="red", justify=tk.RIGHT)
@@ -501,7 +515,7 @@ class Simulador_Estudos_Resultado(Widgets):
 
         lb_adm_per_obras = customtkinter.CTkLabel(fr_dre, text="Adm. - % x Obra", text_color="black", font=('Arial', 10), anchor=tk.W)
         lb_adm_per_obras.place(relx=0.01, rely=0.82, relheight=0.05, relwidth=0.25)
-        self.entry_adm_per_obras = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_adm_per_obras = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", font=('Arial', 10), justify=tk.RIGHT)
         self.entry_adm_per_obras.place(relx=0.30, rely=0.82, relwidth=0.10, relheight=0.05)
         lb_deducao_5.place(relx=0.43, rely=0.82, relheight=0.05, relwidth=0.25)
         self.entry_adm_valor_total = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="red", justify=tk.RIGHT)
@@ -509,7 +523,7 @@ class Simulador_Estudos_Resultado(Widgets):
 
         lb_pos_obras_per_obras = customtkinter.CTkLabel(fr_dre, text="Pós Obras - % x Obra", text_color="black", font=('Arial', 10), anchor=tk.W)
         lb_pos_obras_per_obras.place(relx=0.01, rely=0.88, relheight=0.05, relwidth=0.25)
-        self.entry_pos_obras_per_obras = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_pos_obras_per_obras = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", font=('Arial', 10), justify=tk.RIGHT)
         self.entry_pos_obras_per_obras.place(relx=0.30, rely=0.88, relwidth=0.10, relheight=0.05)
         lb_deducao_6.place(relx=0.43, rely=0.88, relheight=0.05, relwidth=0.25)
         self.entry_pos_obras_valor_total = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="red", justify=tk.RIGHT)
@@ -518,7 +532,7 @@ class Simulador_Estudos_Resultado(Widgets):
         # Resultado Líquido Urbanizadora
         self.lb_dre_ebtda_valor = customtkinter.CTkLabel(fr_dre, text="Resultado Líquido:", text_color="black", font=('Arial', 15, 'bold'), anchor=tk.W)
         self.lb_dre_ebtda_valor.place(relx=0.01, rely=0.94, relheight=0.05, relwidth=0.45)
-        self.entry_dre_ebtda_per = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", justify=tk.RIGHT)
+        self.entry_dre_ebtda_per = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", font=('Arial', 10), justify=tk.RIGHT)
         self.entry_dre_ebtda_per.place(relx=0.30, rely=0.94, relwidth=0.10, relheight=0.05)
         self.entry_dre_ebtda_valor = customtkinter.CTkEntry(fr_dre, fg_color="black", text_color="white", justify=tk.RIGHT)
         self.entry_dre_ebtda_valor.place(relx=0.50, rely=0.94, relwidth=0.49, relheight=0.05)
@@ -559,17 +573,22 @@ class Simulador_Estudos_Resultado(Widgets):
             
             if self.df_resultados['Projetos'].astype(float).sum() != 0.0:
                 _projetos = self.df_resultados['Projetos'].astype(float).cumsum() / 1000
-                idx_fim = len(_projetos)
+                
+                idx_inicio  = 0
+                idx_fim     = 0
                 for i in range(1, len(_projetos)):
+                    if idx_inicio == 0 and _projetos[i] > 0:
+                        idx_inicio = i
+
                     if _projetos[i] == _projetos[i-1]:
                         idx_fim = i
                         break
-                ax.plot(_projetos[:idx_fim], label='Projetos')
+                ax.plot(_projetos[idx_inicio:idx_fim], label='Projetos')
             
             if self.df_resultados['Obras'].astype(float).sum() != 0:
                 _obras     = self.df_resultados['Obras'].astype(float).cumsum() / 1000
                 _adm_obras = self.df_resultados['AdmObras'].astype(float).cumsum() / 1000
-                _pos_obras = self.df_resultados['PosObras'].astype(float).cumsum() / 1000
+                # _pos_obras = self.df_resultados['PosObras'].astype(float).cumsum() / 1000
 
                 idx_inicio  = 0
                 idx_fim     = 0
@@ -592,32 +611,32 @@ class Simulador_Estudos_Resultado(Widgets):
                     if _adm_obras[i] == _adm_obras.max():
                         idx_fim = i
                         break
-                ax.plot(_adm_obras[:idx_fim], label='Adm. Obras')
+                ax.plot(_adm_obras[idx_inicio:idx_fim], label='Adm. Obras')
 
-                idx_inicio = 0
-                idx_fim    = 0
-                for i in range(1, len(_pos_obras)):
-                    if idx_inicio == 0 and _pos_obras[i] > 0:
-                        idx_inicio = i
+                # idx_inicio = 0
+                # idx_fim    = 0
+                # for i in range(1, len(_pos_obras)):
+                #     if idx_inicio == 0 and _pos_obras[i] > 0:
+                #         idx_inicio = i
 
-                    if _pos_obras[i] == _pos_obras.max():
-                        idx_fim = i
-                        break
-                ax.plot(_pos_obras[:idx_fim], label='Pós Obras')
+                #     if _pos_obras[i] == _pos_obras.max():
+                #         idx_fim = i
+                #         break
+                # ax.plot(_pos_obras[idx_inicio:idx_fim], label='Pós Obras')
                 
-            if self.df_resultados['Adm'].astype(float).sum() != 0:
-                _adm = self.df_resultados['Adm'].astype(float).cumsum() / 1000
+            # if self.df_resultados['Adm'].astype(float).sum() != 0:
+            #     _adm = self.df_resultados['Adm'].astype(float).cumsum() / 1000
                 
-                idx_inicio = 0
-                idx_fim    = 0
-                for i in range(1, len(_adm)):
-                    if idx_inicio == 0 and _adm[i] > 0:
-                        idx_inicio = i
+            #     idx_inicio = 0
+            #     idx_fim    = 0
+            #     for i in range(1, len(_adm)):
+            #         if idx_inicio == 0 and _adm[i] > 0:
+            #             idx_inicio = i
 
-                    if _adm[i] == _adm.max():
-                        idx_fim = i
-                        break
-                ax.plot(_adm[:idx_fim], label='Adm')
+            #         if _adm[i] == _adm.max():
+            #             idx_fim = i
+            #             break
+            #     ax.plot(_adm[idx_inicio:idx_fim], label='Adm')
                 
             
             if self.df_resultados['MkT'].astype(float).sum() != 0:
@@ -632,7 +651,7 @@ class Simulador_Estudos_Resultado(Widgets):
                     if _mkt[i] == _mkt.max():
                         idx_fim = i
                         break
-                ax.plot(_mkt[:idx_fim], label='MkT')
+                ax.plot(_mkt[idx_inicio:idx_fim], label='MkT')
             
             # Curva de Receitas x Gastos
             fr_curva_receitas_gastos = customtkinter.CTkFrame(fr_graficos, border_color="gray75", border_width=1, fg_color="white")

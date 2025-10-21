@@ -4,10 +4,12 @@ import time
 from db.db_conector import MySqlDatabase
 import logging
 
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates  as mdates
 import matplotlib.ticker as mticker
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.widgets import Button
 
 import networkx          as nx
 

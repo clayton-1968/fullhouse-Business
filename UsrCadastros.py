@@ -1133,6 +1133,8 @@ class Projetos(Icons, Functions):
         Setor_Projeto = self.entry_setor.get() if self.entry_setor.get().strip() != '' else 'N/A'
         Ativo_Projeto = '' if self.check_var_ativo.get() == 'on' else 'x'
         Observacao = self.entry_obs.get()
+        baseline_idx = 'principal'   
+        baseline_dta = datetime.now().strftime("%Y-%m-%d")
         
         # Buscar Codigo Novo Projeto
         if ID_Projeto == '':
@@ -1163,10 +1165,12 @@ class Projetos(Icons, Functions):
                              projeto_status_id, 
                              projeto_situacao_id, 
                              projeto_empresa, 
-                             projeto_ativo
+                             projeto_ativo,
+                             baseline_idx,
+                             baseline_dta
                              )
 
-                        VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     """  
             
             values = (
@@ -1182,7 +1186,9 @@ class Projetos(Icons, Functions):
                         ID_Projeto_Status,
                         ID_Situacao_Projeto,
                         ID_Empresa,
-                        Ativo_Projeto
+                        Ativo_Projeto,
+                        baseline_idx,
+                        baseline_dta
                      )
             
             myresult = db.executar_consulta(vs_sql,  values)
@@ -1591,6 +1597,8 @@ class Cronograma_Atividades_Copiar(Icons, Functions):
             pass
     
     def executar_copia(self, projeto_origem_id, projeto_destino_id, projeto_destino_ds, janela):
+        baseline_idx = 'principal'   
+        baseline_dta = datetime.now().strftime("%Y-%m-%d")
         try:
             sql = f""" INSERT INTO programas_atividades
                     (
@@ -1613,7 +1621,9 @@ class Cronograma_Atividades_Copiar(Icons, Functions):
                         dias_diferenca,
                         STATUS,
                         observacao,
-                        anexos
+                        anexos,
+                        baseline_idx,
+                        baseline_dta
                     )
                     SELECT
                     projeto_cr,
@@ -1635,7 +1645,9 @@ class Cronograma_Atividades_Copiar(Icons, Functions):
                     dias_diferenca,
                     STATUS,
                     observacao,
-                    anexos
+                    anexos,
+                    '{baseline_idx}',
+                    '{baseline_dta}'
                     FROM programas_atividades
                     WHERE projeto_id = {projeto_origem_id}
             """
